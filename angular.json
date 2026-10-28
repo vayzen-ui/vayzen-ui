@@ -31,6 +31,67 @@
           }
         }
       }
+    },
+    "vayzen-docs": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/vayzen-docs",
+      "sourceRoot": "projects/vayzen-docs/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/vayzen-docs/src/main.ts",
+            "tsConfig": "projects/vayzen-docs/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/vayzen-docs/public"
+              }
+            ],
+            "styles": ["projects/vayzen-docs/src/styles.css"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "vayzen-docs:build:production"
+            },
+            "development": {
+              "buildTarget": "vayzen-docs:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
     }
   }
 }

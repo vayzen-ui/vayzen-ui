@@ -29,6 +29,12 @@
     },
     {
       "path": "./projects/vayzen-ui/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/vayzen-docs/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/vayzen-docs/tsconfig.spec.json"
     }
   ]
 }
