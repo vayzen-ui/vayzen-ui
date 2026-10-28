@@ -1,6 +1,8 @@
 {
   "name": "vayzen-ui",
   "version": "0.0.1",
+  "license": "MIT",
+  "author": "Juan Arturo Galindo Pérez",
   "peerDependencies": {
     "@angular/common": "^22.2.0",
     "@angular/core": "^22.2.0"
