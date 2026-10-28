@@ -1,6 +1,9 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/vayzen-ui",
+  "assets": [
+    "./src/lib/styles/**/*.scss"
+  ],
   "lib": {
     "entryFile": "src/public-api.ts"
   }
