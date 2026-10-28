@@ -1,11 +1,24 @@
 <section class="doc-page">
   <h1>Button</h1>
-  <p>Componente de botón interactivo con soporte para diferentes variantes y tamaños.</p>
+  <p>Componente de botón interactivo nativo con soporte para variantes de diseño y tamaños.</p>
 
-  <h2>Ejemplo</h2>
+  <h2>Variantes</h2>
   <div class="demo-box">
-    <!-- Aquí se integrará el componente Button de vayzen-ui -->
-    <button class="preview-btn">Botón Demo</button>
+    <vz-button variant="primary">Primary</vz-button>
+    <vz-button variant="secondary">Secondary</vz-button>
+    <vz-button variant="outline">Outline</vz-button>
+    <vz-button variant="ghost">Ghost</vz-button>
+  </div>
+
+  <h2>Tamaños</h2>
+  <div class="demo-box">
+    <vz-button size="sm">Small</vz-button>
+    <vz-button size="md">Medium</vz-button>
+    <vz-button size="lg">Large</vz-button>
+  </div>
+
+  <h2>Estados</h2>
+  <div class="demo-box">
+    <vz-button [disabled]="true">Deshabilitado</vz-button>
   </div>
 </section>
-

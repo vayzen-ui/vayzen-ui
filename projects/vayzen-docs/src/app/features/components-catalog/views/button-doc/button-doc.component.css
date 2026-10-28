@@ -1,16 +1,16 @@
+.doc-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .demo-box {
-  padding: 2rem;
-  border: 1px dashed #cbd5e1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  margin-top: 1rem;
+  background-color: #ffffff;
 }
-
-.preview-btn {
-  padding: 0.6rem 1.2rem;
-  background: #0284c7;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
