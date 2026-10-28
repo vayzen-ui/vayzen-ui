@@ -1,0 +1,15 @@
+.demo-box {
+  padding: 2rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.preview-input {
+  padding: 0.6rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 320px;
+}
+
