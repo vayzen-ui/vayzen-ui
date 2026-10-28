@@ -1,5 +1,5 @@
 {
-  "name": "@vayzen-ui/core",
+  "name": "@vayzen-ui/vayzen-core",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
