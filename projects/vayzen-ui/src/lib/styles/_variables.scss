@@ -1,69 +1,132 @@
-// ==========================================
-// VAYZEN UI - DESIGN TOKENS & VARIABLES
-// ==========================================
+// ==========================================================================
+// 1. VAYZEN UI - SISTEMA DE VARIABLES Y DESIGN TOKENS (SCSS + CSS Custom Props)
+// ==========================================================================
 
+// --- Paleta de Colores Base ---
+$vz-primary: #0f172a !default;
+$vz-primary-hover: #1e293b !default;
+$vz-primary-active: #334155 !default;
+$vz-primary-contrast: #ffffff !default;
+
+$vz-secondary: #64748b !default;
+$vz-secondary-hover: #475569 !default;
+$vz-secondary-contrast: #ffffff !default;
+
+$vz-success: #10b981 !default;
+$vz-success-contrast: #ffffff !default;
+
+$vz-warning: #f59e0b !default;
+$vz-warning-contrast: #ffffff !default;
+
+$vz-danger: #ef4444 !default;
+$vz-danger-contrast: #ffffff !default;
+
+$vz-info: #0284c7 !default;
+$vz-info-contrast: #ffffff !default;
+
+// --- Superficies y Neutros ---
+$vz-surface: #ffffff !default;
+$vz-surface-alt: #f8fafc !default;
+$vz-border: #e2e8f0 !default;
+$vz-border-focus: #3b82f6 !default;
+
+// --- Colores de Texto ---
+$vz-text-primary: #0f172a !default;
+$vz-text-secondary: #64748b !default;
+$vz-text-disabled: #94a3b8 !default;
+
+// --- Tipografía ---
+$vz-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !default;
+$vz-font-size-xs: 0.75rem !default;
+$vz-font-size-sm: 0.875rem !default;
+$vz-font-size-md: 1rem !default;
+$vz-font-size-lg: 1.125rem !default;
+$vz-font-size-xl: 1.25rem !default;
+
+// --- Espaciados ---
+$vz-space-xs: 0.25rem !default;
+$vz-space-sm: 0.5rem !default;
+$vz-space-md: 1rem !default;
+$vz-space-lg: 1.5rem !default;
+$vz-space-xl: 2rem !default;
+
+// --- Bordes Redondeados ---
+$vz-radius-sm: 0.25rem !default;
+$vz-radius-md: 0.375rem !default;
+$vz-radius-lg: 0.5rem !default;
+$vz-radius-full: 9999px !default;
+
+// --- Breakpoints Responsivos ---
+$vz-breakpoints: (
+  'sm': 640px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+  '2xl': 1536px
+) !default;
+
+// --- Transiciones y Sombras ---
+$vz-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1) !default;
+$vz-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1) !default;
+
+$vz-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05) !default;
+$vz-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !default;
+$vz-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !default;
+
+// --- Exposición de Tokens Globales en CSS (:root) ---
 :root {
-  // Brand & Colors
-  --vz-primary: #0f172a;
-  --vz-primary-hover: #1e293b;
-  --vz-primary-active: #334155;
-  --vz-primary-contrast: #ffffff;
+  --vz-primary: #{$vz-primary};
+  --vz-primary-hover: #{$vz-primary-hover};
+  --vz-primary-active: #{$vz-primary-active};
+  --vz-primary-contrast: #{$vz-primary-contrast};
 
-  --vz-secondary: #64748b;
-  --vz-secondary-hover: #475569;
-  --vz-secondary-contrast: #ffffff;
+  --vz-secondary: #{$vz-secondary};
+  --vz-secondary-hover: #{$vz-secondary-hover};
+  --vz-secondary-contrast: #{$vz-secondary-contrast};
 
-  --vz-success: #10b981;
-  --vz-success-contrast: #ffffff;
+  --vz-success: #{$vz-success};
+  --vz-success-contrast: #{$vz-success-contrast};
 
-  --vz-warning: #f59e0b;
-  --vz-warning-contrast: #ffffff;
+  --vz-warning: #{$vz-warning};
+  --vz-warning-contrast: #{$vz-warning-contrast};
 
-  --vz-danger: #ef4444;
-  --vz-danger-contrast: #ffffff;
+  --vz-danger: #{$vz-danger};
+  --vz-danger-contrast: #{$vz-danger-contrast};
 
-  --vz-info: #0284c7;
-  --vz-info-contrast: #ffffff;
+  --vz-info: #{$vz-info};
+  --vz-info-contrast: #{$vz-info-contrast};
 
-  // Neutrals & Surfaces
-  --vz-surface: #ffffff;
-  --vz-surface-alt: #f8fafc;
-  --vz-border: #e2e8f0;
-  --vz-border-focus: #3b82f6;
+  --vz-surface: #{$vz-surface};
+  --vz-surface-alt: #{$vz-surface-alt};
+  --vz-border: #{$vz-border};
+  --vz-border-focus: #{$vz-border-focus};
 
-  // Typography Colors
-  --vz-text-primary: #0f172a;
-  --vz-text-secondary: #64748b;
-  --vz-text-disabled: #94a3b8;
+  --vz-text-primary: #{$vz-text-primary};
+  --vz-text-secondary: #{$vz-text-secondary};
+  --vz-text-disabled: #{$vz-text-disabled};
 
-  // Typography
-  --vz-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  --vz-font-size-xs: 0.75rem;
-  --vz-font-size-sm: 0.875rem;
-  --vz-font-size-md: 1rem;
-  --vz-font-size-lg: 1.125rem;
-  --vz-font-size-xl: 1.25rem;
+  --vz-font-family: #{$vz-font-family};
+  --vz-font-size-xs: #{$vz-font-size-xs};
+  --vz-font-size-sm: #{$vz-font-size-sm};
+  --vz-font-size-md: #{$vz-font-size-md};
+  --vz-font-size-lg: #{$vz-font-size-lg};
+  --vz-font-size-xl: #{$vz-font-size-xl};
 
-  // Spacing
-  --vz-space-xs: 0.25rem;
-  --vz-space-sm: 0.5rem;
-  --vz-space-md: 1rem;
-  --vz-space-lg: 1.5rem;
-  --vz-space-xl: 2rem;
+  --vz-space-xs: #{$vz-space-xs};
+  --vz-space-sm: #{$vz-space-sm};
+  --vz-space-md: #{$vz-space-md};
+  --vz-space-lg: #{$vz-space-lg};
+  --vz-space-xl: #{$vz-space-xl};
 
-  // Border Radius
-  --vz-radius-sm: 0.25rem;
-  --vz-radius-md: 0.375rem;
-  --vz-radius-lg: 0.5rem;
-  --vz-radius-full: 9999px;
+  --vz-radius-sm: #{$vz-radius-sm};
+  --vz-radius-md: #{$vz-radius-md};
+  --vz-radius-lg: #{$vz-radius-lg};
+  --vz-radius-full: #{$vz-radius-full};
 
-  // Transitions
-  --vz-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --vz-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --vz-transition-fast: #{$vz-transition-fast};
+  --vz-transition-normal: #{$vz-transition-normal};
 
-  // Shadows
-  --vz-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --vz-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --vz-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --vz-shadow-sm: #{$vz-shadow-sm};
+  --vz-shadow-md: #{$vz-shadow-md};
+  --vz-shadow-lg: #{$vz-shadow-lg};
 }
-
