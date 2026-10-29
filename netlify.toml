@@ -1,0 +1,11 @@
+[build]
+ 
+command = "npm run build vayzen-docs --configuration=production"
+  
+ 
+publish = "dist/vayzen-docs/browser"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
