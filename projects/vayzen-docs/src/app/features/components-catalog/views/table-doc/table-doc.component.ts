@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   VzCellDirective,
   VzColumn,
@@ -24,12 +25,15 @@ type ViewState = 'normal' | 'loading' | 'empty' | 'error';
     VzCellDirective,
     VzFilterControlDirective,
     CodeBlockComponent,
+    RouterLink,
   ],
   templateUrl: './table-doc.component.html',
   styleUrls: ['../../../../shared/styles/doc-page.css', './table-doc.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableDocComponent {
+  // Datos para la demostración en vivo
+  protected readonly previewEmployees = EMPLOYEES;
   // ── Playground ──
   protected readonly mode = signal<'client' | 'server'>('client');
   protected readonly density = signal<VzTableDensity>('comfortable');

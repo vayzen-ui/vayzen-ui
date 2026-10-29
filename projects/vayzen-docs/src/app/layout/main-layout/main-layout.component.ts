@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SidebarService } from '../../core/services/sidebar.service';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
@@ -10,4 +11,14 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css',
 })
-export class MainLayoutComponent {}
+export class MainLayoutComponent {
+  readonly sidebarService = inject(SidebarService);
+
+  @HostListener('window:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'b') {
+      event.preventDefault();
+      this.sidebarService.toggle();
+    }
+  }
+}

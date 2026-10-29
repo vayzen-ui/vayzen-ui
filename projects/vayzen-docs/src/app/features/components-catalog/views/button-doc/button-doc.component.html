@@ -1,197 +1,19 @@
-<div class="doc-page">
-  <!-- 1. Encabezado del Componente -->
-  <header class="doc-header">
-    <div class="doc-header-top">
-      <span class="category-tag">Componentes / General</span>
-      <span class="version-tag">Standalone</span>
-    </div>
-    <h1 class="doc-title">Button</h1>
-    <p class="doc-description">
-      Componente de botón interactivo nativo, accesible y ligero. Diseñado bajo una arquitectura de Design Tokens que permite una personalización total mediante Variables CSS sin romper la encapsulación de Angular.
-    </p>
-  </header>
-
-  <!-- 2. Playground Interactivo (Estilo Bootstrap / PrimeNG) -->
-  <section class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Playground Interactivo</h2>
-      <p class="section-subtitle">
-        Experimenta en tiempo real con las variantes, tamaños, bordes redondeados y personalización con variables CSS.
+<div class="doc-layout">
+  <article class="doc-main-content">
+    <!-- 1. Encabezado del Componente -->
+    <header class="doc-header">
+      <div class="doc-header-top">
+        <span class="category-tag">Componentes / General</span>
+        <span class="version-tag">Standalone</span>
+      </div>
+      <h1 class="doc-title">Button</h1>
+      <p class="doc-description">
+        Componente de botón interactivo nativo, accesible y ligero. Diseñado bajo una arquitectura de Design Tokens que permite una personalización total mediante Variables CSS sin romper la encapsulación de Angular.
       </p>
-    </div>
+    </header>
 
-    <div class="playground-card">
-      <!-- Toolbar de Controles -->
-      <div class="playground-controls">
-        <div class="control-group">
-          <label class="control-label">Variante:</label>
-          <div class="pill-group">
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedVariant() === 'primary'"
-              (click)="selectedVariant.set('primary')"
-            >
-              Primary
-            </button>
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedVariant() === 'secondary'"
-              (click)="selectedVariant.set('secondary')"
-            >
-              Secondary
-            </button>
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedVariant() === 'outline'"
-              (click)="selectedVariant.set('outline')"
-            >
-              Outline
-            </button>
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedVariant() === 'ghost'"
-              (click)="selectedVariant.set('ghost')"
-            >
-              Ghost
-            </button>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <label class="control-label">Tamaño:</label>
-          <div class="pill-group">
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedSize() === 'sm'"
-              (click)="selectedSize.set('sm')"
-            >
-              Small (sm)
-            </button>
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedSize() === 'md'"
-              (click)="selectedSize.set('md')"
-            >
-              Medium (md)
-            </button>
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedSize() === 'lg'"
-              (click)="selectedSize.set('lg')"
-            >
-              Large (lg)
-            </button>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <label class="control-label">Redondeado (Radius):</label>
-          <div class="pill-group">
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedRadius() === 'default'"
-              (click)="selectedRadius.set('default')"
-            >
-              Default (0.375rem)
-            </button>
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedRadius() === 'pill'"
-              (click)="selectedRadius.set('pill')"
-            >
-              Pill (9999px)
-            </button>
-            <button
-              type="button"
-              class="pill-btn"
-              [class.active]="selectedRadius() === 'square'"
-              (click)="selectedRadius.set('square')"
-            >
-              Square (0px)
-            </button>
-          </div>
-        </div>
-
-        <div class="control-group flex-wrap">
-          <div class="input-field">
-            <label class="control-label">Texto:</label>
-            <input
-              type="text"
-              class="text-input"
-              [ngModel]="buttonLabel()"
-              (ngModelChange)="buttonLabel.set($event)"
-              placeholder="Escribe el texto..."
-            />
-          </div>
-
-          <div class="input-field">
-            <label class="control-label">Color Personalizado (--vz-btn-bg):</label>
-            <div class="color-picker-wrapper">
-              <input
-                type="color"
-                class="color-picker"
-                [ngModel]="customBgColor() || '#0f172a'"
-                (ngModelChange)="customBgColor.set($event)"
-              />
-              @if (customBgColor()) {
-                <button
-                  type="button"
-                  class="reset-color-btn"
-                  (click)="customBgColor.set('')"
-                  title="Restablecer color por defecto"
-                >
-                  Limpiar
-                </button>
-              }
-            </div>
-          </div>
-
-          <div class="checkbox-field">
-            <label class="checkbox-label">
-              <input
-                type="checkbox"
-                [checked]="isDisabled()"
-                (change)="isDisabled.set(!isDisabled())"
-              />
-              <span>Deshabilitado (disabled)</span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Preview en Vivo -->
-      <div class="playground-preview">
-        <vz-button
-          [variant]="selectedVariant()"
-          [size]="selectedSize()"
-          [disabled]="isDisabled()"
-          [style.--vz-btn-radius]="playgroundRadiusStyle()"
-          [style.--vz-btn-bg]="playgroundBgStyle()"
-        >
-          {{ buttonLabel() }}
-        </vz-button>
-      </div>
-
-      <!-- Snippet de Código Dinámico generado en vivo -->
-      <app-code-block
-        [code]="playgroundHtmlCode()"
-        language="html"
-        title="Código generado en tiempo real"
-      />
-    </div>
-  </section>
-
-  <!-- 3. Uso Básico e Implementación (Estilo PrimeNG) -->
-  <section class="doc-section">
+    <!-- 2. Uso Básico e Implementación -->
+    <section id="uso-basico" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Uso Básico</h2>
       <p class="section-subtitle">
@@ -211,7 +33,7 @@
   </section>
 
   <!-- 4. Variantes de Diseño -->
-  <section class="doc-section">
+  <section id="variantes" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Variantes</h2>
       <p class="section-subtitle">
@@ -231,7 +53,7 @@
   </section>
 
   <!-- 5. Tamaños -->
-  <section class="doc-section">
+  <section id="tamanos" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Tamaños</h2>
       <p class="section-subtitle">
@@ -250,7 +72,7 @@
   </section>
 
   <!-- 6. GUÍA DE SOBRESCRITURA DE DISEÑO (THEMING & CUSTOMIZATION) -->
-  <section class="doc-section highlight-section">
+  <section id="personalizacion-tokens" class="doc-section highlight-section">
     <div class="section-heading">
       <div class="badge-pill">Arquitectura Híbrida</div>
       <h2 class="section-title">¿Cómo sobrescribir el diseño para adaptarlo a tu marca?</h2>
@@ -307,7 +129,7 @@
   </section>
 
   <!-- 7. Tabla de Variables CSS (Tokens Reference) -->
-  <section class="doc-section">
+  <section id="variables-css" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Referencia de Variables CSS</h2>
       <p class="section-subtitle">
@@ -376,7 +198,7 @@
   </section>
 
   <!-- 8. API Reference -->
-  <section class="doc-section">
+  <section id="api-referencia" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">API Reference</h2>
       <p class="section-subtitle">Propiedades y eventos del componente <code>VzButtonComponent</code>.</p>
@@ -442,4 +264,38 @@
       </table>
     </div>
   </section>
+  </article>
+
+  <!-- Lateral Derecho: Studio Callout + TOC (Estilo PrimeNG / Bootstrap) -->
+  <aside class="doc-toc-sidebar">
+    <div class="studio-widget-card">
+      <div class="widget-badge-row">
+        <span class="widget-dot"></span>
+        <span class="widget-badge">Vayzen Studio</span>
+      </div>
+      <h4 class="widget-title">Diseñador en Vivo</h4>
+      <p class="widget-desc">
+        Abre el laboratorio interactivo para probar variantes, tamaños, estados deshabilitados y exportar código limpio.
+      </p>
+      <a routerLink="/studio" [queryParams]="{ component: 'button' }" class="widget-action-btn">
+        <span>Abrir en Studio</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+    <div class="toc-container">
+      <h5 class="toc-title">En esta página</h5>
+      <nav class="toc-nav">
+        <a href="#uso-basico" class="toc-link">Uso Básico</a>
+        <a href="#variantes" class="toc-link">Variantes Visuales</a>
+        <a href="#tamanos" class="toc-link">Tamaños Escalables</a>
+        <a href="#personalizacion-tokens" class="toc-link">Personalización de Tokens</a>
+        <a href="#variables-css" class="toc-link">Variables CSS</a>
+        <a href="#api-referencia" class="toc-link">Referencia de API</a>
+      </nav>
+    </div>
+  </aside>
 </div>

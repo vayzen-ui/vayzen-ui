@@ -1,12 +1,6 @@
 :host {
   display: block;
-}
-
-.doc-page {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-  max-width: 960px;
+  width: 100%;
 }
 
 /* --- Encabezado --- */

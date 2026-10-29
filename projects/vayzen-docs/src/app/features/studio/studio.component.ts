@@ -29,9 +29,20 @@ import {
   VzTableComponent,
   VzTableDensity,
 } from 'vayzen-ui';
-import { WorkbenchComponent } from '../../shared/components/workbench/workbench.component';
+import { CodeBlockComponent } from '../../shared/components/code-block/code-block.component';
 
 export type StudioComponentType = 'card' | 'button' | 'table';
+export type StudioStageTab = 'preview' | 'code' | 'tokens';
+export type StudioCanvasBg = 'dots' | 'white' | 'slate';
+
+export interface StudioComponentDefinition {
+  id: StudioComponentType;
+  name: string;
+  icon: string;
+  badge: string;
+  description: string;
+  docLink: string;
+}
 
 interface EmployeeItem {
   id: number;
@@ -47,7 +58,7 @@ interface EmployeeItem {
   imports: [
     FormsModule,
     RouterLink,
-    WorkbenchComponent,
+    CodeBlockComponent,
     VzCardComponent,
     VzCardHeaderDirective,
     VzCardTitleDirective,
@@ -60,38 +71,92 @@ interface EmployeeItem {
     VzTableComponent,
   ],
   templateUrl: './studio.component.html',
-  styleUrl: './studio.component.css',
+  styleUrls: ['../../shared/styles/doc-page.css', './studio.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StudioComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
-  // ── Component Switcher ──
+  // ── Navigation & Studio State ──
   readonly activeComponent = signal<StudioComponentType>('card');
+  readonly stageTab = signal<StudioStageTab>('preview');
+  readonly canvasBg = signal<StudioCanvasBg>('dots');
+  readonly isPickerOpen = signal(false);
+  readonly pickerSearch = signal('');
 
-  readonly componentCatalog = [
+  // ── Componentes Disponibles (100% interactivos y reales) ──
+  readonly availableComponents: StudioComponentDefinition[] = [
     {
-      id: 'card' as StudioComponentType,
+      id: 'card',
       name: 'Card',
       icon: '🃏',
-      summary: 'Contenedor adaptable con variantes de acento, orientación y densidades.',
+      badge: 'Contenedor',
+      description: 'Contenedor modular con acentos cromáticos, variantes y orientación.',
       docLink: '/components/cards',
     },
     {
-      id: 'button' as StudioComponentType,
+      id: 'button',
       name: 'Button',
       icon: '🔘',
-      summary: 'Botón nativo accesible con variantes visuales y tamaños escalables.',
+      badge: 'Acción',
+      description: 'Botón táctil nativo con variantes visuales y tamaños escalables.',
       docLink: '/components/buttons',
     },
     {
-      id: 'table' as StudioComponentType,
+      id: 'table',
       name: 'Table',
       icon: '📊',
-      summary: 'Tabla interactiva reactiva con ordenamiento, búsqueda y selección.',
+      badge: 'Datos',
+      description: 'Tabla de datos reactiva con ordenamiento, badges y selección.',
       docLink: '/components/tables',
     },
   ];
+
+  // Componente activo actual
+  readonly currentComponentInfo = computed(() => {
+    const current = this.activeComponent();
+    return this.availableComponents.find((c) => c.id === current) || this.availableComponents[0];
+  });
+
+  // Filtro de búsqueda dentro del selector
+  readonly filteredComponents = computed(() => {
+    const q = this.pickerSearch().trim().toLowerCase();
+    if (!q) return this.availableComponents;
+    return this.availableComponents.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.badge.toLowerCase().includes(q) ||
+        c.description.toLowerCase().includes(q),
+    );
+  });
+
+  // Agrupación automática por categoría para escala infinita
+  readonly groupedComponents = computed(() => {
+    const items = this.filteredComponents();
+    const groups: { [key: string]: StudioComponentDefinition[] } = {};
+    for (const item of items) {
+      if (!groups[item.badge]) {
+        groups[item.badge] = [];
+      }
+      groups[item.badge].push(item);
+    }
+    return Object.keys(groups).map((badge) => ({
+      badge,
+      items: groups[badge],
+    }));
+  });
+
+  togglePicker(): void {
+    this.isPickerOpen.update((open) => !open);
+    if (!this.isPickerOpen()) {
+      this.pickerSearch.set('');
+    }
+  }
+
+  closePicker(): void {
+    this.isPickerOpen.set(false);
+    this.pickerSearch.set('');
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -102,8 +167,15 @@ export class StudioComponent implements OnInit {
     });
   }
 
+  selectComponent(id: string): void {
+    if (['card', 'button', 'table'].includes(id)) {
+      this.activeComponent.set(id as StudioComponentType);
+      this.closePicker();
+    }
+  }
+
   // ══════════════════════════════════════════
-  // CARD STUDIO STATE
+  // CARD STUDIO STATE & COMPUTEDS
   // ══════════════════════════════════════════
   protected readonly cardVariant = signal<VzCardVariant>('elevated');
   protected readonly cardAccent = signal<VzCardAccent>('primary');
@@ -119,8 +191,32 @@ export class StudioComponent implements OnInit {
   protected readonly cardShowImage = signal(true);
   protected readonly cardLastEvent = signal('');
 
+  protected readonly accentOptions = [
+    { id: 'primary', label: 'Blue', color: '#3b82f6' },
+    { id: 'success', label: 'Green', color: '#10b981' },
+    { id: 'warning', label: 'Amber', color: '#f59e0b' },
+    { id: 'danger', label: 'Red', color: '#ef4444' },
+    { id: 'info', label: 'Purple', color: '#8b5cf6' },
+  ];
+
   protected onCardClick(): void {
     this.cardLastEvent.set(`clicked → ${new Date().toLocaleTimeString()}`);
+  }
+
+  protected resetCardDefaults(): void {
+    this.cardVariant.set('elevated');
+    this.cardAccent.set('primary');
+    this.cardAccentPosition.set('top');
+    this.cardOrientation.set('vertical');
+    this.cardDensity.set('comfortable');
+    this.cardBorderedHeader.set(true);
+    this.cardBorderedFooter.set(true);
+    this.cardHoverable.set(true);
+    this.cardClickable.set(false);
+    this.cardLoading.set(false);
+    this.cardDisabled.set(false);
+    this.cardShowImage.set(true);
+    this.cardLastEvent.set('Valores restablecidos');
   }
 
   protected readonly cardCode = computed(() => {
@@ -180,6 +276,31 @@ export class StudioComponent implements OnInit {
     return `<vz-card${attrStr} title="Control Escolar 2026" subtitle="Plantel Central">
   <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones.</p>
 </vz-card>`;
+  });
+
+  protected readonly cardTokensCode = computed(() => {
+    const v = this.cardVariant();
+    const a = this.cardAccent();
+    const d = this.cardDensity();
+
+    const radius = '0.75rem';
+    const padding = d === 'compact' ? '0.75rem 1rem' : d === 'spacious' ? '1.75rem 2rem' : '1.25rem 1.5rem';
+    const shadow = v === 'flat' ? 'none' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px -2px rgba(0,0,0,0.05)';
+
+    return `/* Sobrescribe los Design Tokens de VzCard para tu proyecto */
+.mi-tarjeta-personalizada {
+  --vz-card-bg: #ffffff;
+  --vz-card-color: #1e293b;
+  --vz-card-border-color: #e2e8f0;
+  --vz-card-border-radius: ${radius};
+  --vz-card-shadow: ${shadow};
+  --vz-card-padding: ${padding};
+  --vz-card-accent-color: var(--vz-${a}, #3b82f6);
+  --vz-card-accent-width: 4px;
+  --vz-card-title-color: #0f172a;
+  --vz-card-subtitle-color: #64748b;
+  --vz-card-footer-bg: #fafbfd;
+}`;
   });
 
   // ══════════════════════════════════════════
@@ -270,4 +391,3 @@ export class StudioComponent implements OnInit {
 />`;
   });
 }
-

@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SidebarService } from '../../../../core/services/sidebar.service';
 import { ThemeService } from '../../../../core/services/theme.service';
 
 @Component({
@@ -11,5 +12,6 @@ import { ThemeService } from '../../../../core/services/theme.service';
 })
 export class HeaderComponent {
   readonly themeService = inject(ThemeService);
+  readonly sidebarService = inject(SidebarService);
 }
 

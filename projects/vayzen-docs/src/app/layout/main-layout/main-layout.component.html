@@ -1,7 +1,7 @@
 <div class="layout-wrapper">
   <app-header />
-  <div class="layout-body">
-    <app-sidebar />
+  <div class="layout-body" [class.sidebar-collapsed]="!sidebarService.isOpen()">
+    <app-sidebar [class.collapsed]="!sidebarService.isOpen()" />
     <main class="layout-content">
       <router-outlet />
     </main>

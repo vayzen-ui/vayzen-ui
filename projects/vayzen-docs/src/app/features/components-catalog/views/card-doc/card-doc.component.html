@@ -1,39 +1,19 @@
-<div class="doc-page">
-  <header class="doc-header">
-    <div class="doc-header-top">
-      <span class="category-tag">Componentes / Contenedores</span>
-      <span class="version-tag">Standalone</span>
-    </div>
-    <h1 class="doc-title">Card</h1>
-    <p class="doc-description">
-      Contenedor versátil y elegante para presentar contenido estructurado, indicadores clave (KPIs), multimedia y acciones.
-      Diseñado desde cero con CSS nativo, tokens 100% personalizables, variantes con franjas de acento, orientación horizontal y soporte completo de estados.
-    </p>
-  </header>
-
-  <!-- Banner Acceso a Vayzen Studio -->
-  <div class="studio-banner">
-    <div class="studio-banner-content">
-      <div class="studio-banner-badge">
-        <span class="studio-banner-dot"></span>
-        <span>Vayzen Studio</span>
+<div class="doc-layout">
+  <article class="doc-main-content">
+    <header class="doc-header">
+      <div class="doc-header-top">
+        <span class="category-tag">Componentes / Contenedores</span>
+        <span class="version-tag">Standalone</span>
       </div>
-      <h3 class="studio-banner-title">¿Deseas personalizar y probar esta Card en tiempo real?</h3>
-      <p class="studio-banner-desc">
-        Abre el laboratorio interactivo para probar variantes, franjas de acento, orientación horizontal, estados y exportar código.
+      <h1 class="doc-title">Card</h1>
+      <p class="doc-description">
+        Contenedor versátil y elegante para presentar contenido estructurado, indicadores clave (KPIs), multimedia y acciones.
+        Diseñado desde cero con CSS nativo, tokens 100% personalizables, variantes con franjas de acento, orientación horizontal y soporte completo de estados.
       </p>
-    </div>
-    <a routerLink="/studio" [queryParams]="{ component: 'card' }" class="studio-banner-action">
-      <span>Abrir en Studio</span>
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-        <polyline points="12 5 19 12 12 19"></polyline>
-      </svg>
-    </a>
-  </div>
+    </header>
 
-  <!-- 1. Ejemplo Básico -->
-  <section class="doc-section">
+    <!-- 1. Ejemplo Básico -->
+    <section id="ejemplo-basico" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Ejemplo Básico</h2>
       <p class="section-subtitle">
@@ -67,7 +47,7 @@
   </section>
 
   <!-- Showcase 1: Widgets de Métricas (Dashboard Style) -->
-  <section class="doc-section">
+  <section id="metricas-dashboard" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Indicadores y Métricas para Dashboards</h2>
       <p class="section-subtitle">
@@ -149,7 +129,7 @@
   </section>
 
   <!-- Showcase 2: Tarjetas con Franja de Acento de Estado -->
-  <section class="doc-section">
+  <section id="franjas-acento" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Franjas de Acento Semánticas (Accent Cards)</h2>
       <p class="section-subtitle">
@@ -223,7 +203,7 @@
   </section>
 
   <!-- Showcase 3: Tarjeta Horizontal -->
-  <section class="doc-section">
+  <section id="disposicion-horizontal" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Disposición Horizontal</h2>
       <p class="section-subtitle">
@@ -260,7 +240,7 @@
   </section>
 
   <!-- Showcase 4: Personalización con Tokens CSS -->
-  <section class="doc-section">
+  <section id="theming-tokens" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Personalización Total (Tokens de Diseño)</h2>
       <p class="section-subtitle">
@@ -298,7 +278,7 @@
   </section>
 
   <!-- Referencia de API -->
-  <section class="doc-section">
+  <section id="api-referencia" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Referencia de API</h2>
     </div>
@@ -391,4 +371,38 @@
       </table>
     </div>
   </section>
+  </article>
+
+  <!-- Lateral Derecho: Studio Callout + TOC (Estilo Bootstrap / PrimeNG) -->
+  <aside class="doc-toc-sidebar">
+    <div class="studio-widget-card">
+      <div class="widget-badge-row">
+        <span class="widget-dot"></span>
+        <span class="widget-badge">Vayzen Studio</span>
+      </div>
+      <h4 class="widget-title">Diseñador en Vivo</h4>
+      <p class="widget-desc">
+        Abre el laboratorio interactivo para probar variantes, franjas de acento, orientación y exportar código limpio.
+      </p>
+      <a routerLink="/studio" [queryParams]="{ component: 'card' }" class="widget-action-btn">
+        <span>Abrir en Studio</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+    <div class="toc-container">
+      <h5 class="toc-title">En esta página</h5>
+      <nav class="toc-nav">
+        <a href="#ejemplo-basico" class="toc-link">Ejemplo Básico</a>
+        <a href="#metricas-dashboard" class="toc-link">Indicadores y KPIs</a>
+        <a href="#franjas-acento" class="toc-link">Franjas de Acento</a>
+        <a href="#disposicion-horizontal" class="toc-link">Disposición Horizontal</a>
+        <a href="#theming-tokens" class="toc-link">Tokens de Diseño</a>
+        <a href="#api-referencia" class="toc-link">Referencia de API</a>
+      </nav>
+    </div>
+  </aside>
 </div>

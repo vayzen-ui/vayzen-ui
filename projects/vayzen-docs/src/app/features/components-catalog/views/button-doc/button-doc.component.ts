@@ -1,56 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { VzButtonComponent, VzButtonSize, VzButtonVariant } from 'vayzen-ui';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { VzButtonComponent } from 'vayzen-ui';
 import { CodeBlockComponent } from '../../../../shared/components/code-block/code-block.component';
 
 @Component({
   selector: 'app-button-doc',
   standalone: true,
-  imports: [VzButtonComponent, CodeBlockComponent, FormsModule],
+  imports: [VzButtonComponent, CodeBlockComponent, RouterLink],
   templateUrl: './button-doc.component.html',
-  styleUrl: './button-doc.component.css',
+  styleUrls: ['../../../../shared/styles/doc-page.css', './button-doc.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonDocComponent {
-  // --- Estados del Playground Interactivo ---
-  protected readonly selectedVariant = signal<VzButtonVariant>('primary');
-  protected readonly selectedSize = signal<VzButtonSize>('md');
-  protected readonly selectedRadius = signal<'default' | 'pill' | 'square'>('default');
-  protected readonly isDisabled = signal<boolean>(false);
-  protected readonly customBgColor = signal<string>('');
-  protected readonly buttonLabel = signal<string>('Click me');
-
-  // --- Propiedades CSS dinámicas para el host del botón ---
-  protected readonly playgroundRadiusStyle = computed(() => {
-    const radius = this.selectedRadius();
-    if (radius === 'pill') return '9999px';
-    if (radius === 'square') return '0px';
-    return null;
-  });
-
-  protected readonly playgroundBgStyle = computed(() => {
-    return this.customBgColor() || null;
-  });
-
-  // --- Snippet de código generado dinámicamente en tiempo real ---
-  protected readonly playgroundHtmlCode = computed(() => {
-    const variant = this.selectedVariant();
-    const size = this.selectedSize();
-    const disabled = this.isDisabled();
-    const radius = this.selectedRadius();
-    const bg = this.customBgColor();
-
-    let styleParts: string[] = [];
-    if (radius === 'pill') styleParts.push('--vz-btn-radius: 9999px');
-    if (radius === 'square') styleParts.push('--vz-btn-radius: 0px');
-    if (bg) styleParts.push(`--vz-btn-bg: ${bg}`);
-
-    const styleAttr = styleParts.length > 0 ? ` style="${styleParts.join('; ')}"` : '';
-    const disabledAttr = disabled ? ' [disabled]="true"' : '';
-
-    return `<vz-button variant="${variant}" size="${size}"${disabledAttr}${styleAttr}>\n  ${this.buttonLabel()}\n</vz-button>`;
-  });
-
   // --- Snippets Estáticos para la Documentación ---
   protected readonly basicImportTs = `import { Component } from '@angular/core';
 import { VzButtonComponent } from 'vayzen-ui';

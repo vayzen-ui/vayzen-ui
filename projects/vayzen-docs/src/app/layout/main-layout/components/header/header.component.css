@@ -23,6 +23,33 @@
   gap: 0.5rem;
 }
 
+.sidebar-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-right: 0.25rem;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.sidebar-toggle-btn.active {
+  color: #0284c7;
+  border-color: #bae6fd;
+  background-color: #f0f9ff;
+}
+
 .logo {
   font-size: 1.25rem;
   font-weight: 700;

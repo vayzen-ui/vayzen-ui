@@ -1,95 +1,39 @@
-<div class="doc-page">
-  <header class="doc-header">
-    <div class="doc-header-top">
-      <span class="category-tag">Componentes / Datos</span>
-      <span class="version-tag">Standalone</span>
-    </div>
-    <h1 class="doc-title">Table</h1>
-    <p class="doc-description">
-      Tabla de datos configurable: búsqueda, orden múltiple, filtros y paginación que pueden resolverse en el navegador
-      (todo el JSON en memoria) o delegarse al backend. Sin dependencias externas y con theming por variables CSS.
-    </p>
-  </header>
+<div class="doc-layout">
+  <article class="doc-main-content">
+    <header class="doc-header">
+      <div class="doc-header-top">
+        <span class="category-tag">Componentes / Datos</span>
+        <span class="version-tag">Standalone</span>
+      </div>
+      <h1 class="doc-title">Table</h1>
+      <p class="doc-description">
+        Tabla de datos configurable: búsqueda, orden múltiple, filtros y paginación que pueden resolverse en el navegador
+        (todo el JSON en memoria) o delegarse al backend. Sin dependencias externas y con theming por variables CSS.
+      </p>
+    </header>
 
-  <!-- Playground -->
-  <section class="doc-section">
+    <!-- Demostración en Vivo -->
+    <section id="demo-vivo" class="doc-section">
     <div class="section-heading">
-      <h2 class="section-title">Playground</h2>
+      <h2 class="section-title">Demostración en Vivo</h2>
       <p class="section-subtitle">
-        Cambia entre <strong>modo cliente</strong> (87 registros en memoria) y <strong>modo servidor</strong> (una API simulada con
-        600&nbsp;ms de latencia que recibe el <code>queryChange</code> y devuelve solo la página pedida). Usa <strong>Shift + clic</strong> en
-        los encabezados para ordenar por varias columnas.
+        Tabla reactiva autónoma en acción con ordenamiento, búsqueda, filtros y paginación en el cliente.
       </p>
     </div>
 
-    <div class="playground-card">
-      <div class="playground-controls">
-        <div class="control-group">
-          <span class="control-label">Datos:</span>
-          <div class="pill-group">
-            <button type="button" class="pill-btn" [class.active]="mode() === 'client'" (click)="mode.set('client')">Cliente (JSON completo)</button>
-            <button type="button" class="pill-btn" [class.active]="mode() === 'server'" (click)="mode.set('server')">Servidor (API simulada)</button>
-          </div>
-        </div>
-        <div class="control-group">
-          <span class="control-label">Densidad:</span>
-          <div class="pill-group">
-            <button type="button" class="pill-btn" [class.active]="density() === 'compact'" (click)="density.set('compact')">Compact</button>
-            <button type="button" class="pill-btn" [class.active]="density() === 'comfortable'" (click)="density.set('comfortable')">Comfortable</button>
-            <button type="button" class="pill-btn" [class.active]="density() === 'spacious'" (click)="density.set('spacious')">Spacious</button>
-          </div>
-        </div>
-        <div class="control-group">
-          <span class="control-label">Estado:</span>
-          <div class="pill-group">
-            <button type="button" class="pill-btn" [class.active]="viewState() === 'normal'" (click)="viewState.set('normal')">Normal</button>
-            <button type="button" class="pill-btn" [class.active]="viewState() === 'loading'" (click)="viewState.set('loading')">Loading</button>
-            <button type="button" class="pill-btn" [class.active]="viewState() === 'empty'" (click)="viewState.set('empty')">Empty</button>
-            <button type="button" class="pill-btn" [class.active]="viewState() === 'error'" (click)="viewState.set('error')">Error</button>
-          </div>
-        </div>
-        <div class="control-group">
-          <span class="control-label">Opciones:</span>
-          <label class="checkbox-label"><input type="checkbox" [checked]="striped()" (change)="striped.set(!striped())" /> Striped</label>
-          <label class="checkbox-label"><input type="checkbox" [checked]="hoverable()" (change)="hoverable.set(!hoverable())" /> Hoverable</label>
-          <label class="checkbox-label"><input type="checkbox" [checked]="bordered()" (change)="bordered.set(!bordered())" /> Bordered</label>
-          <label class="checkbox-label"><input type="checkbox" [checked]="selectable()" (change)="selectable.set(!selectable())" /> Selección</label>
-        </div>
-      </div>
-
-      <div class="stage">
-        @for (key of modeKey(); track key) {
-          <vz-table
-            heading="Empleados"
-            [columns]="columns"
-            [data]="tableData()"
-            [filters]="filters"
-            [config]="config()"
-            [loading]="tableLoading()"
-            [error]="tableError()"
-            [total]="mode() === 'server' ? serverTotal() : null"
-            (queryChange)="onQuery($event)"
-            (rowAction)="onRowAction($event)"
-            (selectionChange)="onSelection($event)"
-            (retry)="onRetry()"
-          />
-        }
-      </div>
-
-      <div class="event-bar">
-        <span>Último evento: <code>{{ lastEvent() }}</code></span>
-        <span>Modo: <code>{{ mode() }}</code></span>
-      </div>
-
-      @if (mode() === 'server' && lastQuery()) {
-        <div class="query-preview-title">Último queryChange enviado al backend</div>
-        <pre class="query-preview">{{ asJson(lastQuery()) }}</pre>
-      }
+    <div class="preview-card-container">
+      <vz-table
+        heading="Directorio de Empleados"
+        [columns]="columns"
+        [data]="previewEmployees"
+        [filters]="filters"
+        (rowAction)="onRowAction($event)"
+      />
     </div>
   </section>
 
   <!-- Uso básico (cliente) -->
-  <section class="doc-section">
+  <section id="uso-cliente" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Uso básico · todos los datos en un JSON</h2>
       <p class="section-subtitle">
@@ -101,7 +45,7 @@
   </section>
 
   <!-- Servidor -->
-  <section class="doc-section">
+  <section id="modo-servidor" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Modo servidor · arquitectura limpia y autónoma</h2>
       <p class="section-subtitle">
@@ -150,7 +94,7 @@
   </section>
 
   <!-- Filtros y celdas personalizadas -->
-  <section class="doc-section">
+  <section id="filtros-celdas" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Filtros y celdas personalizadas</h2>
       <p class="section-subtitle">
@@ -183,7 +127,7 @@
   </section>
 
   <!-- Theming -->
-  <section class="doc-section">
+  <section id="personalizacion-theming" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">Personalización del diseño</h2>
       <p class="section-subtitle">
@@ -204,7 +148,7 @@
   </section>
 
   <!-- Referencias -->
-  <section class="doc-section">
+  <section id="api-referencia" class="doc-section">
     <div class="section-heading">
       <h2 class="section-title">API Reference</h2>
     </div>
@@ -269,5 +213,39 @@
       </table>
     </div>
   </section>
+  </article>
+
+  <!-- Lateral Derecho: Studio Callout + TOC (Estilo PrimeNG / Bootstrap) -->
+  <aside class="doc-toc-sidebar">
+    <div class="studio-widget-card">
+      <div class="widget-badge-row">
+        <span class="widget-dot"></span>
+        <span class="widget-badge">Vayzen Studio</span>
+      </div>
+      <h4 class="widget-title">Diseñador en Vivo</h4>
+      <p class="widget-desc">
+        Abre el laboratorio interactivo para probar densidades, modo rayado, selección y exportar código limpio.
+      </p>
+      <a routerLink="/studio" [queryParams]="{ component: 'table' }" class="widget-action-btn">
+        <span>Abrir en Studio</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+    <div class="toc-container">
+      <h5 class="toc-title">En esta página</h5>
+      <nav class="toc-nav">
+        <a href="#demo-vivo" class="toc-link">Demostración en Vivo</a>
+        <a href="#uso-cliente" class="toc-link">Uso Básico (Cliente)</a>
+        <a href="#modo-servidor" class="toc-link">Modo Servidor & API</a>
+        <a href="#filtros-celdas" class="toc-link">Filtros y Celdas</a>
+        <a href="#personalizacion-theming" class="toc-link">Personalización & Tokens</a>
+        <a href="#api-referencia" class="toc-link">Referencia de API</a>
+      </nav>
+    </div>
+  </aside>
 </div>
 
