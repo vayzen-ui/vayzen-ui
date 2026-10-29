@@ -1,0 +1,87 @@
+:host {
+  display: block;
+  margin: 1rem 0;
+}
+
+.code-block-container {
+  border-radius: 8px;
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background-color: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+
+.code-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.code-lang-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.code-title {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #94a3b8;
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+
+  &:hover {
+    color: #f8fafc;
+    background: #334155;
+  }
+}
+
+.copy-icon {
+  display: inline-block;
+}
+
+.copy-icon.check {
+  color: #34d399;
+}
+
+.code-content {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  tab-size: 2;
+}
+
+.code-content code {
+  font-family: inherit;
+  color: inherit;
+}

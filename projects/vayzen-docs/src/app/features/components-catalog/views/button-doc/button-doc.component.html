@@ -1,30 +1,445 @@
-<section class="doc-page">
-  <h1>Button</h1>
-  <p>Componente de botón interactivo nativo con soporte para variantes de diseño, tamaños y personalización mediante Variables CSS.</p>
+<div class="doc-page">
+  <!-- 1. Encabezado del Componente -->
+  <header class="doc-header">
+    <div class="doc-header-top">
+      <span class="category-tag">Componentes / General</span>
+      <span class="version-tag">Standalone</span>
+    </div>
+    <h1 class="doc-title">Button</h1>
+    <p class="doc-description">
+      Componente de botón interactivo nativo, accesible y ligero. Diseñado bajo una arquitectura de Design Tokens que permite una personalización total mediante Variables CSS sin romper la encapsulación de Angular.
+    </p>
+  </header>
 
-  <h2>Variantes</h2>
-  <div class="demo-box">
-    <vz-button variant="primary">Primary</vz-button>
-    <vz-button variant="secondary">Secondary</vz-button>
-    <vz-button variant="outline">Outline</vz-button>
-    <vz-button variant="ghost">Ghost</vz-button>
-  </div>
+  <!-- 2. Playground Interactivo (Estilo Bootstrap / PrimeNG) -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Playground Interactivo</h2>
+      <p class="section-subtitle">
+        Experimenta en tiempo real con las variantes, tamaños, bordes redondeados y personalización con variables CSS.
+      </p>
+    </div>
 
-  <h2>Tamaños</h2>
-  <div class="demo-box">
-    <vz-button size="sm">Small</vz-button>
-    <vz-button size="md">Medium</vz-button>
-    <vz-button size="lg">Large</vz-button>
-  </div>
+    <div class="playground-card">
+      <!-- Toolbar de Controles -->
+      <div class="playground-controls">
+        <div class="control-group">
+          <label class="control-label">Variante:</label>
+          <div class="pill-group">
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedVariant() === 'primary'"
+              (click)="selectedVariant.set('primary')"
+            >
+              Primary
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedVariant() === 'secondary'"
+              (click)="selectedVariant.set('secondary')"
+            >
+              Secondary
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedVariant() === 'outline'"
+              (click)="selectedVariant.set('outline')"
+            >
+              Outline
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedVariant() === 'ghost'"
+              (click)="selectedVariant.set('ghost')"
+            >
+              Ghost
+            </button>
+          </div>
+        </div>
 
-  <h2>Estados</h2>
-  <div class="demo-box">
-    <vz-button [disabled]="true">Deshabilitado</vz-button>
-  </div>
+        <div class="control-group">
+          <label class="control-label">Tamaño:</label>
+          <div class="pill-group">
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedSize() === 'sm'"
+              (click)="selectedSize.set('sm')"
+            >
+              Small (sm)
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedSize() === 'md'"
+              (click)="selectedSize.set('md')"
+            >
+              Medium (md)
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedSize() === 'lg'"
+              (click)="selectedSize.set('lg')"
+            >
+              Large (lg)
+            </button>
+          </div>
+        </div>
 
-  <h2>Personalización Híbrida (Variables CSS)</h2>
-  <div class="demo-box">
-    <vz-button class="custom-emerald-pill">Esmeralda Pill (--vz-btn-radius: 9999px)</vz-button>
-    <vz-button class="custom-violet-square">Violeta Square (--vz-btn-bg: #8b5cf6)</vz-button>
-  </div>
-</section>
+        <div class="control-group">
+          <label class="control-label">Redondeado (Radius):</label>
+          <div class="pill-group">
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedRadius() === 'default'"
+              (click)="selectedRadius.set('default')"
+            >
+              Default (0.375rem)
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedRadius() === 'pill'"
+              (click)="selectedRadius.set('pill')"
+            >
+              Pill (9999px)
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.active]="selectedRadius() === 'square'"
+              (click)="selectedRadius.set('square')"
+            >
+              Square (0px)
+            </button>
+          </div>
+        </div>
+
+        <div class="control-group flex-wrap">
+          <div class="input-field">
+            <label class="control-label">Texto:</label>
+            <input
+              type="text"
+              class="text-input"
+              [ngModel]="buttonLabel()"
+              (ngModelChange)="buttonLabel.set($event)"
+              placeholder="Escribe el texto..."
+            />
+          </div>
+
+          <div class="input-field">
+            <label class="control-label">Color Personalizado (--vz-btn-bg):</label>
+            <div class="color-picker-wrapper">
+              <input
+                type="color"
+                class="color-picker"
+                [ngModel]="customBgColor() || '#0f172a'"
+                (ngModelChange)="customBgColor.set($event)"
+              />
+              @if (customBgColor()) {
+                <button
+                  type="button"
+                  class="reset-color-btn"
+                  (click)="customBgColor.set('')"
+                  title="Restablecer color por defecto"
+                >
+                  Limpiar
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="checkbox-field">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [checked]="isDisabled()"
+                (change)="isDisabled.set(!isDisabled())"
+              />
+              <span>Deshabilitado (disabled)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview en Vivo -->
+      <div class="playground-preview">
+        <vz-button
+          [variant]="selectedVariant()"
+          [size]="selectedSize()"
+          [disabled]="isDisabled()"
+          [style.--vz-btn-radius]="playgroundRadiusStyle()"
+          [style.--vz-btn-bg]="playgroundBgStyle()"
+        >
+          {{ buttonLabel() }}
+        </vz-button>
+      </div>
+
+      <!-- Snippet de Código Dinámico generado en vivo -->
+      <app-code-block
+        [code]="playgroundHtmlCode()"
+        language="html"
+        title="Código generado en tiempo real"
+      />
+    </div>
+  </section>
+
+  <!-- 3. Uso Básico e Implementación (Estilo PrimeNG) -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Uso Básico</h2>
+      <p class="section-subtitle">
+        Importa <code>VzButtonComponent</code> en los imports de tu componente Standalone y úsalo en tu plantilla.
+      </p>
+    </div>
+
+    <div class="demo-card">
+      <div class="demo-card-preview">
+        <vz-button variant="primary">Submit</vz-button>
+      </div>
+      <div class="demo-card-code">
+        <app-code-block [code]="basicImportTs" language="typescript" title="mi-vista.component.ts" />
+        <app-code-block [code]="basicHtmlSnippet" language="html" title="mi-vista.component.html" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Variantes de Diseño -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Variantes</h2>
+      <p class="section-subtitle">
+        Cuatro variantes visuales integradas para diferentes jerarquías de acción: <code>primary</code>, <code>secondary</code>, <code>outline</code> y <code>ghost</code>.
+      </p>
+    </div>
+
+    <div class="demo-card">
+      <div class="demo-card-preview gap-lg">
+        <vz-button variant="primary">Primary</vz-button>
+        <vz-button variant="secondary">Secondary</vz-button>
+        <vz-button variant="outline">Outline</vz-button>
+        <vz-button variant="ghost">Ghost</vz-button>
+      </div>
+      <app-code-block [code]="variantsSnippet" language="html" title="Ejemplo de Variantes" />
+    </div>
+  </section>
+
+  <!-- 5. Tamaños -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Tamaños</h2>
+      <p class="section-subtitle">
+        Soporte para tamaños <code>sm</code> (pequeño), <code>md</code> (mediano/predeterminado) y <code>lg</code> (grande).
+      </p>
+    </div>
+
+    <div class="demo-card">
+      <div class="demo-card-preview gap-lg">
+        <vz-button size="sm">Small</vz-button>
+        <vz-button size="md">Medium</vz-button>
+        <vz-button size="lg">Large</vz-button>
+      </div>
+      <app-code-block [code]="sizesSnippet" language="html" title="Ejemplo de Tamaños" />
+    </div>
+  </section>
+
+  <!-- 6. GUÍA DE SOBRESCRITURA DE DISEÑO (THEMING & CUSTOMIZATION) -->
+  <section class="doc-section highlight-section">
+    <div class="section-heading">
+      <div class="badge-pill">Arquitectura Híbrida</div>
+      <h2 class="section-title">¿Cómo sobrescribir el diseño para adaptarlo a tu marca?</h2>
+      <p class="section-subtitle">
+        A diferencia de librerías tradicionales que requieren <code>::ng-deep</code> o <code>!important</code>, <strong>Vayzen UI</strong> está construida con <strong>CSS Custom Properties</strong> que atraviesan limpiamente la encapsulación de Angular. Puedes adaptar el diseño de 3 formas distintas:
+      </p>
+    </div>
+
+    <!-- Método 1: Global -->
+    <div class="customization-card">
+      <div class="customization-badge">Método 1: Nivel Global (:root)</div>
+      <h3 class="customization-title">Cambiar toda la paleta o bordes de la aplicación</h3>
+      <p class="customization-desc">
+        En el archivo <code>styles.scss</code> de tu proyecto consumidor, define las variables en <code>:root</code>. Toda la librería adoptará automáticamente tu nueva identidad visual.
+      </p>
+      <app-code-block [code]="globalOverrideSnippet" language="scss" title="src/styles.scss" />
+    </div>
+
+    <!-- Método 2: Por Clase CSS -->
+    <div class="customization-card">
+      <div class="customization-badge">Método 2: Por Clase CSS Específica</div>
+      <h3 class="customization-title">Diseñar un botón especial para una sección (ej. Landing Hero)</h3>
+      <p class="customization-desc">
+        Crea una clase en tu componente o SCSS definiendo únicamente las variables que quieres cambiar. No necesitas selectores complicados:
+      </p>
+
+      <div class="demo-card-preview gap-lg custom-preview-box">
+        <vz-button class="btn-marketing-hero" size="lg">
+          Comenzar prueba gratis &rarr;
+        </vz-button>
+        <vz-button class="btn-emerald-pill">
+          Pill Esmeralda
+        </vz-button>
+      </div>
+
+      <app-code-block [code]="classOverrideSnippet" language="scss" title="hero.component.scss" />
+      <app-code-block [code]="classOverrideHtmlSnippet" language="html" title="hero.component.html" />
+    </div>
+
+    <!-- Método 3: En Línea -->
+    <div class="customization-card">
+      <div class="customization-badge">Método 3: Sobrescritura en Línea</div>
+      <h3 class="customization-title">Personalización puntual y rápida</h3>
+      <p class="customization-desc">
+        Pasa variables CSS directamente en el atributo <code>style</code> del elemento:
+      </p>
+      <div class="demo-card-preview">
+        <vz-button style="--vz-btn-bg: #ec4899; --vz-btn-hover-bg: #db2777; --vz-btn-radius: 4px;">
+          Acento Rosa (4px Radius)
+        </vz-button>
+      </div>
+      <app-code-block [code]="inlineOverrideSnippet" language="html" title="template.html" />
+    </div>
+  </section>
+
+  <!-- 7. Tabla de Variables CSS (Tokens Reference) -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Referencia de Variables CSS</h2>
+      <p class="section-subtitle">
+        Lista completa de variables CSS Custom Properties disponibles para personalizar <code>&lt;vz-button&gt;</code>:
+      </p>
+    </div>
+
+    <div class="table-container">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Variable CSS</th>
+            <th>Descripción</th>
+            <th>Valor por Defecto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>--vz-btn-bg</code></td>
+            <td>Color de fondo principal del botón</td>
+            <td><code>var(--vz-primary, #0f172a)</code></td>
+          </tr>
+          <tr>
+            <td><code>--vz-btn-hover-bg</code></td>
+            <td>Color de fondo al pasar el cursor (hover)</td>
+            <td><code>var(--vz-primary-hover, #1e293b)</code></td>
+          </tr>
+          <tr>
+            <td><code>--vz-btn-active-bg</code></td>
+            <td>Color de fondo al presionar (active)</td>
+            <td><code>var(--vz-primary-active, #334155)</code></td>
+          </tr>
+          <tr>
+            <td><code>--vz-btn-color</code></td>
+            <td>Color del texto e iconos</td>
+            <td><code>var(--vz-primary-contrast, #ffffff)</code></td>
+          </tr>
+          <tr>
+            <td><code>--vz-btn-border-color</code></td>
+            <td>Color del borde del botón</td>
+            <td><code>transparent</code> (o <code>--vz-border</code> en outline)</td>
+          </tr>
+          <tr>
+            <td><code>--vz-btn-radius</code></td>
+            <td>Radio del borde (border-radius)</td>
+            <td><code>var(--vz-radius-md, 0.375rem)</code></td>
+          </tr>
+          <tr>
+            <td><code>--vz-btn-padding-y</code></td>
+            <td>Espaciado interno vertical</td>
+            <td><code>0.5rem</code> (en tamaño md)</td>
+          </tr>
+          <tr>
+            <td><code>--vz-btn-padding-x</code></td>
+            <td>Espaciado interno horizontal</td>
+            <td><code>1rem</code> (en tamaño md)</td>
+          </tr>
+          <tr>
+            <td><code>--vz-btn-font-size</code></td>
+            <td>Tamaño de la tipografía</td>
+            <td><code>0.875rem</code> (en tamaño md)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 8. API Reference -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">API Reference</h2>
+      <p class="section-subtitle">Propiedades y eventos del componente <code>VzButtonComponent</code>.</p>
+    </div>
+
+    <h3 class="subsection-title">Inputs</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Default</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>variant</code></td>
+            <td><code>'primary' | 'secondary' | 'outline' | 'ghost'</code></td>
+            <td><code>'primary'</code></td>
+            <td>Estilo visual del botón</td>
+          </tr>
+          <tr>
+            <td><code>size</code></td>
+            <td><code>'sm' | 'md' | 'lg'</code></td>
+            <td><code>'md'</code></td>
+            <td>Dimensiones del botón</td>
+          </tr>
+          <tr>
+            <td><code>type</code></td>
+            <td><code>'button' | 'submit' | 'reset'</code></td>
+            <td><code>'button'</code></td>
+            <td>Atributo nativo HTML <code>type</code></td>
+          </tr>
+          <tr>
+            <td><code>disabled</code></td>
+            <td><code>boolean</code></td>
+            <td><code>false</code></td>
+            <td>Si el botón está deshabilitado para interacción</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title" style="margin-top: 2rem;">Outputs</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo de Evento</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>clicked</code></td>
+            <td><code>EventEmitter&lt;MouseEvent&gt;</code></td>
+            <td>Se emite al hacer clic (ignorado si está <code>disabled</code>)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

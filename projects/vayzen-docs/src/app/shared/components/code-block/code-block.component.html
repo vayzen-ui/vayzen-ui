@@ -1,0 +1,30 @@
+<div class="code-block-container">
+  <div class="code-block-header">
+    <div class="code-meta">
+      <span class="code-lang-badge">{{ languageUpper() }}</span>
+      @if (title()) {
+        <span class="code-title">{{ title() }}</span>
+      }
+    </div>
+    <button
+      type="button"
+      class="copy-btn"
+      (click)="copyToClipboard()"
+      [attr.aria-label]="copied() ? 'Código copiado' : 'Copiar código'"
+    >
+      @if (copied()) {
+        <svg class="copy-icon check" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+        <span>¡Copiado!</span>
+      } @else {
+        <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+        </svg>
+        <span>Copiar</span>
+      }
+    </button>
+  </div>
+  <pre class="code-content"><code>{{ code() }}</code></pre>
+</div>
