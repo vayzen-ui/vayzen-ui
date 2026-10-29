@@ -1,26 +1,11 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { VzCardComponent } from './card.component';
-import {
-  VzCardActionsDirective,
-  VzCardContentDirective,
-  VzCardFooterDirective,
-  VzCardHeaderDirective,
-  VzCardSubtitleDirective,
-  VzCardTitleDirective,
-} from './card.directives';
+import { VZ_CARD_DIRECTIVES } from './card.directives';
 
 @Component({
   standalone: true,
-  imports: [
-    VzCardComponent,
-    VzCardHeaderDirective,
-    VzCardTitleDirective,
-    VzCardSubtitleDirective,
-    VzCardActionsDirective,
-    VzCardContentDirective,
-    VzCardFooterDirective,
-  ],
+  imports: [VzCardComponent, ...VZ_CARD_DIRECTIVES],
   template: `
     <vz-card>
       <div vzCardHeader>
@@ -28,8 +13,27 @@ import {
         <span vzCardSubtitle>Subtítulo Slotted</span>
         <div vzCardActions><button type="button">Acción</button></div>
       </div>
-      <div vzCardContent>Contenido Slotted</div>
-      <div vzCardFooter>Pie Slotted</div>
+      <div vzCardContent>
+        <div vzCardEyebrow>
+          <span vzCardBadge variant="primary">TECNOLOGÍA</span>
+          <span vzCardRating>4.95</span>
+        </div>
+        <div vzCardMeta>
+          <span vzCardMetaItem tone="success">Verificado</span>
+        </div>
+        <hr vzCardDivider />
+        <div vzCardTags>
+          <span vzCardTag tone="success">Efectivo</span>
+        </div>
+        <div vzCardInfoRow>
+          <span>CDMX</span>
+        </div>
+        Contenido Slotted
+      </div>
+      <div vzCardFooter>
+        <a vzCardLink href="javascript:void(0)">kintab.app</a>
+        Pie Slotted
+      </div>
     </vz-card>
   `,
 })
@@ -114,7 +118,7 @@ describe('VzCardComponent', () => {
     expect(subEl?.textContent?.trim()).toBe('Detalle breve');
   });
 
-  it('soporta estructura componible mediante slots y directivas', () => {
+  it('soporta estructura componible mediante slots y directivas (básicas y completas)', () => {
     const fixture = TestBed.createComponent(TestSlottedCardComponent);
     fixture.detectChanges();
 
@@ -122,11 +126,21 @@ describe('VzCardComponent', () => {
     const subEl = fixture.nativeElement.querySelector('.vz-card__subtitle');
     const contentEl = fixture.nativeElement.querySelector('.vz-card__content');
     const footerEl = fixture.nativeElement.querySelector('.vz-card__footer');
+    const badgeEl = fixture.nativeElement.querySelector('.vz-card__badge--primary');
+    const ratingEl = fixture.nativeElement.querySelector('.vz-card__rating');
+    const metaItemEl = fixture.nativeElement.querySelector('.vz-card__meta-item--success');
+    const tagEl = fixture.nativeElement.querySelector('.vz-card__tag--success');
+    const linkEl = fixture.nativeElement.querySelector('.vz-card__link');
 
     expect(titleEl?.textContent?.trim()).toBe('Título Slotted');
     expect(subEl?.textContent?.trim()).toBe('Subtítulo Slotted');
-    expect(contentEl?.textContent?.trim()).toBe('Contenido Slotted');
-    expect(footerEl?.textContent?.trim()).toBe('Pie Slotted');
+    expect(contentEl).toBeTruthy();
+    expect(footerEl).toBeTruthy();
+    expect(badgeEl?.textContent?.trim()).toBe('TECNOLOGÍA');
+    expect(ratingEl?.textContent?.trim()).toBe('4.95');
+    expect(metaItemEl?.textContent?.trim()).toBe('Verificado');
+    expect(tagEl?.textContent?.trim()).toBe('Efectivo');
+    expect(linkEl?.textContent?.trim()).toBe('kintab.app');
   });
 
   it('emite clicked cuando clickable es true y se hace clic', () => {

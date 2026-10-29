@@ -192,7 +192,8 @@
           <!-- CARD COMPONENT -->
           @if (activeComponent() === 'card') {
             <div class="card-render-wrapper" [class.card-render-wrapper--horizontal]="cardOrientation() === 'horizontal'">
-              @if (cardShowImage()) {
+              @if (cardComplexity() === 'complete') {
+                <!-- MODO COMPLETA (PRO / MARKETPLACE) -->
                 <vz-card
                   [variant]="cardVariant()"
                   [accent]="cardAccent()"
@@ -207,43 +208,144 @@
                   [disabled]="cardDisabled()"
                   (clicked)="onCardClick()"
                 >
-                  <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
-                  <div vzCardHeader>
-                    <div>
-                      <h3 vzCardTitle>Control Escolar 2026</h3>
-                      <span vzCardSubtitle>Plantel Central · Grupo 402</span>
-                    </div>
-                    <div vzCardActions>
-                      <vz-button size="sm" variant="ghost">Ver</vz-button>
-                    </div>
-                  </div>
+                  @if (cardShowImage()) {
+                    <img
+                      vzCardImage
+                      src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=700&q=80"
+                      alt="Nexus Hardware Lab"
+                    />
+                  }
+
                   <div vzCardContent>
-                    <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
+                    @if (cardShowEyebrow()) {
+                      <div vzCardEyebrow>
+                        <span vzCardBadge variant="primary">TECNOLOGÍA</span>
+                        <span vzCardRating>
+                          <svg width="14" height="14" viewBox="0 0 24 24">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                          </svg>
+                          4.95
+                        </span>
+                      </div>
+                    }
+
+                    <h3 vzCardTitle>Nexus Hardware Lab</h3>
+                    <span vzCardSubtitle>Periféricos, hardware custom y componentes de precisión</span>
+
+                    @if (cardShowMeta()) {
+                      <div vzCardMeta>
+                        <span vzCardMetaItem tone="success">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="9 12 11 14 15 10"></polyline>
+                          </svg>
+                          Verificado
+                        </span>
+                        <span vzCardMetaItem>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#2563eb" stroke="#2563eb" stroke-width="1.5">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                          </svg>
+                          99% Seriedad
+                        </span>
+                        <span vzCardMetaItem>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                          98% Puntualidad
+                        </span>
+                      </div>
+                    }
+
+                    @if (cardShowTags()) {
+                      <hr vzCardDivider />
+                      <div vzCardTags>
+                        <span vzCardTag tone="success">💵 Efectivo</span>
+                        <span vzCardTag tone="primary">💳 Digital</span>
+                        <span vzCardTag tone="warning">🪙 Coin Points</span>
+                      </div>
+                    }
+
+                    @if (cardShowInfoRow()) {
+                      <div vzCardInfoRow>
+                        <span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#dc2626" stroke="#ffffff" stroke-width="1.5">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3" fill="#ffffff"></circle>
+                          </svg>
+                          CDMX · Entregas Zona Centro
+                        </span>
+                        <vz-button size="sm" variant="outline">Ver QR</vz-button>
+                      </div>
+                    }
                   </div>
+
                   <div vzCardFooter>
-                    <span class="text-muted">16 Alumnos inscritos</span>
-                    <vz-button size="sm" variant="primary">Ingresar</vz-button>
+                    <a vzCardLink href="javascript:void(0)">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                      </svg>
+                      kintab.app/&#64;nexus-hardw
+                    </a>
+                    <vz-button size="sm" variant="primary" style="--vz-btn-bg: #1d4ed8; --vz-btn-radius: 9999px;">
+                      Ver Catálogo →
+                    </vz-button>
                   </div>
                 </vz-card>
               } @else {
-                <vz-card
-                  [variant]="cardVariant()"
-                  [accent]="cardAccent()"
-                  [accentPosition]="cardAccentPosition()"
-                  [orientation]="cardOrientation()"
-                  [density]="cardDensity()"
-                  [borderedHeader]="cardBorderedHeader()"
-                  [borderedFooter]="cardBorderedFooter()"
-                  [hoverable]="cardHoverable()"
-                  [clickable]="cardClickable()"
-                  [loading]="cardLoading()"
-                  [disabled]="cardDisabled()"
-                  title="Control Escolar 2026"
-                  subtitle="Plantel Central"
-                  (clicked)="onCardClick()"
-                >
-                  <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
-                </vz-card>
+                <!-- MODO BÁSICA (MINIMALISTA) -->
+                @if (cardShowImage()) {
+                  <vz-card
+                    [variant]="cardVariant()"
+                    [accent]="cardAccent()"
+                    [accentPosition]="cardAccentPosition()"
+                    [orientation]="cardOrientation()"
+                    [density]="cardDensity()"
+                    [borderedHeader]="cardBorderedHeader()"
+                    [borderedFooter]="cardBorderedFooter()"
+                    [hoverable]="cardHoverable()"
+                    [clickable]="cardClickable()"
+                    [loading]="cardLoading()"
+                    [disabled]="cardDisabled()"
+                    (clicked)="onCardClick()"
+                  >
+                    <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
+                    <div vzCardHeader>
+                      <div>
+                        <span vzCardBadge variant="neutral" style="margin-bottom: 0.35rem;">TRÁMITE RÁPIDO</span>
+                        <h3 vzCardTitle>Constancia de Estudios</h3>
+                        <span vzCardSubtitle>Emisión digital inmediata</span>
+                      </div>
+                    </div>
+                    <div vzCardContent>
+                      <p>Descarga tu documento oficial con sello digital y código QR de validación institucional.</p>
+                    </div>
+                    <div vzCardFooter>
+                      <span class="text-muted">Tiempo: 1 min</span>
+                      <vz-button size="sm" variant="primary">Solicitar</vz-button>
+                    </div>
+                  </vz-card>
+                } @else {
+                  <vz-card
+                    [variant]="cardVariant()"
+                    [accent]="cardAccent()"
+                    [accentPosition]="cardAccentPosition()"
+                    [orientation]="cardOrientation()"
+                    [density]="cardDensity()"
+                    [borderedHeader]="cardBorderedHeader()"
+                    [borderedFooter]="cardBorderedFooter()"
+                    [hoverable]="cardHoverable()"
+                    [clickable]="cardClickable()"
+                    [loading]="cardLoading()"
+                    [disabled]="cardDisabled()"
+                    title="Aviso de Mantenimiento"
+                    subtitle="Actualización programada · Viernes 22:00 hrs"
+                    (clicked)="onCardClick()"
+                  >
+                    <p style="margin: 0; color: #475569;">El portal de servicios escolares permanecerá en mantenimiento preventivo durante 45 minutos.</p>
+                  </vz-card>
+                }
               }
             </div>
           }
@@ -341,6 +443,35 @@
     <div class="inspector-scrollable">
       <!-- ── INSPECTOR PARA CARD ── -->
       @if (activeComponent() === 'card') {
+        <!-- Sección 0: Nivel de Complejidad (Básica vs Completa Pro) -->
+        <div class="panel-section">
+          <div class="section-label-row">
+            <span class="panel-section-title">Plantilla &amp; Complejidad</span>
+          </div>
+
+          <div class="control-box">
+            <label class="control-caption">Tipo de Composición</label>
+            <div class="segmented-track">
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="cardComplexity() === 'complete'"
+                (click)="cardComplexity.set('complete')"
+              >
+                Completa (Pro)
+              </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="cardComplexity() === 'basic'"
+                (click)="cardComplexity.set('basic')"
+              >
+                Básica (Minimal)
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Sección 1: Variante & Estilo -->
         <div class="panel-section">
           <div class="section-label-row">
@@ -391,7 +522,7 @@
         <!-- Sección 2: Disposición & Dimensiones -->
         <div class="panel-section">
           <div class="section-label-row">
-            <span class="panel-section-title">Estructura & Disposición</span>
+            <span class="panel-section-title">Estructura &amp; Disposición</span>
           </div>
 
           <div class="control-box">
@@ -416,10 +547,74 @@
           </div>
         </div>
 
+        <!-- Sección 2.5: Bloques Semánticos (Solo en Completa Pro) -->
+        @if (cardComplexity() === 'complete') {
+          <div class="panel-section">
+            <div class="section-label-row">
+              <span class="panel-section-title">Bloques de Card Completa</span>
+            </div>
+
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Eyebrow (Badge + Rating)</span>
+                <span class="switch-sub">TECNOLOGÍA + ★ 4.95</span>
+              </div>
+              <label class="ios-switch">
+                <input type="checkbox" [checked]="cardShowEyebrow()" (change)="cardShowEyebrow.set(!cardShowEyebrow())" />
+                <span class="ios-track"></span>
+              </label>
+            </div>
+
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Métricas de Confianza</span>
+                <span class="switch-sub">Verificado · Seriedad · Puntualidad</span>
+              </div>
+              <label class="ios-switch">
+                <input type="checkbox" [checked]="cardShowMeta()" (change)="cardShowMeta.set(!cardShowMeta())" />
+                <span class="ios-track"></span>
+              </label>
+            </div>
+
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Chips de Atributos / Pago</span>
+                <span class="switch-sub">Efectivo, Digital, Coin Points</span>
+              </div>
+              <label class="ios-switch">
+                <input type="checkbox" [checked]="cardShowTags()" (change)="cardShowTags.set(!cardShowTags())" />
+                <span class="ios-track"></span>
+              </label>
+            </div>
+
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Ubicación + Botón QR</span>
+                <span class="switch-sub">Fila inferior con acción secundaria</span>
+              </div>
+              <label class="ios-switch">
+                <input type="checkbox" [checked]="cardShowInfoRow()" (change)="cardShowInfoRow.set(!cardShowInfoRow())" />
+                <span class="ios-track"></span>
+              </label>
+            </div>
+          </div>
+        }
+
         <!-- Sección 3: Interruptores de Comportamiento -->
         <div class="panel-section">
           <div class="section-label-row">
-            <span class="panel-section-title">Comportamiento & Estados</span>
+            <span class="panel-section-title">Comportamiento &amp; Estados</span>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <span class="switch-title">Imagen Superior</span>
+              <span class="switch-sub">Recorte y adaptación visual</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" [checked]="cardShowImage()" (change)="cardShowImage.set(!cardShowImage())" />
+              <span class="ios-track"></span>
+            </label>
           </div>
 
           <div class="switch-row">
@@ -451,28 +646,6 @@
             </div>
             <label class="ios-switch">
               <input type="checkbox" [checked]="cardLoading()" (change)="cardLoading.set(!cardLoading())" />
-              <span class="ios-track"></span>
-            </label>
-          </div>
-
-          <div class="switch-row">
-            <div class="switch-info">
-              <span class="switch-title">Imagen Superior</span>
-              <span class="switch-sub">Recorte y adaptación visual</span>
-            </div>
-            <label class="ios-switch">
-              <input type="checkbox" [checked]="cardShowImage()" (change)="cardShowImage.set(!cardShowImage())" />
-              <span class="ios-track"></span>
-            </label>
-          </div>
-
-          <div class="switch-row">
-            <div class="switch-info">
-              <span class="switch-title">Borde en Cabecera</span>
-              <span class="switch-sub">Línea divisoria inferior</span>
-            </div>
-            <label class="ios-switch">
-              <input type="checkbox" [checked]="cardBorderedHeader()" (change)="cardBorderedHeader.set(!cardBorderedHeader())" />
               <span class="ios-track"></span>
             </label>
           </div>
