@@ -1,6 +1,18 @@
 .preview-card-container {
-  max-width: 440px;
-  margin: 1.25rem 0;
+  padding: 1.5rem;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+  background-size: 18px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-card-container vz-card {
+  max-width: 400px;
+  width: 100%;
 }
 
 /* ── Grids de Muestra ── */

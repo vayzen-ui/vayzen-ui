@@ -1,26 +1,278 @@
-<header class="header">
-  <div class="brand">
+<header class="header" [class.header--dark]="themeService.currentTheme() === 'dark'">
+  <!-- Header Left: Sidebar Toggle + Brand -->
+  <div class="header-left">
     <button
       type="button"
-      class="sidebar-toggle-btn"
+      class="sidebar-toggle"
       (click)="sidebarService.toggle()"
       [class.active]="sidebarService.isOpen()"
       [attr.aria-label]="sidebarService.isOpen() ? 'Ocultar barra lateral' : 'Mostrar barra lateral'"
       [title]="sidebarService.isOpen() ? 'Ocultar barra lateral (Ctrl+B)' : 'Mostrar barra lateral (Ctrl+B)'"
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
+        <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+        <line x1="9" y1="3" x2="9" y2="21"></line>
       </svg>
     </button>
-    <a routerLink="/" class="logo">Vayzen UI</a>
-    <span class="badge">v0.0.1</span>
+
+    <a routerLink="/" class="header-logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <div class="logo-info">
+        <div class="logo-title-row">
+          <span class="logo-title">Vayzen UI</span>
+          <span class="version-badge">v0.0.1</span>
+        </div>
+        <span class="logo-subtitle">Angular Design System</span>
+      </div>
+    </a>
   </div>
-  <div class="actions">
-    <button type="button" class="theme-toggle" (click)="themeService.toggleTheme()">
-      Tema: {{ themeService.currentTheme() }}
-    </button>
+
+  <!-- Header Center: Command-Bar Search -->
+  <div class="header-search">
+    <div class="search-form" [class.focused]="isSearchOpen()">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        #searchInput
+        type="search"
+        placeholder="Buscar componentes, Studio o guías..."
+        [value]="searchQuery()"
+        (focus)="onSearchFocus()"
+        (input)="onSearchInput($event)"
+        autocomplete="off"
+      />
+      <kbd class="search-shortcut">Ctrl K</kbd>
+    </div>
+
+    <!-- Floating Search Results Dropdown -->
+    @if (isSearchOpen()) {
+      <div class="search-dropdown">
+        <div class="dropdown-header">
+          <span>Navegación Rápida</span>
+          <span class="dropdown-count">{{ filteredItems().length }} resultados</span>
+        </div>
+        <div class="search-results-list">
+          @for (item of filteredItems(); track item.route) {
+            <button type="button" class="search-result-item" (click)="navigateTo(item.route)">
+              <span class="result-icon" [attr.data-icon]="item.icon">
+                @switch (item.icon) {
+                  @case ('card') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  }
+                  @case ('button') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="7" width="18" height="10" rx="5"></rect>
+                      <circle cx="12" cy="12" r="2"></circle>
+                    </svg>
+                  }
+                  @case ('table') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                      <line x1="3" y1="9" x2="21" y2="9"></line>
+                      <line x1="3" y1="15" x2="21" y2="15"></line>
+                      <line x1="9" y1="9" x2="9" y2="21"></line>
+                    </svg>
+                  }
+                  @case ('studio') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="4" y1="21" x2="4" y2="14"></line>
+                      <line x1="4" y1="10" x2="4" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12" y2="3"></line>
+                      <line x1="20" y1="21" x2="20" y2="16"></line>
+                      <line x1="20" y1="12" x2="20" y2="3"></line>
+                      <line x1="1" y1="14" x2="7" y2="14"></line>
+                      <line x1="9" y1="8" x2="15" y2="8"></line>
+                      <line x1="17" y1="16" x2="23" y2="16"></line>
+                    </svg>
+                  }
+                  @case ('home') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                  }
+                  @default {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="4 17 10 11 4 5"></polyline>
+                      <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                  }
+                }
+              </span>
+              <div class="result-content">
+                <div class="result-title-row">
+                  <span class="result-title">{{ item.title }}</span>
+                  <span class="result-category">{{ item.category }}</span>
+                  @if (item.badge) {
+                    <span class="result-badge">{{ item.badge }}</span>
+                  }
+                </div>
+                <span class="result-subtitle">{{ item.subtitle }}</span>
+              </div>
+              <svg class="result-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          } @empty {
+            <div class="search-empty">
+              No se encontraron resultados para "{{ searchQuery() }}"
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Header Right: Quick Studio Pill, Action Cluster & Architecture Profile -->
+  <div class="header-right">
+    <a routerLink="/studio" routerLinkActive="active" class="studio-pill-cta">
+      <span class="studio-live-dot"></span>
+      <span>Vayzen Studio</span>
+    </a>
+
+    <!-- Frosted Action Cluster (Inspired by FlexAdmin) -->
+    <div class="header-action-cluster">
+      <!-- Quick Access Grid Button -->
+      <div class="header-action-wrap">
+        <button
+          type="button"
+          class="header-action"
+          [class.active]="isQuickAccessOpen()"
+          (click)="toggleQuickAccess()"
+          title="Acceso rápido a módulos"
+          aria-label="Acceso rápido"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
+        </button>
+
+        @if (isQuickAccessOpen()) {
+          <div class="quickaccess-menu">
+            <div class="dropdown-header">
+              <span>Acceso Rápido</span>
+              <span class="dropdown-count">6 módulos</span>
+            </div>
+            <div class="quickaccess-grid">
+              <button type="button" class="quickaccess-item" (click)="navigateTo('/components/cards')">
+                <span class="quickaccess-icon icon-sky">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="quickaccess-label">Card</span>
+              </button>
+
+              <button type="button" class="quickaccess-item" (click)="navigateTo('/components/buttons')">
+                <span class="quickaccess-icon icon-indigo">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="7" width="18" height="10" rx="5"></rect>
+                    <circle cx="12" cy="12" r="2"></circle>
+                  </svg>
+                </span>
+                <span class="quickaccess-label">Button</span>
+              </button>
+
+              <button type="button" class="quickaccess-item" (click)="navigateTo('/components/tables')">
+                <span class="quickaccess-icon icon-emerald">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <line x1="9" y1="9" x2="9" y2="21"></line>
+                  </svg>
+                </span>
+                <span class="quickaccess-label">Table</span>
+              </button>
+
+              <button type="button" class="quickaccess-item" (click)="navigateTo('/studio')">
+                <span class="quickaccess-icon icon-amber">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                  </svg>
+                </span>
+                <span class="quickaccess-label">Studio</span>
+              </button>
+
+              <button type="button" class="quickaccess-item" (click)="navigateTo('/installation')">
+                <span class="quickaccess-icon icon-purple">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="4 17 10 11 4 5"></polyline>
+                    <line x1="12" y1="19" x2="20" y2="19"></line>
+                  </svg>
+                </span>
+                <span class="quickaccess-label">Instalar</span>
+              </button>
+
+              <button type="button" class="quickaccess-item" (click)="navigateTo('/home')">
+                <span class="quickaccess-icon icon-rose">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  </svg>
+                </span>
+                <span class="quickaccess-label">Inicio</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Theme Switcher Button -->
+      <button
+        type="button"
+        class="header-action"
+        (click)="themeService.toggleTheme()"
+        [title]="themeService.currentTheme() === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'"
+        aria-label="Cambiar tema"
+      >
+        @if (themeService.currentTheme() === 'light') {
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        } @else {
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        }
+      </button>
+    </div>
+
+    <span class="header-divider"></span>
+
+    <!-- System Architecture Badge (FlexAdmin User Trigger Style) -->
+    <div class="arch-profile" title="Arquitectura 100% CSS Nativo y Angular Signals">
+      <div class="arch-avatar">VZ</div>
+      <div class="arch-brief">
+        <span class="arch-name">Angular 21+</span>
+        <span class="arch-role">Zero-Deps UI</span>
+      </div>
+    </div>
   </div>
 </header>
-

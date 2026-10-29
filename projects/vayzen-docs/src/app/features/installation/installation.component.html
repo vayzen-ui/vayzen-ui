@@ -1,17 +1,125 @@
-<section class="doc-page">
-  <h1>Guía de Instalación</h1>
-  <p>Aprende cómo integrar <code>vayzen-ui</code> en tu proyecto Angular.</p>
+<div class="doc-layout">
+  <article class="doc-main-content">
+    <!-- Hero Header -->
+    <header class="doc-header">
+      <div class="doc-header-top">
+        <span class="category-tag">Comenzar / Guía Oficial</span>
+        <span class="version-tag">Angular 21+ Ready</span>
+      </div>
+      <h1 class="doc-title">Guía de Instalación</h1>
+      <p class="doc-description">
+        Integra <strong>Vayzen UI</strong> en tu aplicación Angular en cuestión de segundos. Al estar diseñada con componentes
+        100% Standalone y CSS nativo, no necesitas importar hojas de estilo pesadas ni configurar proveedores globales complejos.
+      </p>
+      <div class="doc-meta-chips">
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+          Paquete: <code>vayzen-ui</code>
+        </span>
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Tree-Shakeable: <code>100%</code>
+        </span>
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Tiempo estimado: <code>2 min</code>
+        </span>
+      </div>
+    </header>
 
-  <h2>1. Instalación mediante npm</h2>
-  <pre><code>npm install vayzen-ui</code></pre>
+    <!-- Paso 1: Requisitos -->
+    <section id="requisitos" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">1. Requisitos del Sistema</h2>
+        <p class="section-subtitle">
+          Asegúrate de contar con un entorno Angular moderno con soporte para Signals y componentes Standalone.
+        </p>
+      </div>
 
-  <h2>2. Uso en componentes</h2>
-  <p>Importa el componente Standalone que requieras directamente en tu componente Angular:</p>
-  <pre><code>import &#123; VayzenUi &#125; from 'vayzen-ui';
+      <div class="req-grid">
+        <div class="req-card">
+          <span class="req-label">Framework</span>
+          <strong class="req-val">Angular ^19.0 / ^21.0</strong>
+          <span class="req-sub">Soporte nativo de Signals e inputs reactivos</span>
+        </div>
+        <div class="req-card">
+          <span class="req-label">Node.js</span>
+          <strong class="req-val">&gt;= 20.11 LTS</strong>
+          <span class="req-sub">Recomendado para compilación esbuild/Vite</span>
+        </div>
+        <div class="req-card">
+          <span class="req-label">Estilos</span>
+          <strong class="req-val">CSS / SCSS Nativo</strong>
+          <span class="req-sub">Sin necesidad de Bootstrap ni Tailwind</span>
+        </div>
+      </div>
+    </section>
 
-&#64;Component(&#123;
-  imports: [VayzenUi],
-  ...
-&#125;)</code></pre>
-</section>
+    <!-- Paso 2: Instalación NPM -->
+    <section id="instalacion-npm" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">2. Instalar el Paquete</h2>
+        <p class="section-subtitle">
+          Ejecuta el siguiente comando en la raíz de tu espacio de trabajo Angular:
+        </p>
+      </div>
 
+      <app-code-block [code]="npmInstallSnippet" language="bash" title="Terminal" />
+    </section>
+
+    <!-- Paso 3: Tokens Globales -->
+    <section id="tokens-globales" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">3. Personalizar Design Tokens (Opcional)</h2>
+        <p class="section-subtitle">
+          Cada componente cuenta con valores por defecto listos para producción. Si deseas alinear la librería con la paleta de colores de tu organización, define las variables CSS en tu archivo <code>styles.scss</code> o <code>styles.css</code>:
+        </p>
+      </div>
+
+      <app-code-block [code]="globalTokensSnippet" language="css" title="src/styles.css" />
+    </section>
+
+    <!-- Paso 4: Uso en Componentes -->
+    <section id="uso-standalone" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">4. Importar y Usar Componentes</h2>
+        <p class="section-subtitle">
+          Importa únicamente los componentes y directivas que utilices en tu vista para aprovechar el Tree-Shaking automático de Angular:
+        </p>
+      </div>
+
+      <app-code-block [code]="standaloneUsageSnippet" language="typescript" title="panel-escolar.component.ts" />
+    </section>
+  </article>
+
+  <!-- Lateral Derecho Sticky -->
+  <aside class="doc-toc-sidebar">
+    <div class="studio-widget-card">
+      <div class="widget-badge-row">
+        <span class="widget-dot"></span>
+        <span class="widget-badge">Vayzen Studio</span>
+      </div>
+      <h4 class="widget-title">Diseña tu Tema Visual</h4>
+      <p class="widget-desc">
+        Usa el laboratorio interactivo para ajustar variables CSS en vivo y copiar la hoja de tokens lista para tu proyecto.
+      </p>
+      <a routerLink="/studio" class="widget-action-btn">
+        <span>Ir a Vayzen Studio</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+    <div class="toc-container">
+      <h5 class="toc-title">En esta página</h5>
+      <nav class="toc-nav">
+        <a href="#requisitos" class="toc-link">1. Requisitos del Sistema</a>
+        <a href="#instalacion-npm" class="toc-link">2. Instalar el Paquete</a>
+        <a href="#tokens-globales" class="toc-link">3. Design Tokens Globales</a>
+        <a href="#uso-standalone" class="toc-link">4. Uso en Componentes</a>
+      </nav>
+    </div>
+  </aside>
+</div>

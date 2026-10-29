@@ -1,14 +1,46 @@
-.doc-page {
-  display: flex;
-  flex-direction: column;
+:host {
+  display: block;
+  width: 100%;
+}
+
+.req-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 
-pre {
-  background: #0f172a;
-  color: #e2e8f0;
-  padding: 1rem;
-  border-radius: 8px;
-  overflow-x: auto;
+@media (max-width: 860px) {
+  .req-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
+.req-card {
+  padding: 1.1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.req-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #0284c7;
+}
+
+.req-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.req-sub {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.4;
+}

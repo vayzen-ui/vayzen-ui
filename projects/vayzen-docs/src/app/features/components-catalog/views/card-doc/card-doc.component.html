@@ -3,48 +3,64 @@
     <header class="doc-header">
       <div class="doc-header-top">
         <span class="category-tag">Componentes / Contenedores</span>
-        <span class="version-tag">Standalone</span>
+        <span class="version-tag">Standalone · Signals</span>
       </div>
       <h1 class="doc-title">Card</h1>
       <p class="doc-description">
         Contenedor versátil y elegante para presentar contenido estructurado, indicadores clave (KPIs), multimedia y acciones.
         Diseñado desde cero con CSS nativo, tokens 100% personalizables, variantes con franjas de acento, orientación horizontal y soporte completo de estados.
       </p>
+      <div class="doc-meta-chips">
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          Selector: <code>&lt;vz-card&gt;</code>
+        </span>
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          7 Directivas Semánticas
+        </span>
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          16 Design Tokens CSS
+        </span>
+      </div>
     </header>
 
     <!-- 1. Ejemplo Básico -->
     <section id="ejemplo-basico" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Ejemplo Básico</h2>
-      <p class="section-subtitle">
-        Estructura recomendada combinando imagen de cabecera, títulos semánticos, acciones y pie.
-      </p>
-    </div>
+      <div class="section-heading">
+        <h2 class="section-title">Ejemplo Básico</h2>
+        <p class="section-subtitle">
+          Estructura recomendada combinando imagen de cabecera, títulos semánticos, acciones y pie.
+        </p>
+      </div>
 
-    <div class="preview-card-container">
-      <vz-card variant="elevated" [hoverable]="true">
-        <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
-        <div vzCardHeader>
-          <div>
-            <h3 vzCardTitle>Control Escolar 2026</h3>
-            <span vzCardSubtitle>Plantel Central · Grupo 402</span>
-          </div>
-          <div vzCardActions>
-            <vz-button size="sm" variant="ghost">Ver</vz-button>
-          </div>
+      <div class="doc-split-showcase">
+        <div class="preview-card-container">
+          <vz-card variant="elevated" [hoverable]="true">
+            <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
+            <div vzCardHeader>
+              <div>
+                <h3 vzCardTitle>Control Escolar 2026</h3>
+                <span vzCardSubtitle>Plantel Central · Grupo 402</span>
+              </div>
+              <div vzCardActions>
+                <vz-button size="sm" variant="ghost">Ver</vz-button>
+              </div>
+            </div>
+            <div vzCardContent>
+              <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
+            </div>
+            <div vzCardFooter>
+              <span class="text-muted">16 Alumnos inscritos</span>
+              <vz-button size="sm" variant="primary">Ingresar</vz-button>
+            </div>
+          </vz-card>
         </div>
-        <div vzCardContent>
-          <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
-        </div>
-        <div vzCardFooter>
-          <span class="text-muted">16 Alumnos inscritos</span>
-          <vz-button size="sm" variant="primary">Ingresar</vz-button>
-        </div>
-      </vz-card>
-    </div>
 
-    <app-code-block [code]="starterSnippet" language="html" title="Código de ejemplo" />
-  </section>
+        <app-code-block [code]="starterSnippet" language="html" title="Código de ejemplo" />
+      </div>
+    </section>
 
   <!-- Showcase 1: Widgets de Métricas (Dashboard Style) -->
   <section id="metricas-dashboard" class="doc-section">
@@ -248,33 +264,35 @@
       </p>
     </div>
 
-    <div class="custom-theme-demo">
-      <div class="custom-card-wrapper card-dark-pro">
-        <vz-card variant="elevated" [hoverable]="true">
-          <div vzCardHeader>
-            <div>
-              <h4 vzCardTitle>Tema Nocturno Personalizado</h4>
-              <span vzCardSubtitle>Sobrescrito 100% con Variables CSS</span>
+    <div class="doc-split-showcase">
+      <div class="preview-card-container">
+        <div class="custom-card-wrapper card-dark-pro">
+          <vz-card variant="elevated" [hoverable]="true">
+            <div vzCardHeader>
+              <div>
+                <h4 vzCardTitle>Tema Nocturno Personalizado</h4>
+                <span vzCardSubtitle>Sobrescrito 100% con Variables CSS</span>
+              </div>
+              <div vzCardActions>
+                <vz-button size="sm" variant="outline">Pro</vz-button>
+              </div>
             </div>
-            <div vzCardActions>
-              <vz-button size="sm" variant="outline">Pro</vz-button>
+            <div vzCardContent>
+              <p>
+                Observa cómo el fondo, el texto, los bordes, el radio de las esquinas y las sombras cambian
+                únicamente declarando variables CSS bajo una clase contenedora.
+              </p>
             </div>
-          </div>
-          <div vzCardContent>
-            <p>
-              Observa cómo el fondo, el texto, los bordes, el radio de las esquinas y las sombras cambian
-              únicamente declarando variables CSS bajo una clase contenedora.
-            </p>
-          </div>
-          <div vzCardFooter>
-            <span class="text-muted">Cero Bootstrap · 100% CSS Nativo</span>
-            <vz-button size="sm" variant="primary">Explorar</vz-button>
-          </div>
-        </vz-card>
+            <div vzCardFooter>
+              <span class="text-muted">Cero Bootstrap · 100% CSS Nativo</span>
+              <vz-button size="sm" variant="primary">Explorar</vz-button>
+            </div>
+          </vz-card>
+        </div>
       </div>
-    </div>
 
-    <app-code-block [code]="customThemingSnippet" language="css" title="Sobrescritura de tokens CSS" />
+      <app-code-block [code]="customThemingSnippet" language="css" title="Sobrescritura de tokens CSS" />
+    </div>
   </section>
 
   <!-- Referencia de API -->

@@ -1,24 +1,147 @@
 <aside class="sidebar">
-  <nav class="nav">
-    <div class="nav-group">
-      <span class="group-title">Comenzar</span>
-      <a routerLink="/home" routerLinkActive="active" class="nav-link">Bienvenida</a>
-      <a routerLink="/installation" routerLinkActive="active" class="nav-link">Instalación</a>
+  <!-- Sidebar Quick Filter -->
+  <div class="sidebar-filter">
+    <div class="filter-input-wrap">
+      <svg class="filter-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      <input
+        type="text"
+        placeholder="Filtrar menú..."
+        [value]="filterQuery()"
+        (input)="onFilterInput($event)"
+        aria-label="Filtrar elementos del menú lateral"
+      />
+      @if (filterQuery()) {
+        <button type="button" class="filter-clear" (click)="clearFilter()" title="Limpiar filtro">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      }
     </div>
+  </div>
 
-    <div class="nav-group">
-      <span class="group-title">Herramientas</span>
-      <a routerLink="/studio" routerLinkActive="active" class="nav-link nav-link--studio">
-        <span>Studio</span>
-        <span class="studio-nav-badge">Live</span>
-      </a>
-    </div>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar-nav">
+    <ul class="nav-menu">
+      @for (group of filteredGroups(); track group.id) {
+        <li class="nav-heading">
+          <span>{{ group.title }}</span>
+        </li>
 
-    <div class="nav-group">
-      <span class="group-title">Componentes</span>
-      <a routerLink="/components/buttons" routerLinkActive="active" class="nav-link">Button</a>
-      <a routerLink="/components/cards" routerLinkActive="active" class="nav-link">Card</a>
-      <a routerLink="/components/tables" routerLinkActive="active" class="nav-link">Table</a>
-    </div>
+        @for (item of group.items; track item.route) {
+          <li class="nav-item">
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              class="nav-link"
+              [class.nav-link--studio]="item.icon === 'studio'"
+            >
+              <span class="nav-icon" [attr.data-icon]="item.icon">
+                @switch (item.icon) {
+                  @case ('home') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                      <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                      <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                      <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                    </svg>
+                  }
+                  @case ('install') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="4 17 10 11 4 5"></polyline>
+                      <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                  }
+                  @case ('studio') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="4" y1="21" x2="4" y2="14"></line>
+                      <line x1="4" y1="10" x2="4" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12" y2="3"></line>
+                      <line x1="20" y1="21" x2="20" y2="16"></line>
+                      <line x1="20" y1="12" x2="20" y2="3"></line>
+                      <line x1="1" y1="14" x2="7" y2="14"></line>
+                      <line x1="9" y1="8" x2="15" y2="8"></line>
+                      <line x1="17" y1="16" x2="23" y2="16"></line>
+                    </svg>
+                  }
+                  @case ('button') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="7" width="18" height="10" rx="5"></rect>
+                      <circle cx="12" cy="12" r="2"></circle>
+                    </svg>
+                  }
+                  @case ('card') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="16" rx="2.5"></rect>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  }
+                  @case ('table') {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                      <line x1="3" y1="9" x2="21" y2="9"></line>
+                      <line x1="3" y1="15" x2="21" y2="15"></line>
+                      <line x1="9" y1="9" x2="9" y2="21"></line>
+                    </svg>
+                  }
+                }
+              </span>
+
+              <span class="nav-text">{{ item.label }}</span>
+
+              @if (item.badge) {
+                <span
+                  class="nav-badge"
+                  [class.nav-badge-soft]="item.badgeType === 'soft'"
+                  [class.nav-badge-primary]="item.badgeType === 'primary'"
+                  [class.nav-badge-live]="item.badgeType === 'live'"
+                >
+                  @if (item.badgeType === 'live') {
+                    <span class="live-dot"></span>
+                  }
+                  {{ item.badge }}
+                </span>
+              }
+            </a>
+          </li>
+        }
+      } @empty {
+        <li class="nav-empty">
+          <span>Sin coincidencias para "{{ filterQuery() }}"</span>
+        </li>
+      }
+    </ul>
   </nav>
+
+  <!-- Sidebar Footer (Inspired by FlexAdmin & EliteAdmin) -->
+  <div class="sidebar-footer">
+    <div class="sidebar-footer-user">
+      <div class="sidebar-footer-avatar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <div class="sidebar-footer-info">
+        <div class="sidebar-footer-name">Vayzen Core Engine</div>
+        <div class="sidebar-footer-role">CSS Nativo · Zero Deps</div>
+      </div>
+    </div>
+
+    <a routerLink="/studio" class="sidebar-help-card">
+      <span class="sidebar-help-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </span>
+      <span class="sidebar-help-text">Diseñar tokens en Studio</span>
+      <svg class="sidebar-help-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <line x1="7" y1="17" x2="17" y2="7"></line>
+        <polyline points="7 7 17 7 17 17"></polyline>
+      </svg>
+    </a>
+  </div>
 </aside>

@@ -3,13 +3,27 @@
     <!-- 1. Encabezado del Componente -->
     <header class="doc-header">
       <div class="doc-header-top">
-        <span class="category-tag">Componentes / General</span>
-        <span class="version-tag">Standalone</span>
+        <span class="category-tag">Componentes / Acciones</span>
+        <span class="version-tag">Standalone · Signals</span>
       </div>
       <h1 class="doc-title">Button</h1>
       <p class="doc-description">
         Componente de botón interactivo nativo, accesible y ligero. Diseñado bajo una arquitectura de Design Tokens que permite una personalización total mediante Variables CSS sin romper la encapsulación de Angular.
       </p>
+      <div class="doc-meta-chips">
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          Selector: <code>&lt;vz-button&gt;</code>
+        </span>
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          ChangeDetection: <code>OnPush</code>
+        </span>
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          9 Design Tokens CSS
+        </span>
+      </div>
     </header>
 
     <!-- 2. Uso Básico e Implementación -->
@@ -21,7 +35,7 @@
       </p>
     </div>
 
-    <div class="demo-card">
+    <div class="demo-card demo-card--split">
       <div class="demo-card-preview">
         <vz-button variant="primary">Submit</vz-button>
       </div>
@@ -41,14 +55,16 @@
       </p>
     </div>
 
-    <div class="demo-card">
+    <div class="demo-card demo-card--split">
       <div class="demo-card-preview gap-lg">
         <vz-button variant="primary">Primary</vz-button>
         <vz-button variant="secondary">Secondary</vz-button>
         <vz-button variant="outline">Outline</vz-button>
         <vz-button variant="ghost">Ghost</vz-button>
       </div>
-      <app-code-block [code]="variantsSnippet" language="html" title="Ejemplo de Variantes" />
+      <div class="demo-card-code">
+        <app-code-block [code]="variantsSnippet" language="html" title="Ejemplo de Variantes" />
+      </div>
     </div>
   </section>
 
@@ -61,13 +77,15 @@
       </p>
     </div>
 
-    <div class="demo-card">
+    <div class="demo-card demo-card--split">
       <div class="demo-card-preview gap-lg">
         <vz-button size="sm">Small</vz-button>
         <vz-button size="md">Medium</vz-button>
         <vz-button size="lg">Large</vz-button>
       </div>
-      <app-code-block [code]="sizesSnippet" language="html" title="Ejemplo de Tamaños" />
+      <div class="demo-card-code">
+        <app-code-block [code]="sizesSnippet" language="html" title="Ejemplo de Tamaños" />
+      </div>
     </div>
   </section>
 
@@ -119,12 +137,16 @@
       <p class="customization-desc">
         Pasa variables CSS directamente en el atributo <code>style</code> del elemento:
       </p>
-      <div class="demo-card-preview">
-        <vz-button style="--vz-btn-bg: #ec4899; --vz-btn-hover-bg: #db2777; --vz-btn-radius: 4px;">
-          Acento Rosa (4px Radius)
-        </vz-button>
+      <div class="demo-card demo-card--split">
+        <div class="demo-card-preview">
+          <vz-button style="--vz-btn-bg: #ec4899; --vz-btn-hover-bg: #db2777; --vz-btn-radius: 4px;">
+            Acento Rosa (4px Radius)
+          </vz-button>
+        </div>
+        <div class="demo-card-code">
+          <app-code-block [code]="inlineOverrideSnippet" language="html" title="template.html" />
+        </div>
       </div>
-      <app-code-block [code]="inlineOverrideSnippet" language="html" title="template.html" />
     </div>
   </section>
 

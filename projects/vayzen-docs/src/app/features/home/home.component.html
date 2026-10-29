@@ -1,12 +1,193 @@
-<section class="doc-page">
-  <h1>Bienvenido a Vayzen UI</h1>
-  <p class="lead">
-    Librería de componentes UI moderna, accesible y ligera construida para Angular.
-  </p>
+<div class="home-shell">
+  <!-- 1. Hero Command Card (Inspirado en FlexAdmin .fx-hero-card) -->
+  <section class="hero-card">
+    <div class="hero-head">
+      <div class="hero-copy">
+        <div class="hero-overline">
+          <span class="overline-dot"></span>
+          <span>Vayzen Design System · Angular 21+</span>
+        </div>
+        <h1 class="hero-title">Arquitectura UI Nativa de Alto Rendimiento</h1>
+        <p class="hero-description">
+          Colección de componentes empresariales para Angular construidos desde cero con
+          <strong>100% CSS Nativo</strong>, <strong>CSS Custom Properties (Design Tokens)</strong> y
+          <strong>Angular Signals</strong>. Cero dependencias pesadas, cero Bootstrap y control visual absoluto.
+        </p>
+      </div>
 
-  <div class="quick-links">
-    <a routerLink="/installation" class="btn primary">Comenzar con la instalación &rarr;</a>
-    <a routerLink="/components/buttons" class="btn secondary">Ver componentes</a>
-  </div>
-</section>
+      <div class="hero-actions">
+        <a routerLink="/studio" class="btn-hero-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Abrir Vayzen Studio</span>
+        </a>
+        <a routerLink="/installation" class="btn-hero-secondary">
+          <span>Guía de Instalación</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
 
+    <!-- 4-Column KPI Strip (FlexAdmin .profile-metrics / .fx-kpi-grid) -->
+    <div class="kpi-strip">
+      <div class="kpi-tile">
+        <span class="kpi-icon icon-sky">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </span>
+        <span class="kpi-label">Dependencias Externas</span>
+        <strong class="kpi-value">0 KB</strong>
+        <span class="kpi-trend positive">100% CSS & Angular Puro</span>
+      </div>
+
+      <div class="kpi-tile">
+        <span class="kpi-icon icon-emerald">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </span>
+        <span class="kpi-label">Design Tokens</span>
+        <strong class="kpi-value">37+ Variables</strong>
+        <span class="kpi-trend positive">Sin ::ng-deep ni !important</span>
+      </div>
+
+      <div class="kpi-tile">
+        <span class="kpi-icon icon-indigo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </span>
+        <span class="kpi-label">Reactividad</span>
+        <strong class="kpi-value">Signals API</strong>
+        <span class="kpi-trend positive">ChangeDetection OnPush</span>
+      </div>
+
+      <div class="kpi-tile">
+        <span class="kpi-icon icon-amber">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+          </svg>
+        </span>
+        <span class="kpi-label">Laboratorio</span>
+        <strong class="kpi-value">Vayzen Studio</strong>
+        <span class="kpi-trend positive">Inspector & Exportador</span>
+      </div>
+    </div>
+
+    <div class="hero-footer">
+      <div class="chip-list">
+        <span class="feature-chip">✓ Standalone Components</span>
+        <span class="feature-chip">✓ Encapsulación Limpia</span>
+        <span class="feature-chip">✓ Tipado Estricto TypeScript</span>
+        <span class="feature-chip">✓ Soporte SSR & Hidratación</span>
+      </div>
+      <a routerLink="/studio" class="hero-link">
+        Probar componentes en el lienzo interactivo &rarr;
+      </a>
+    </div>
+  </section>
+
+  <!-- 2. Catálogo de Componentes Principales -->
+  <section class="catalog-section">
+    <div class="section-bar">
+      <div>
+        <h2 class="section-heading-title">Catálogo de Componentes</h2>
+        <p class="section-heading-sub">
+          Explora la documentación técnica o abre cada componente directamente en Vayzen Studio.
+        </p>
+      </div>
+    </div>
+
+    <div class="catalog-grid">
+      <!-- Card Component -->
+      <article class="catalog-card">
+        <div class="catalog-card-head">
+          <span class="catalog-icon icon-sky">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="16" rx="2.5"></rect>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </span>
+          <span class="catalog-badge badge-primary">Nuevo Rediseño</span>
+        </div>
+        <h3 class="catalog-title">Card <code>&lt;vz-card&gt;</code></h3>
+        <p class="catalog-desc">
+          Contenedor versátil con soporte para variantes semánticas (elevated, outlined, flat, accent), franjas de estado, disposición horizontal y skeleton loader.
+        </p>
+        <div class="catalog-meta">
+          <span>7 Directivas</span>
+          <span>•</span>
+          <span>16 Variables CSS</span>
+        </div>
+        <div class="catalog-actions">
+          <a routerLink="/components/cards" class="catalog-btn-doc">Ver Documentación</a>
+          <a routerLink="/studio" [queryParams]="{ component: 'card' }" class="catalog-btn-studio">Studio ↗</a>
+        </div>
+      </article>
+
+      <!-- Button Component -->
+      <article class="catalog-card">
+        <div class="catalog-card-head">
+          <span class="catalog-icon icon-indigo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="7" width="18" height="10" rx="5"></rect>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+          </span>
+          <span class="catalog-badge badge-soft">Acciones</span>
+        </div>
+        <h3 class="catalog-title">Button <code>&lt;vz-button&gt;</code></h3>
+        <p class="catalog-desc">
+          Botón interactivo accesible con 4 jerarquías visuales (primary, secondary, outline, ghost), 3 escalas de tamaño y personalización por tokens.
+        </p>
+        <div class="catalog-meta">
+          <span>4 Variantes</span>
+          <span>•</span>
+          <span>9 Variables CSS</span>
+        </div>
+        <div class="catalog-actions">
+          <a routerLink="/components/buttons" class="catalog-btn-doc">Ver Documentación</a>
+          <a routerLink="/studio" [queryParams]="{ component: 'button' }" class="catalog-btn-studio">Studio ↗</a>
+        </div>
+      </article>
+
+      <!-- Table Component -->
+      <article class="catalog-card">
+        <div class="catalog-card-head">
+          <span class="catalog-icon icon-emerald">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="3" y1="15" x2="21" y2="15"></line>
+              <line x1="9" y1="9" x2="9" y2="21"></line>
+            </svg>
+          </span>
+          <span class="catalog-badge badge-soft">Datos & Grids</span>
+        </div>
+        <h3 class="catalog-title">Table <code>&lt;vz-table&gt;</code></h3>
+        <p class="catalog-desc">
+          Tabla reactiva autónoma con ordenamiento multicriterio, búsqueda sin acentos, filtros personalizables, paginación y modo cliente/servidor.
+        </p>
+        <div class="catalog-meta">
+          <span>Cliente & API</span>
+          <span>•</span>
+          <span>12 Variables CSS</span>
+        </div>
+        <div class="catalog-actions">
+          <a routerLink="/components/tables" class="catalog-btn-doc">Ver Documentación</a>
+          <a routerLink="/studio" [queryParams]="{ component: 'table' }" class="catalog-btn-studio">Studio ↗</a>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
