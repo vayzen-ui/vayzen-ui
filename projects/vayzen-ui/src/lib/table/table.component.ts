@@ -9,6 +9,7 @@ import {
   effect,
   inject,
   input,
+  model,
   output,
   signal,
   untracked,
@@ -20,11 +21,13 @@ import {
   VZ_TABLE_DEFAULT_LABELS,
   VzBadgeVariant,
   VzColumn,
+  VzDataMode,
   VzRowAction,
   VzRowActionEvent,
   VzServerPage,
   VzSortState,
   VzTableConfig,
+  VzTableDensity,
   VzTableFilter,
   VzTableLabels,
   VzTableQuery,
@@ -54,17 +57,65 @@ export class VzTableComponent<T = any> implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // ───────────────────────── Inputs ─────────────────────────
+  // ───────────────────────── Inputs directos (DX Amigable) ─────────────────────────
   readonly columns = input<VzColumn<T>[]>([]);
   readonly data = input<T[]>([]);
-  readonly config = input<VzTableConfig>({});
-  readonly filters = input<VzTableFilter<T>[]>([]);
-  readonly labels = input<Partial<VzTableLabels>>({});
-  readonly heading = input<string>('');
+
+  /**
+   * Total de filas para la paginación.
+   * En `mode="server"`, basta con pasar `[total]="totalCount"`.
+   * En `mode="client"`, se calcula automáticamente de `data`, pero puedes forzarlo si lo deseas.
+   */
+  readonly total = input<number | null>(null);
+  /** Alias de `total` compatible con la nomenclatura PrimeNG (`[totalRecords]`). */
+  readonly totalRecords = input<number | null>(null);
+
+  /** Modo general de la tabla ('client' | 'server'). Por defecto 'client'. */
+  readonly mode = input<VzDataMode | null>(null);
   readonly loading = input<boolean>(false);
   /** Mensaje de error. `null`/`undefined` = sin error (un string vacío también muestra el estado de error). */
   readonly error = input<string | null | undefined>(null);
-  /** Metadatos del backend cuando la paginación es `server`. */
+  readonly heading = input<string>('');
+
+  // ── Paginación directa (soporta two-way [(page)] y [(pageSize)]) ──
+  readonly page = input<number>(1);
+  readonly pageSize = input<number | null>(null);
+  readonly pageSizes = input<number[] | null>(null);
+  readonly pageSizeOptions = input<number[] | null>(null);
+  readonly pagination = input<boolean | null>(null);
+  readonly showPageSizeSelector = input<boolean | null>(null);
+  readonly showPageInfo = input<boolean | null>(null);
+
+  // ── Búsqueda y orden directos ──
+  readonly searchable = input<boolean | null>(null);
+  readonly searchDebounce = input<number | null>(null);
+  readonly searchMinChars = input<number | null>(null);
+  readonly searchPlaceholder = input<string | null>(null);
+  readonly sortable = input<boolean | null>(null);
+  readonly multiSort = input<boolean | null>(null);
+
+  // ── Apariencia directa ──
+  readonly density = input<VzTableDensity | null>(null);
+  readonly striped = input<boolean | null>(null);
+  readonly hoverable = input<boolean | null>(null);
+  readonly bordered = input<boolean | null>(null);
+  readonly stickyHeader = input<boolean | null>(null);
+  readonly maxHeight = input<string | null>(null);
+  readonly showCount = input<boolean | null>(null);
+
+  // ── Selección directa (soporta two-way [(selection)]) ──
+  readonly selectable = input<boolean | null>(null);
+  readonly selection = input<T[]>([]);
+  readonly rowKey = input<string | ((row: T) => unknown) | null>(null);
+  readonly clickableRows = input<boolean | null>(null);
+
+  // ── Configuración avanzada / por objeto (opcional) ──
+  readonly config = input<VzTableConfig>({});
+  readonly filters = input<VzTableFilter<T>[]>([]);
+  readonly labels = input<Partial<VzTableLabels>>({});
+  readonly emitInitialQuery = input<boolean | null>(null);
+
+  /** Metadatos del backend cuando la paginación es `server` (mantenido por compatibilidad). */
   readonly serverPage = input<VzServerPage | null>(null);
 
   // ───────────────────────── Outputs ─────────────────────────
@@ -90,19 +141,48 @@ export class VzTableComponent<T = any> implements OnInit {
   protected readonly searchTerm = signal('');
   private readonly appliedSearch = signal('');
   protected readonly sort = signal<VzSortState[]>([]);
-  private readonly page = signal(1);
+  private readonly pageState = signal(1);
   private readonly pageSizeState = signal<number | null>(null);
   private readonly filterValues = signal<Record<string, unknown>>({});
   private readonly selected = signal<ReadonlyMap<unknown, T>>(new Map());
 
   // ───────────────────────── Derivados ─────────────────────────
-  protected readonly cfg = computed(() => resolveConfig(this.config()));
+  protected readonly cfg = computed(() =>
+    resolveConfig(this.config(), {
+      mode: this.mode(),
+      searchable: this.searchable(),
+      searchDebounce: this.searchDebounce(),
+      searchMinChars: this.searchMinChars(),
+      searchPlaceholder: this.searchPlaceholder(),
+      sortable: this.sortable(),
+      multiSort: this.multiSort(),
+      pagination: this.pagination(),
+      pageSizes: this.pageSizes() ?? this.pageSizeOptions(),
+      pageSize: this.pageSize(),
+      showPageSizeSelector: this.showPageSizeSelector(),
+      showPageInfo: this.showPageInfo(),
+      selectable: this.selectable(),
+      rowKey: this.rowKey(),
+      clickableRows: this.clickableRows(),
+      density: this.density(),
+      striped: this.striped(),
+      hoverable: this.hoverable(),
+      bordered: this.bordered(),
+      stickyHeader: this.stickyHeader(),
+      maxHeight: this.maxHeight(),
+      showCount: this.showCount(),
+      emitInitialQuery: this.emitInitialQuery(),
+    }),
+  );
+
   protected readonly lbl = computed(() => ({ ...VZ_TABLE_DEFAULT_LABELS, ...this.labels() }));
   protected readonly visibleColumns = computed(() => this.columns().filter((c) => !c.hidden));
   protected readonly colspan = computed(() => this.visibleColumns().length + (this.cfg().selectable ? 1 : 0));
   protected readonly hasError = computed(() => this.error() !== null && this.error() !== undefined);
 
-  protected readonly activePageSize = computed(() => this.pageSizeState() ?? this.cfg().pagination.defaultPageSize);
+  protected readonly activePageSize = computed(
+    () => this.pageSize() ?? this.pageSizeState() ?? this.cfg().pagination.defaultPageSize,
+  );
 
   private readonly processedRows = computed(() => {
     const cfg = this.cfg();
@@ -114,9 +194,9 @@ export class VzTableComponent<T = any> implements OnInit {
   });
 
   protected readonly totalRows = computed(() => {
-    const cfg = this.cfg();
-    if (cfg.pagination.enabled && cfg.pagination.mode === 'server') {
-      return this.serverPage()?.total ?? this.processedRows().length;
+    const directTotal = this.total() ?? this.totalRecords() ?? this.serverPage()?.total;
+    if (directTotal !== null && directTotal !== undefined) {
+      return directTotal;
     }
     return this.processedRows().length;
   });
@@ -124,7 +204,7 @@ export class VzTableComponent<T = any> implements OnInit {
   private readonly totalPages = computed(() => Math.max(1, Math.ceil(this.totalRows() / this.activePageSize())));
 
   protected readonly activePage = computed(() =>
-    this.cfg().pagination.mode === 'server' ? this.page() : Math.min(this.page(), this.totalPages()),
+    this.cfg().pagination.mode === 'server' ? this.pageState() : Math.min(this.pageState(), this.totalPages()),
   );
 
   protected readonly visibleRows = computed(() => {
@@ -144,7 +224,7 @@ export class VzTableComponent<T = any> implements OnInit {
       if (hasFilterValue(value)) filters[key] = value;
     }
     return {
-      page: this.page(),
+      page: this.pageState(),
       pageSize: this.activePageSize(),
       search: this.appliedSearch(),
       sort: this.sort(),
@@ -196,15 +276,47 @@ export class VzTableComponent<T = any> implements OnInit {
   );
 
   constructor() {
+    effect(() => {
+      this.pageState.set(this.page());
+    });
+    effect(() => {
+      const ps = this.pageSize();
+      if (ps !== null && ps !== undefined) {
+        this.pageSizeState.set(ps);
+      }
+    });
+
     // Si el backend devuelve página/tamaño normalizados, se sincronizan con el estado interno.
     effect(() => {
       const sp = this.serverPage();
       untracked(() => {
         if (this.cfg().pagination.mode !== 'server' || !sp) return;
-        if (sp.page) this.page.set(sp.page);
-        if (sp.pageSize) this.pageSizeState.set(sp.pageSize);
+        if (sp.page) {
+          this.pageState.set(sp.page);
+          this.pageChange.emit(sp.page);
+        }
+        if (sp.pageSize) {
+          this.pageSizeState.set(sp.pageSize);
+          this.pageSizeChange.emit(sp.pageSize);
+        }
       });
     });
+
+    // Sincronizar selección bidireccional si el padre muta el model `selection` desde afuera
+    effect(() => {
+      const ext = this.selection();
+      untracked(() => {
+        const curMap = this.selected();
+        const curList = [...curMap.values()];
+        if (curList.length === ext.length && curList.every((r, i) => r === ext[i])) return;
+        const next = new Map<unknown, T>();
+        for (const row of ext) {
+          next.set(this.rowKeyOf(row), row);
+        }
+        this.selected.set(next);
+      });
+    });
+
     this.destroyRef.onDestroy(() => this.clearSearchTimer());
   }
 
@@ -309,7 +421,7 @@ export class VzTableComponent<T = any> implements OnInit {
 
   // ───────────────────────── Paginación ─────────────────────────
   protected goToPage(page: number): void {
-    this.page.set(page);
+    this.pageState.set(page);
     this.pageChange.emit(page);
     this.commit('page', false);
   }
@@ -494,8 +606,8 @@ export class VzTableComponent<T = any> implements OnInit {
     }[source];
     let notifyServer = capabilityMode === 'server';
 
-    if (resetPage && this.page() !== 1) {
-      this.page.set(1);
+    if (resetPage && this.pageState() !== 1) {
+      this.pageState.set(1);
       this.pageChange.emit(1);
       if (cfg.pagination.mode === 'server') notifyServer = true;
     }

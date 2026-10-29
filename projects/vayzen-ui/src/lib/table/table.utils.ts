@@ -1,4 +1,4 @@
-import type { VzColumn, VzResolvedTableConfig, VzTableConfig } from './table.types';
+import type { VzColumn, VzDataMode, VzResolvedTableConfig, VzTableConfig, VzTableOverrides } from './table.types';
 
 export function getByPath(obj: unknown, path: string): unknown {
   if (obj === null || obj === undefined || !path) return undefined;
@@ -91,36 +91,51 @@ export function hasFilterValue(value: unknown): boolean {
   return value !== null && value !== undefined && value !== '';
 }
 
-export function resolveConfig(config: VzTableConfig | undefined): VzResolvedTableConfig {
+export function resolveConfig(
+  config?: VzTableConfig,
+  overrides?: VzTableOverrides,
+): VzResolvedTableConfig {
   const c = config ?? {};
-  const mode = c.mode ?? 'client';
-  const pageSizes = c.pagination?.pageSizes?.length ? c.pagination.pageSizes : [10, 25, 50, 100];
+  const o = overrides ?? {};
+  const mode: VzDataMode = (o.mode !== null && o.mode !== undefined ? o.mode : c.mode) ?? 'client';
+  const pageSizes =
+    (o.pageSizes !== null && o.pageSizes !== undefined ? o.pageSizes : c.pagination?.pageSizes) ?? [10, 25, 50, 100];
+  const defaultPageSize =
+    (o.pageSize !== null && o.pageSize !== undefined ? o.pageSize : c.pagination?.defaultPageSize) ?? pageSizes[0];
+
   const resolved: VzResolvedTableConfig = {
     search: {
-      enabled: c.search?.enabled ?? true,
+      enabled: (o.searchable !== null && o.searchable !== undefined ? o.searchable : c.search?.enabled) ?? true,
       mode: c.search?.mode ?? mode,
-      debounce: c.search?.debounce ?? 300,
-      minChars: c.search?.minChars ?? 0,
+      debounce: (o.searchDebounce !== null && o.searchDebounce !== undefined ? o.searchDebounce : c.search?.debounce) ?? 300,
+      minChars: (o.searchMinChars !== null && o.searchMinChars !== undefined ? o.searchMinChars : c.search?.minChars) ?? 0,
+      placeholder: (o.searchPlaceholder !== null && o.searchPlaceholder !== undefined ? o.searchPlaceholder : c.search?.placeholder),
     },
-    sort: { enabled: c.sort?.enabled ?? true, mode: c.sort?.mode ?? mode, multi: c.sort?.multi ?? true },
+    sort: {
+      enabled: (o.sortable !== null && o.sortable !== undefined ? o.sortable : c.sort?.enabled) ?? true,
+      mode: c.sort?.mode ?? mode,
+      multi: (o.multiSort !== null && o.multiSort !== undefined ? o.multiSort : c.sort?.multi) ?? true,
+    },
     pagination: {
-      enabled: c.pagination?.enabled ?? true,
+      enabled: (o.pagination !== null && o.pagination !== undefined ? o.pagination : c.pagination?.enabled) ?? true,
       mode: c.pagination?.mode ?? mode,
       pageSizes,
-      defaultPageSize: c.pagination?.defaultPageSize ?? pageSizes[0],
+      defaultPageSize,
+      showSizeSelector: (o.showPageSizeSelector !== null && o.showPageSizeSelector !== undefined ? o.showPageSizeSelector : c.pagination?.showSizeSelector) ?? true,
+      showInfo: (o.showPageInfo !== null && o.showPageInfo !== undefined ? o.showPageInfo : c.pagination?.showInfo) ?? true,
     },
     filters: { mode: c.filters?.mode ?? mode },
-    selectable: c.selectable ?? false,
-    rowKey: c.rowKey ?? null,
-    clickableRows: c.clickableRows ?? false,
-    density: c.density ?? 'comfortable',
-    striped: c.striped ?? false,
-    hoverable: c.hoverable ?? true,
-    bordered: c.bordered ?? false,
-    stickyHeader: c.stickyHeader ?? true,
-    maxHeight: c.maxHeight ?? null,
-    showCount: c.showCount ?? true,
-    emitInitialQuery: c.emitInitialQuery ?? true,
+    selectable: (o.selectable !== null && o.selectable !== undefined ? o.selectable : c.selectable) ?? false,
+    rowKey: (o.rowKey !== null && o.rowKey !== undefined ? o.rowKey : c.rowKey) ?? null,
+    clickableRows: (o.clickableRows !== null && o.clickableRows !== undefined ? o.clickableRows : c.clickableRows) ?? false,
+    density: (o.density !== null && o.density !== undefined ? o.density : c.density) ?? 'comfortable',
+    striped: (o.striped !== null && o.striped !== undefined ? o.striped : c.striped) ?? false,
+    hoverable: (o.hoverable !== null && o.hoverable !== undefined ? o.hoverable : c.hoverable) ?? true,
+    bordered: (o.bordered !== null && o.bordered !== undefined ? o.bordered : c.bordered) ?? false,
+    stickyHeader: (o.stickyHeader !== null && o.stickyHeader !== undefined ? o.stickyHeader : c.stickyHeader) ?? true,
+    maxHeight: (o.maxHeight !== null && o.maxHeight !== undefined ? o.maxHeight : c.maxHeight) ?? null,
+    showCount: (o.showCount !== null && o.showCount !== undefined ? o.showCount : c.showCount) ?? true,
+    emitInitialQuery: (o.emitInitialQuery !== null && o.emitInitialQuery !== undefined ? o.emitInitialQuery : c.emitInitialQuery) ?? true,
     anyServer: false,
   };
   resolved.anyServer = [

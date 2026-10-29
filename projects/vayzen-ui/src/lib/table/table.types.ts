@@ -99,15 +99,17 @@ export interface VzRowActionEvent<T = any> {
 }
 
 export interface VzTableConfig {
-  /** Modo por defecto de todas las capacidades. Cada una puede sobrescribirlo. */
+  /** Modo por defecto de todas las capacidades: 'client' o 'server'. */
   mode?: VzDataMode;
-  search?: { enabled?: boolean; mode?: VzDataMode; debounce?: number; minChars?: number };
+  search?: { enabled?: boolean; mode?: VzDataMode; debounce?: number; minChars?: number; placeholder?: string };
   sort?: { enabled?: boolean; mode?: VzDataMode; multi?: boolean };
   pagination?: {
     enabled?: boolean;
     mode?: VzDataMode;
     pageSizes?: number[];
     defaultPageSize?: number;
+    showSizeSelector?: boolean;
+    showInfo?: boolean;
   };
   filters?: { mode?: VzDataMode };
   selectable?: boolean;
@@ -126,10 +128,43 @@ export interface VzTableConfig {
   emitInitialQuery?: boolean;
 }
 
+export interface VzTableOverrides {
+  mode?: VzDataMode | null;
+  searchable?: boolean | null;
+  searchDebounce?: number | null;
+  searchMinChars?: number | null;
+  searchPlaceholder?: string | null;
+  sortable?: boolean | null;
+  multiSort?: boolean | null;
+  pagination?: boolean | null;
+  pageSizes?: number[] | null;
+  pageSize?: number | null;
+  showPageSizeSelector?: boolean | null;
+  showPageInfo?: boolean | null;
+  selectable?: boolean | null;
+  rowKey?: string | ((row: any) => unknown) | null;
+  clickableRows?: boolean | null;
+  density?: VzTableDensity | null;
+  striped?: boolean | null;
+  hoverable?: boolean | null;
+  bordered?: boolean | null;
+  stickyHeader?: boolean | null;
+  maxHeight?: string | null;
+  showCount?: boolean | null;
+  emitInitialQuery?: boolean | null;
+}
+
 export interface VzResolvedTableConfig {
-  search: { enabled: boolean; mode: VzDataMode; debounce: number; minChars: number };
+  search: { enabled: boolean; mode: VzDataMode; debounce: number; minChars: number; placeholder?: string };
   sort: { enabled: boolean; mode: VzDataMode; multi: boolean };
-  pagination: { enabled: boolean; mode: VzDataMode; pageSizes: number[]; defaultPageSize: number };
+  pagination: {
+    enabled: boolean;
+    mode: VzDataMode;
+    pageSizes: number[];
+    defaultPageSize: number;
+    showSizeSelector: boolean;
+    showInfo: boolean;
+  };
   filters: { mode: VzDataMode };
   selectable: boolean;
   rowKey: string | ((row: any) => unknown) | null;

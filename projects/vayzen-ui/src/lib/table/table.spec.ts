@@ -172,6 +172,28 @@ describe('VzTableComponent · modo servidor', () => {
     expect(queries.at(-1)?.sort).toEqual([{ key: 'name', direction: 'asc' }]);
   });
 
+  it('soporta input directo [total] en modo server sin requerir serverPage', () => {
+    const f = TestBed.createComponent(VzTableComponent<Row>);
+    f.componentRef.setInput('columns', COLUMNS);
+    f.componentRef.setInput('data', ROWS.slice(0, 10));
+    f.componentRef.setInput('mode', 'server');
+    f.componentRef.setInput('total', 350);
+    f.detectChanges();
+
+    expect(el(f).querySelector('.vz-pagination__info')?.textContent).toContain('350');
+  });
+
+  it('soporta alias [totalRecords] para compatibilidad', () => {
+    const f = TestBed.createComponent(VzTableComponent<Row>);
+    f.componentRef.setInput('columns', COLUMNS);
+    f.componentRef.setInput('data', ROWS.slice(0, 10));
+    f.componentRef.setInput('mode', 'server');
+    f.componentRef.setInput('totalRecords', 520);
+    f.detectChanges();
+
+    expect(el(f).querySelector('.vz-pagination__info')?.textContent).toContain('520');
+  });
+
   it('con búsqueda en cliente y paginación en servidor solo avisa al backend por la paginación', () => {
     const f = setup({ mode: 'server', search: { mode: 'client' } }, ROWS.slice(0, 10));
     f.componentRef.setInput('serverPage', { total: 100 });

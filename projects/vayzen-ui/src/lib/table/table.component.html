@@ -28,8 +28,8 @@
           class="vz-table__search-input"
           autocomplete="off"
           [value]="searchTerm()"
-          [placeholder]="lbl().searchPlaceholder"
-          [attr.aria-label]="lbl().searchPlaceholder"
+          [placeholder]="searchPlaceholder() ?? cfg().search.placeholder ?? lbl().searchPlaceholder"
+          [attr.aria-label]="searchPlaceholder() ?? cfg().search.placeholder ?? lbl().searchPlaceholder"
           (input)="onSearchInput($any($event.target).value)"
         />
         @if (searchTerm()) {
@@ -204,13 +204,15 @@
   </div>
 
   <!-- Pie: paginación -->
-  @if (cfg().pagination.enabled && totalRows() > 0) {
+  @if (cfg().pagination.enabled && (totalRows() > 0 || cfg().pagination.mode === 'server')) {
     <div class="vz-table__footer">
       <vz-pagination
         [page]="activePage()"
         [pageSize]="activePageSize()"
         [total]="totalRows()"
         [pageSizes]="cfg().pagination.pageSizes"
+        [showInfo]="cfg().pagination.showInfo"
+        [showSizeSelector]="cfg().pagination.showSizeSelector"
         [labels]="lbl().pagination"
         (pageChange)="goToPage($event)"
         (pageSizeChange)="changePageSize($event)"
