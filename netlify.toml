@@ -1,9 +1,6 @@
 [build]
- 
-command = "npm run build vayzen-docs --configuration=production"
-  
- 
-publish = "dist/vayzen-docs/browser"
+  command = "npm run build"
+  publish = "dist/vayzen-docs/browser"
 
 [[redirects]]
   from = "/*"

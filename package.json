@@ -5,7 +5,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build vayzen-ui && ng build vayzen-docs --configuration=production",
+    "build:ui": "ng build vayzen-ui",
+    "build:docs": "ng build vayzen-docs --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -18,7 +20,6 @@
     "@angular/forms": "^22.2.0",
     "@angular/platform-browser": "^22.2.0",
     "@angular/router": "^22.2.0",
-    "@vayzen-ui/vayzen-core": "^0.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
