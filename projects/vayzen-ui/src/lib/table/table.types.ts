@@ -176,3 +176,4 @@ export const VZ_TABLE_DEFAULT_LABELS: VzTableLabels = {
   sortHint: 'Clic para ordenar · Shift+clic para orden múltiple',
   pagination: {},
 };
+

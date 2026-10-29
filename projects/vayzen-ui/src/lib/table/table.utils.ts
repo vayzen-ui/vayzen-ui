@@ -131,3 +131,4 @@ export function resolveConfig(config: VzTableConfig | undefined): VzResolvedTabl
   ].includes('server');
   return resolved;
 }
+

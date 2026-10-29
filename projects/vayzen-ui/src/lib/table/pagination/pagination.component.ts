@@ -66,3 +66,4 @@ export class VzPaginationComponent {
     this.pageSizeChange.emit(Number((event.target as HTMLSelectElement).value));
   }
 }
+

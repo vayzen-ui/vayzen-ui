@@ -9,3 +9,4 @@ import { VzCellDirective, VzFilterControlDirective } from './table-templates.dir
 
 /** Atajo: `imports: [...VZ_TABLE_IMPORTS]` trae la tabla, la paginación y las directivas de templates. */
 export const VZ_TABLE_IMPORTS = [VzTableComponent, VzPaginationComponent, VzCellDirective, VzFilterControlDirective] as const;
+

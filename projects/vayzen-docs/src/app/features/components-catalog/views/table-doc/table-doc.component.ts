@@ -385,3 +385,4 @@ config: VzTableConfig = {
     ['--vz-pagination-*', 'color, muted-color, border-color, radius, active-bg, active-color, hover-bg'],
   ];
 }
+

@@ -37,3 +37,4 @@ export class VzFilterControlDirective {
   readonly key = input.required<string>({ alias: 'vzFilterControl' });
   readonly template = inject<TemplateRef<VzFilterControlContext>>(TemplateRef);
 }
+
