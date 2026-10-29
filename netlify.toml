@@ -2,6 +2,10 @@
   command = "npm run build"
   publish = "dist/vayzen-docs/browser"
 
+[build.environment]
+  ANGULAR_PROJECT = "vayzen-docs"
+  NETLIFY_AUTO_INSTALL_PLUGINS = "false"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
