@@ -10,9 +10,29 @@
   justify-content: center;
 }
 
+.preview-card-container--stack {
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
 .preview-card-container vz-card {
   max-width: 400px;
   width: 100%;
+}
+
+/* ── Botones de estilo Marketplace / Pro dentro de la Card ── */
+.btn-pill-cta {
+  --vz-btn-bg: #1d4ed8;
+  --vz-btn-hover-bg: #1e40af;
+  --vz-btn-radius: 9999px;
+  --vz-btn-padding-y: 0.42rem;
+  --vz-btn-padding-x: 1rem;
+}
+
+.btn-qr-outline {
+  --vz-btn-radius: 8px;
+  --vz-btn-color: #1e40af;
+  --vz-btn-border-color: #cbd5e1;
 }
 
 /* ── Grids de Muestra ── */
@@ -112,34 +132,6 @@
 .trend-caption {
   font-size: 0.8125rem;
   color: #64748b;
-}
-
-/* ── Status Pills para Tarjetas de Acento ── */
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.625rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.status-pill--success {
-  background-color: #ecfdf5;
-  color: #059669;
-  border: 1px solid #a7f3d0;
-}
-
-.status-pill--warning {
-  background-color: #fffbeb;
-  color: #d97706;
-  border: 1px solid #fde68a;
-}
-
-.status-pill--danger {
-  background-color: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
 }
 
 /* ── Demo de Personalización con Tokens CSS ── */

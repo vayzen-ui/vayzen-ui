@@ -9,21 +9,14 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
+  VZ_CARD_IMPORTS,
   VzButtonComponent,
   VzButtonSize,
   VzButtonVariant,
   VzCardAccent,
   VzCardAccentPosition,
-  VzCardActionsDirective,
-  VzCardComponent,
-  VzCardContentDirective,
   VzCardDensity,
-  VzCardFooterDirective,
-  VzCardHeaderDirective,
-  VzCardImageDirective,
   VzCardOrientation,
-  VzCardSubtitleDirective,
-  VzCardTitleDirective,
   VzCardVariant,
   VzColumn,
   VzTableComponent,
@@ -34,6 +27,7 @@ import { CodeBlockComponent } from '../../shared/components/code-block/code-bloc
 export type StudioComponentType = 'card' | 'button' | 'table';
 export type StudioStageTab = 'preview' | 'code' | 'tokens';
 export type StudioCanvasBg = 'dots' | 'white' | 'slate';
+export type StudioCardComplexity = 'complete' | 'basic';
 
 export interface StudioComponentDefinition {
   id: StudioComponentType;
@@ -59,14 +53,7 @@ interface EmployeeItem {
     FormsModule,
     RouterLink,
     CodeBlockComponent,
-    VzCardComponent,
-    VzCardHeaderDirective,
-    VzCardTitleDirective,
-    VzCardSubtitleDirective,
-    VzCardActionsDirective,
-    VzCardContentDirective,
-    VzCardFooterDirective,
-    VzCardImageDirective,
+    ...VZ_CARD_IMPORTS,
     VzButtonComponent,
     VzTableComponent,
   ],
@@ -91,8 +78,8 @@ export class StudioComponent implements OnInit {
       name: 'Card',
       icon: '🃏',
       badge: 'Contenedor',
-      description: 'Contenedor modular con acentos cromáticos, variantes y orientación.',
-      docLink: '/components/cards',
+      description: 'Contenedor modular para cards básicas y cards completas Pro.',
+      docLink: '/components/card',
     },
     {
       id: 'button',
@@ -100,7 +87,7 @@ export class StudioComponent implements OnInit {
       icon: '🔘',
       badge: 'Acción',
       description: 'Botón táctil nativo con variantes visuales y tamaños escalables.',
-      docLink: '/components/buttons',
+      docLink: '/components/button',
     },
     {
       id: 'table',
@@ -108,7 +95,7 @@ export class StudioComponent implements OnInit {
       icon: '📊',
       badge: 'Datos',
       description: 'Tabla de datos reactiva con ordenamiento, badges y selección.',
-      docLink: '/components/tables',
+      docLink: '/components/table',
     },
   ];
 
@@ -177,22 +164,30 @@ export class StudioComponent implements OnInit {
   // ══════════════════════════════════════════
   // CARD STUDIO STATE & COMPUTEDS
   // ══════════════════════════════════════════
+  protected readonly cardComplexity = signal<StudioCardComplexity>('complete');
   protected readonly cardVariant = signal<VzCardVariant>('elevated');
   protected readonly cardAccent = signal<VzCardAccent>('primary');
   protected readonly cardAccentPosition = signal<VzCardAccentPosition>('top');
   protected readonly cardOrientation = signal<VzCardOrientation>('vertical');
   protected readonly cardDensity = signal<VzCardDensity>('comfortable');
-  protected readonly cardBorderedHeader = signal(true);
+  protected readonly cardBorderedHeader = signal(false);
   protected readonly cardBorderedFooter = signal(true);
   protected readonly cardHoverable = signal(true);
   protected readonly cardClickable = signal(false);
   protected readonly cardLoading = signal(false);
   protected readonly cardDisabled = signal(false);
   protected readonly cardShowImage = signal(true);
+
+  // Toggles de bloques ricos para Card Completa
+  protected readonly cardShowEyebrow = signal(true);
+  protected readonly cardShowMeta = signal(true);
+  protected readonly cardShowTags = signal(true);
+  protected readonly cardShowInfoRow = signal(true);
+
   protected readonly cardLastEvent = signal('');
 
   protected readonly accentOptions = [
-    { id: 'primary', label: 'Blue', color: '#3b82f6' },
+    { id: 'primary', label: 'Blue', color: '#2563eb' },
     { id: 'success', label: 'Green', color: '#10b981' },
     { id: 'warning', label: 'Amber', color: '#f59e0b' },
     { id: 'danger', label: 'Red', color: '#ef4444' },
@@ -204,22 +199,28 @@ export class StudioComponent implements OnInit {
   }
 
   protected resetCardDefaults(): void {
+    this.cardComplexity.set('complete');
     this.cardVariant.set('elevated');
     this.cardAccent.set('primary');
     this.cardAccentPosition.set('top');
     this.cardOrientation.set('vertical');
     this.cardDensity.set('comfortable');
-    this.cardBorderedHeader.set(true);
+    this.cardBorderedHeader.set(false);
     this.cardBorderedFooter.set(true);
     this.cardHoverable.set(true);
     this.cardClickable.set(false);
     this.cardLoading.set(false);
     this.cardDisabled.set(false);
     this.cardShowImage.set(true);
+    this.cardShowEyebrow.set(true);
+    this.cardShowMeta.set(true);
+    this.cardShowTags.set(true);
+    this.cardShowInfoRow.set(true);
     this.cardLastEvent.set('Valores restablecidos');
   }
 
   protected readonly cardCode = computed(() => {
+    const mode = this.cardComplexity();
     const v = this.cardVariant();
     const a = this.cardAccent();
     const ap = this.cardAccentPosition();
@@ -251,31 +252,75 @@ export class StudioComponent implements OnInit {
 
     const attrStr = attrs ? ` ${attrs}` : '';
 
-    if (img) {
+    if (mode === 'basic') {
+      if (!img) {
+        return `<vz-card${attrStr} title="Aviso de Mantenimiento" subtitle="Viernes 22:00 hrs">
+  <p>El portal de servicios escolares permanecerá en mantenimiento preventivo durante 45 minutos.</p>
+</vz-card>`;
+      }
       return `<vz-card${attrStr}>
   <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula" />
   <div vzCardHeader>
     <div>
-      <h3 vzCardTitle>Control Escolar 2026</h3>
-      <span vzCardSubtitle>Plantel Central · Grupo 402</span>
-    </div>
-    <div vzCardActions>
-      <vz-button size="sm" variant="ghost">Ver</vz-button>
+      <span vzCardBadge variant="neutral">TRÁMITE RÁPIDO</span>
+      <h3 vzCardTitle>Constancia de Estudios</h3>
+      <span vzCardSubtitle>Emisión digital inmediata</span>
     </div>
   </div>
   <div vzCardContent>
-    <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones.</p>
+    <p>Descarga tu documento oficial con sello digital y código QR de validación institucional.</p>
   </div>
   <div vzCardFooter>
-    <span class="text-muted">16 Alumnos inscritos</span>
-    <vz-button size="sm" variant="primary">Ingresar</vz-button>
+    <span class="text-muted">Tiempo: 1 min</span>
+    <vz-button size="sm" variant="primary">Solicitar</vz-button>
   </div>
 </vz-card>`;
     }
 
-    return `<vz-card${attrStr} title="Control Escolar 2026" subtitle="Plantel Central">
-  <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones.</p>
-</vz-card>`;
+    // Complete Mode
+    const lines: string[] = [`<vz-card${attrStr}>`];
+    if (img) {
+      lines.push(
+        `  <img vzCardImage src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=700&q=80" alt="Nexus Hardware Lab" />`
+      );
+    }
+    lines.push(`  <div vzCardContent>`);
+    if (this.cardShowEyebrow()) {
+      lines.push(`    <div vzCardEyebrow>`);
+      lines.push(`      <span vzCardBadge variant="primary">TECNOLOGÍA</span>`);
+      lines.push(`      <span vzCardRating>★ 4.95</span>`);
+      lines.push(`    </div>`);
+    }
+    lines.push(`    <h3 vzCardTitle>Nexus Hardware Lab</h3>`);
+    lines.push(`    <span vzCardSubtitle>Periféricos, hardware custom y componentes de precisión</span>`);
+    if (this.cardShowMeta()) {
+      lines.push(`    <div vzCardMeta>`);
+      lines.push(`      <span vzCardMetaItem tone="success">✓ Verificado</span>`);
+      lines.push(`      <span vzCardMetaItem>🛡️ 99% Seriedad</span>`);
+      lines.push(`      <span vzCardMetaItem>🕒 98% Puntualidad</span>`);
+      lines.push(`    </div>`);
+    }
+    if (this.cardShowTags()) {
+      lines.push(`    <hr vzCardDivider />`);
+      lines.push(`    <div vzCardTags>`);
+      lines.push(`      <span vzCardTag tone="success">💵 Efectivo</span>`);
+      lines.push(`      <span vzCardTag tone="primary">💳 Digital</span>`);
+      lines.push(`      <span vzCardTag tone="warning">🪙 Coin Points</span>`);
+      lines.push(`    </div>`);
+    }
+    if (this.cardShowInfoRow()) {
+      lines.push(`    <div vzCardInfoRow>`);
+      lines.push(`      <span>📍 CDMX · Entregas Zona Centro</span>`);
+      lines.push(`      <vz-button size="sm" variant="outline">Ver QR</vz-button>`);
+      lines.push(`    </div>`);
+    }
+    lines.push(`  </div>`);
+    lines.push(`  <div vzCardFooter>`);
+    lines.push(`    <a vzCardLink href="javascript:void(0)">🔗 kintab.app/@nexus-hardw</a>`);
+    lines.push(`    <vz-button size="sm" variant="primary">Ver Catálogo →</vz-button>`);
+    lines.push(`  </div>`);
+    lines.push(`</vz-card>`);
+    return lines.join('\n');
   });
 
   protected readonly cardTokensCode = computed(() => {
@@ -283,9 +328,9 @@ export class StudioComponent implements OnInit {
     const a = this.cardAccent();
     const d = this.cardDensity();
 
-    const radius = '0.75rem';
-    const padding = d === 'compact' ? '0.75rem 1rem' : d === 'spacious' ? '1.75rem 2rem' : '1.25rem 1.5rem';
-    const shadow = v === 'flat' ? 'none' : '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px -2px rgba(0,0,0,0.05)';
+    const radius = '1rem';
+    const padding = d === 'compact' ? '0.875rem 1.125rem' : d === 'spacious' ? '1.625rem 1.875rem' : '1.25rem 1.375rem';
+    const shadow = v === 'flat' ? 'none' : '0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04)';
 
     return `/* Sobrescribe los Design Tokens de VzCard para tu proyecto */
 .mi-tarjeta-personalizada {
@@ -295,11 +340,11 @@ export class StudioComponent implements OnInit {
   --vz-card-border-radius: ${radius};
   --vz-card-shadow: ${shadow};
   --vz-card-padding: ${padding};
-  --vz-card-accent-color: var(--vz-${a}, #3b82f6);
+  --vz-card-accent-color: var(--vz-${a}, #2563eb);
   --vz-card-accent-width: 4px;
   --vz-card-title-color: #0f172a;
   --vz-card-subtitle-color: #64748b;
-  --vz-card-footer-bg: #fafbfd;
+  --vz-card-footer-bg: #f8fafc;
 }`;
   });
 
