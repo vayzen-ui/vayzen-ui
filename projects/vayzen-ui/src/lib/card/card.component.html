@@ -19,28 +19,29 @@
 
   <ng-content select="[vzCardImage], img[vzCardImage]" />
 
-  <ng-content select="[vzCardHeader]" />
+  <div class="vz-card__main">
+    <ng-content select="[vzCardHeader]" />
 
-  @if (!hasHeaderSlot() && (title() || subtitle())) {
-    <div class="vz-card__header">
-      <div class="vz-card__header-content">
-        @if (title()) {
-          <h3 class="vz-card__title">{{ title() }}</h3>
-        }
-        @if (subtitle()) {
-          <p class="vz-card__subtitle">{{ subtitle() }}</p>
-        }
+    @if (!hasHeaderSlot() && (title() || subtitle())) {
+      <div class="vz-card__header">
+        <div class="vz-card__header-content">
+          @if (title()) {
+            <h3 class="vz-card__title">{{ title() }}</h3>
+          }
+          @if (subtitle()) {
+            <p class="vz-card__subtitle">{{ subtitle() }}</p>
+          }
+        </div>
+        <ng-content select="[vzCardActions]" />
       </div>
-      <ng-content select="[vzCardActions]" />
+    }
+
+    <ng-content select="[vzCardContent]" />
+
+    <div class="vz-card__body">
+      <ng-content />
     </div>
-  }
 
-  <ng-content select="[vzCardContent]" />
-
-  <div class="vz-card__body">
-    <ng-content />
+    <ng-content select="[vzCardFooter]" />
   </div>
-
-  <ng-content select="[vzCardFooter]" />
 }
-

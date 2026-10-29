@@ -36,13 +36,14 @@ import {
 class TestSlottedCardComponent {}
 
 describe('VzCardComponent', () => {
-  it('se crea con valores por defecto (elevated, comfortable)', () => {
+  it('se crea con valores por defecto (elevated, comfortable, vertical)', () => {
     const fixture = TestBed.createComponent(VzCardComponent);
     fixture.detectChanges();
     const el: HTMLElement = fixture.nativeElement;
 
     expect(el.classList.contains('vz-card--elevated')).toBe(true);
     expect(el.classList.contains('vz-card--comfortable')).toBe(true);
+    expect(el.classList.contains('vz-card--vertical')).toBe(true);
   });
 
   it('aplica las clases de variante correctamente', () => {
@@ -54,6 +55,39 @@ describe('VzCardComponent', () => {
     fixture.componentRef.setInput('variant', 'flat');
     fixture.detectChanges();
     expect(fixture.nativeElement.classList.contains('vz-card--flat')).toBe(true);
+
+    fixture.componentRef.setInput('variant', 'accent');
+    fixture.componentRef.setInput('accent', 'success');
+    fixture.componentRef.setInput('accentPosition', 'top');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--accent')).toBe(true);
+    expect(fixture.nativeElement.classList.contains('vz-card--accent-success')).toBe(true);
+    expect(fixture.nativeElement.classList.contains('vz-card--accent-top')).toBe(true);
+  });
+
+  it('soporta orientación horizontal', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('orientation', 'horizontal');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--horizontal')).toBe(true);
+  });
+
+  it('aplica clases de header y footer sin bordes cuando se desactivan', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('borderedHeader', false);
+    fixture.componentRef.setInput('borderedFooter', false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--seamless-header')).toBe(true);
+    expect(fixture.nativeElement.classList.contains('vz-card--seamless-footer')).toBe(true);
+  });
+
+  it('aplica color de acento personalizado mediante variable CSS', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('variant', 'accent');
+    fixture.componentRef.setInput('accent', '#e11d48');
+    fixture.detectChanges();
+    const styleAttr = fixture.nativeElement.getAttribute('style') || '';
+    expect(styleAttr).toContain('--vz-card-accent-color: #e11d48');
   });
 
   it('aplica las clases de densidad correctamente', () => {
@@ -133,4 +167,3 @@ describe('VzCardComponent', () => {
     expect(titleEl).toBeFalsy();
   });
 });
-

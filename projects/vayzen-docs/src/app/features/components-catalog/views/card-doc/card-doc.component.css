@@ -2,122 +2,180 @@
   max-width: 440px;
   width: 100%;
   margin: 0 auto;
+  transition: max-width 0.25s ease;
 }
 
-.showcase-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+.card-stage-container--horizontal {
+  max-width: 720px;
 }
 
-/* ── Showcase 1: Métrica ── */
-.stat-category {
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #64748b;
+.event-stream {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+}
+
+.event-label {
   font-weight: 600;
+  color: #64748b;
 }
 
-.stat-value {
-  margin: 0.375rem 0 0;
-  font-size: 2rem;
+.event-value {
+  color: #0284c7;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.825rem;
+}
+
+/* ── Grids de Muestra ── */
+.metric-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.accent-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.horizontal-showcase-container {
+  margin: 1.5rem 0;
+}
+
+/* ── Métricas de Dashboard (Estilo AdminT) ── */
+.metric-category {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  display: block;
+}
+
+.metric-num {
+  margin: 0.25rem 0 0;
+  font-size: 1.875rem;
   font-weight: 700;
   color: #0f172a;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.stat-badge {
+.metric-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.metric-icon-box--primary {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.metric-icon-box--success {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.metric-icon-box--info {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+}
+
+.metric-trend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.trend-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.trend-tag--up {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.trend-tag--neutral {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.trend-tag--down {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.trend-caption {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+/* ── Status Pills para Tarjetas de Acento ── */
+.status-pill {
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.625rem;
   border-radius: 9999px;
-  background-color: #ecfdf5;
-  color: #059669;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
-.stat-desc {
-  margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.5;
+.status-pill--success {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
 }
 
-/* ── Showcase 2: Alumno ── */
-.student-header {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
+.status-pill--warning {
+  background-color: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fde68a;
 }
 
-.student-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, #0284c7, #38bdf8);
-  color: #ffffff;
+.status-pill--danger {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* ── Demo de Personalización con Tokens CSS ── */
+.custom-theme-demo {
+  margin: 1.5rem 0;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.9375rem;
-  flex-shrink: 0;
 }
 
-.student-info-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.375rem 0;
-  font-size: 0.875rem;
-  border-bottom: 1px dashed #f1f5f9;
-
-  &:last-child {
-    border-bottom: none;
-  }
+.custom-card-wrapper {
+  max-width: 500px;
+  width: 100%;
 }
 
-.info-label {
-  color: #64748b;
-}
-
-.info-val {
-  font-weight: 500;
-  color: #1e293b;
-}
-
-.badge-success {
-  background-color: #ecfdf5;
-  color: #059669;
-  padding: 0.125rem 0.5rem;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.75rem;
-}
-
-/* ── Showcase 3: Curso ── */
-.course-code {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #0284c7;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.25rem;
-}
-
-/* ── Tema Personalizado ── */
-.theme-demo-row {
-  max-width: 440px;
-  margin: 1rem 0;
-}
-
-.card-personalizada {
+.card-dark-pro {
   --vz-card-bg: #0f172a;
   --vz-card-color: #f8fafc;
-  --vz-card-border-color: #334155;
-  --vz-card-radius: 1.25rem;
-  --vz-card-shadow-hover: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+  --vz-card-border-color: #1e293b;
+  --vz-card-border-radius: 1rem;
+  --vz-card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  --vz-card-title-color: #ffffff;
   --vz-card-subtitle-color: #94a3b8;
+  --vz-card-footer-bg: #0b1120;
 }
