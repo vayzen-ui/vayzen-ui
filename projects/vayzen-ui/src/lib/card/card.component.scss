@@ -6,19 +6,19 @@
   --vz-card-border-color: var(--vz-border, #e2e8f0);
   --vz-card-border-width: 1px;
   --vz-card-border-style: solid;
-  --vz-card-border-radius: var(--vz-radius-lg, 0.75rem);
-  --vz-card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
-  --vz-card-shadow-hover: 0 12px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
-  --vz-card-padding: 1.25rem 1.5rem;
+  --vz-card-border-radius: var(--vz-radius-lg, 1rem);
+  --vz-card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+  --vz-card-shadow-hover: 0 16px 32px -6px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
+  --vz-card-padding: 1.25rem 1.375rem;
   --vz-card-header-bg: transparent;
-  --vz-card-footer-bg: #fafbfd;
+  --vz-card-footer-bg: #f8fafc;
   --vz-card-title-color: #0f172a;
-  --vz-card-title-size: 1.0625rem;
-  --vz-card-title-weight: 600;
+  --vz-card-title-size: 1.15rem;
+  --vz-card-title-weight: 700;
   --vz-card-subtitle-color: #64748b;
-  --vz-card-subtitle-size: 0.8125rem;
+  --vz-card-subtitle-size: 0.875rem;
   --vz-card-accent-width: 4px;
-  --vz-card-accent-color: #3b82f6;
+  --vz-card-accent-color: #2563eb;
 
   position: relative;
   display: flex;
@@ -88,7 +88,7 @@
 // ── Colores semánticos de acento ──
 :host(.vz-card--accent-primary),
 .vz-card--accent-primary {
-  --vz-card-accent-color: #3b82f6;
+  --vz-card-accent-color: #2563eb;
 }
 
 :host(.vz-card--accent-success),
@@ -123,8 +123,8 @@
     flex: 0 0 38%;
     max-width: 38%;
     width: 38%;
-    height: 100%;
-    min-height: 200px;
+    height: auto;
+    min-height: 220px;
     max-height: none;
     object-fit: cover;
     display: block;
@@ -153,23 +153,23 @@
 // ── Densidades ──
 :host(.vz-card--compact),
 .vz-card--compact {
-  --vz-card-padding: 0.75rem 1rem;
-  --vz-card-title-size: 0.9375rem;
-  --vz-card-subtitle-size: 0.75rem;
+  --vz-card-padding: 0.875rem 1.125rem;
+  --vz-card-title-size: 1rem;
+  --vz-card-subtitle-size: 0.8125rem;
 }
 
 :host(.vz-card--comfortable),
 .vz-card--comfortable {
-  --vz-card-padding: 1.25rem 1.5rem;
-  --vz-card-title-size: 1.0625rem;
-  --vz-card-subtitle-size: 0.8125rem;
+  --vz-card-padding: 1.25rem 1.375rem;
+  --vz-card-title-size: 1.15rem;
+  --vz-card-subtitle-size: 0.875rem;
 }
 
 :host(.vz-card--spacious),
 .vz-card--spacious {
-  --vz-card-padding: 1.75rem 2rem;
-  --vz-card-title-size: 1.25rem;
-  --vz-card-subtitle-size: 0.875rem;
+  --vz-card-padding: 1.625rem 1.875rem;
+  --vz-card-title-size: 1.3rem;
+  --vz-card-subtitle-size: 0.9375rem;
 }
 
 // ── Estados ──
@@ -177,7 +177,7 @@
 .vz-card.is-hoverable:hover {
   transform: translateY(-3px);
   box-shadow: var(--vz-card-shadow-hover);
-  border-color: rgba(148, 163, 184, 0.4);
+  border-color: rgba(148, 163, 184, 0.45);
 }
 
 :host(.is-clickable),
@@ -186,11 +186,11 @@
   user-select: none;
 
   &:hover {
-    border-color: rgba(59, 130, 246, 0.4);
+    border-color: rgba(37, 99, 235, 0.4);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--vz-card-accent-color, #3b82f6);
+    outline: 2px solid var(--vz-card-accent-color, #2563eb);
     outline-offset: 2px;
   }
 
@@ -221,13 +221,14 @@
   width: 100%;
   display: block;
   overflow: hidden;
-  max-height: 240px;
+  max-height: var(--vz-card-image-height, 210px);
   object-fit: cover;
 
   img,
   &.vz-card__img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    max-height: var(--vz-card-image-height, 210px);
     object-fit: cover;
     display: block;
   }
@@ -257,7 +258,7 @@
   ::ng-deep [vzCardHeader],
   ::ng-deep .vz-card__header {
     border-bottom: none;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
   }
 }
 
@@ -272,18 +273,20 @@
   margin: 0;
   font-weight: var(--vz-card-title-weight);
   font-size: var(--vz-card-title-size);
-  line-height: 1.4;
+  line-height: 1.35;
   color: var(--vz-card-title-color);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
 }
 
 .vz-card__subtitle,
 ::ng-deep [vzCardSubtitle],
 ::ng-deep .vz-card__subtitle {
+  display: block;
   margin: 0.25rem 0 0;
   font-size: var(--vz-card-subtitle-size);
   color: var(--vz-card-subtitle-color);
-  line-height: 1.4;
+  line-height: 1.45;
+  font-weight: 400;
 }
 
 .vz-card__actions,
@@ -301,10 +304,257 @@
 ::ng-deep .vz-card__content {
   flex: 1 1 auto;
   padding: var(--vz-card-padding);
-  line-height: 1.6;
+  line-height: 1.55;
+  font-size: 0.9rem;
 
   &:empty {
     display: none;
+  }
+
+  > p:first-child {
+    margin-top: 0;
+  }
+
+  > p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// ── Sub-directivas Ricas para Cards Completas (Estilo Pro / Marketplace) ──
+
+// 1. Eyebrow Row (Categoría a la izquierda + Rating/Estado a la derecha)
+::ng-deep [vzCardEyebrow],
+::ng-deep .vz-card__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+// 2. Category Badge Pill (ej. "TECNOLOGÍA")
+::ng-deep [vzCardBadge],
+::ng-deep .vz-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+
+  &.vz-card__badge--primary {
+    background-color: #eef2ff;
+    color: #1d4ed8;
+  }
+
+  &.vz-card__badge--success {
+    background-color: #ecfdf5;
+    color: #047857;
+  }
+
+  &.vz-card__badge--warning {
+    background-color: #fffbeb;
+    color: #b45309;
+  }
+
+  &.vz-card__badge--danger {
+    background-color: #fef2f2;
+    color: #dc2626;
+  }
+
+  &.vz-card__badge--info {
+    background-color: #f5f3ff;
+    color: #6d28d9;
+  }
+
+  &.vz-card__badge--neutral {
+    background-color: #f1f5f9;
+    color: #475569;
+  }
+}
+
+// 3. Rating / Score (ej. "★ 4.95")
+::ng-deep [vzCardRating],
+::ng-deep .vz-card__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #d97706;
+  line-height: 1;
+
+  svg {
+    color: #d97706;
+    fill: #d97706;
+    flex-shrink: 0;
+  }
+}
+
+// 4. Meta / Trust Row (ej. "✓ Verificado · 🛡️ 99% Seriedad · 🕒 98% Puntualidad")
+::ng-deep [vzCardMeta],
+::ng-deep .vz-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 0.35rem;
+  column-gap: 0.45rem;
+  margin-top: 0.8rem;
+  font-size: 0.8125rem;
+  color: #475569;
+}
+
+::ng-deep [vzCardMetaItem],
+::ng-deep .vz-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  font-weight: 500;
+  color: #475569;
+
+  &:not(:last-child)::after {
+    content: '·';
+    margin-left: 0.45rem;
+    color: #cbd5e1;
+    font-weight: 700;
+  }
+
+  &.vz-card__meta-item--success {
+    color: #059669;
+    font-weight: 600;
+  }
+
+  &.vz-card__meta-item--primary {
+    color: #2563eb;
+    font-weight: 600;
+  }
+
+  &.vz-card__meta-item--warning {
+    color: #d97706;
+    font-weight: 600;
+  }
+
+  &.vz-card__meta-item--danger {
+    color: #dc2626;
+    font-weight: 600;
+  }
+}
+
+// 5. Divider (Línea punteada o continua dentro del cuerpo)
+::ng-deep [vzCardDivider],
+::ng-deep .vz-card__divider {
+  border: 0;
+  border-top: 1px dashed var(--vz-card-border-color, #e2e8f0);
+  margin: 0.9rem 0;
+  width: 100%;
+
+  &.vz-card__divider--solid {
+    border-top-style: solid;
+  }
+}
+
+// 6. Feature Tags / Payment Chips (ej. "Efectivo", "Digital", "Coin Points")
+::ng-deep [vzCardTags],
+::ng-deep .vz-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+::ng-deep [vzCardTag],
+::ng-deep .vz-card__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  border: 1px solid transparent;
+  transition: transform 0.15s ease;
+
+  &.vz-card__tag--success {
+    background-color: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #047857;
+  }
+
+  &.vz-card__tag--primary {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+  }
+
+  &.vz-card__tag--warning {
+    background-color: #fffbeb;
+    border-color: #fde68a;
+    color: #b45309;
+  }
+
+  &.vz-card__tag--danger {
+    background-color: #fef2f2;
+    border-color: #fecaca;
+    color: #dc2626;
+  }
+
+  &.vz-card__tag--info {
+    background-color: #f5f3ff;
+    border-color: #ddd6fe;
+    color: #6d28d9;
+  }
+
+  &.vz-card__tag--neutral {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #475569;
+  }
+}
+
+// 7. Info Row (Ubicación a la izquierda + Botón secundario ej. "Ver QR" a la derecha)
+::ng-deep [vzCardInfoRow],
+::ng-deep .vz-card__info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  font-size: 0.8125rem;
+  color: #64748b;
+
+  .vz-card__location,
+  > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// 8. Footer Link (ej. "kintab.app/@nexus-hardw")
+::ng-deep [vzCardLink],
+::ng-deep .vz-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
   }
 }
 
@@ -316,7 +566,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: calc(var(--vz-card-padding) * 0.75) var(--vz-card-padding);
+  padding: 0.875rem 1.375rem;
   border-top: 1px solid var(--vz-card-border-color);
   background-color: var(--vz-card-footer-bg);
 }
@@ -341,7 +591,7 @@
     background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
     background-size: 400% 100%;
     animation: vz-shimmer 1.4s ease infinite;
-    border-radius: var(--vz-card-border-radius);
+    border-radius: calc(var(--vz-card-border-radius) * 0.65);
     margin-bottom: 1rem;
   }
 

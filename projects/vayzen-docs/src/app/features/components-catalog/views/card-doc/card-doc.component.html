@@ -7,8 +7,7 @@
       </div>
       <h1 class="doc-title">Card</h1>
       <p class="doc-description">
-        Contenedor versátil y elegante para presentar contenido estructurado, indicadores clave (KPIs), multimedia y acciones.
-        Diseñado desde cero con CSS nativo, tokens 100% personalizables, variantes con franjas de acento, orientación horizontal y soporte completo de estados.
+        Sistema modular de tarjetas diseñado para cubrir desde <strong>cards muy básicas y minimalistas</strong> (avisos rápidos, notas, contenedores limpios) hasta <strong>cards muy completas de nivel empresarial y marketplace</strong> con badges de categoría, calificaciones, métricas de confianza, chips semánticos, ubicación, QR y acciones.
       </p>
       <div class="doc-meta-chips">
         <span class="doc-meta-chip">
@@ -17,381 +16,631 @@
         </span>
         <span class="doc-meta-chip">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          7 Directivas Semánticas
+          17 Directivas Componibles
         </span>
         <span class="doc-meta-chip">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          16 Design Tokens CSS
+          Básicas &amp; Completas Pro
         </span>
       </div>
     </header>
 
-    <!-- 1. Ejemplo Básico -->
-    <section id="ejemplo-basico" class="doc-section">
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 1. CARDS MUY BÁSICAS (ESENCIALES Y MINIMALISTAS)                     -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="cards-basicas" class="doc-section">
       <div class="section-heading">
-        <h2 class="section-title">Ejemplo Básico</h2>
+        <h2 class="section-title">1. Cards Muy Básicas (Esenciales y Minimalistas)</h2>
         <p class="section-subtitle">
-          Estructura recomendada combinando imagen de cabecera, títulos semánticos, acciones y pie.
+          Para casos donde necesitas máxima limpieza y velocidad: usa inputs declarativos (<code>title</code>, <code>subtitle</code>) sin necesidad de declarar directivas, o una estructura ligera de cabecera, texto breve y acción.
+        </p>
+      </div>
+
+      <div class="doc-split-showcase">
+        <div class="preview-card-container preview-card-container--stack">
+          <!-- Card Ultra Básica Declarativa -->
+          <vz-card
+            variant="outlined"
+            title="Aviso de Mantenimiento"
+            subtitle="Actualización programada · Viernes 22:00 hrs"
+          >
+            <p style="margin: 0; color: #475569;">
+              El portal de servicios escolares permanecerá en mantenimiento preventivo durante 45 minutos.
+            </p>
+          </vz-card>
+
+          <!-- Card Básica con Acción -->
+          <vz-card variant="elevated" [hoverable]="true">
+            <div vzCardHeader>
+              <div>
+                <span vzCardBadge variant="neutral" style="margin-bottom: 0.4rem;">TRÁMITE RÁPIDO</span>
+                <h3 vzCardTitle>Constancia de Estudios</h3>
+                <span vzCardSubtitle>Emisión digital inmediata</span>
+              </div>
+            </div>
+            <div vzCardContent>
+              <p>Descarga tu documento oficial con sello digital y código QR de validación institucional.</p>
+            </div>
+            <div vzCardFooter>
+              <span class="text-muted">Tiempo estimado: 1 min</span>
+              <vz-button size="sm" variant="primary">Solicitar</vz-button>
+            </div>
+          </vz-card>
+        </div>
+
+        <app-code-block [code]="basicCardSnippet" language="html" title="Cards Básicas (Declarativa y con Acción)" />
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 2. CARD MUY COMPLETA: PERFIL COMERCIAL / MARKETPLACE (PRO)           -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="card-completa-pro" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">2. Card Muy Completa (Marketplace &amp; Perfil Pro)</h2>
+        <p class="section-subtitle">
+          Composición de alta densidad informativa lograda 100% con directivas nativas de <code>vayzen-ui</code> (<code>vzCardEyebrow</code>, <code>vzCardBadge</code>, <code>vzCardRating</code>, <code>vzCardMeta</code>, <code>vzCardDivider</code>, <code>vzCardTags</code>, <code>vzCardInfoRow</code> y <code>vzCardLink</code>).
         </p>
       </div>
 
       <div class="doc-split-showcase">
         <div class="preview-card-container">
-          <vz-card variant="elevated" [hoverable]="true">
-            <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
-            <div vzCardHeader>
-              <div>
-                <h3 vzCardTitle>Control Escolar 2026</h3>
-                <span vzCardSubtitle>Plantel Central · Grupo 402</span>
-              </div>
-              <div vzCardActions>
-                <vz-button size="sm" variant="ghost">Ver</vz-button>
-              </div>
-            </div>
+          <vz-card variant="elevated" [borderedHeader]="false" [hoverable]="true">
+            <img
+              vzCardImage
+              src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=700&q=80"
+              alt="Nexus Hardware Lab"
+            />
+
             <div vzCardContent>
-              <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
+              <!-- Fila Eyebrow: Categoría + Rating -->
+              <div vzCardEyebrow>
+                <span vzCardBadge variant="primary">TECNOLOGÍA</span>
+                <span vzCardRating>
+                  <svg width="14" height="14" viewBox="0 0 24 24">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  4.95
+                </span>
+              </div>
+
+              <!-- Título y Subtítulo -->
+              <h3 vzCardTitle>Nexus Hardware Lab</h3>
+              <span vzCardSubtitle>Periféricos, hardware custom y componentes de precisión</span>
+
+              <!-- Indicadores de Confianza -->
+              <div vzCardMeta>
+                <span vzCardMetaItem tone="success">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                  Verificado
+                </span>
+                <span vzCardMetaItem>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#2563eb" stroke="#2563eb" stroke-width="1.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                  99% Seriedad
+                </span>
+                <span vzCardMetaItem>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  98% Puntualidad
+                </span>
+              </div>
+
+              <!-- Divisor Punteado -->
+              <hr vzCardDivider />
+
+              <!-- Etiquetas / Métodos de Pago -->
+              <div vzCardTags>
+                <span vzCardTag tone="success">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                    <circle cx="12" cy="12" r="2"></circle>
+                    <path d="M6 12h.01M18 12h.01"></path>
+                  </svg>
+                  Efectivo
+                </span>
+                <span vzCardTag tone="primary">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                  </svg>
+                  Digital
+                </span>
+                <span vzCardTag tone="warning">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M14.5 9a2.5 2.5 0 0 0-5 0v6a2.5 2.5 0 0 0 5 0"></path>
+                  </svg>
+                  Coin Points
+                </span>
+              </div>
+
+              <!-- Ubicación + Acción Secundaria -->
+              <div vzCardInfoRow>
+                <span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#dc2626" stroke="#ffffff" stroke-width="1.5">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3" fill="#ffffff"></circle>
+                  </svg>
+                  CDMX · Entregas Zona Centro
+                </span>
+                <vz-button size="sm" variant="outline" class="btn-qr-outline">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                  Ver QR
+                </vz-button>
+              </div>
             </div>
+
+            <!-- Pie de Tarjeta con Link y Botón Pill -->
             <div vzCardFooter>
-              <span class="text-muted">16 Alumnos inscritos</span>
-              <vz-button size="sm" variant="primary">Ingresar</vz-button>
+              <a vzCardLink href="javascript:void(0)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                kintab.app/&#64;nexus-hardw
+              </a>
+              <vz-button size="sm" variant="primary" class="btn-pill-cta">
+                Ver Catálogo →
+              </vz-button>
             </div>
           </vz-card>
         </div>
 
-        <app-code-block [code]="starterSnippet" language="html" title="Código de ejemplo" />
+        <app-code-block [code]="completeProSnippet" language="html" title="Código de Card Completa (Marketplace Pro)" />
       </div>
     </section>
 
-  <!-- Showcase 1: Widgets de Métricas (Dashboard Style) -->
-  <section id="metricas-dashboard" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Indicadores y Métricas para Dashboards</h2>
-      <p class="section-subtitle">
-        Composición con cabeceras limpias sin bordes, números grandes y badges de tendencia, ideal para paneles administrativos.
-      </p>
-    </div>
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 3. CARD MUY COMPLETA: GESTIÓN ACADÉMICA / ENTERPRISE                 -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="card-completa-academica" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">3. Card Muy Completa (Académica &amp; Enterprise)</h2>
+        <p class="section-subtitle">
+          La misma arquitectura de directivas aplicada a un módulo institucional: acreditaciones, métricas de eficiencia, becas activas, ubicación en campus y acceso directo al expediente.
+        </p>
+      </div>
 
-    <div class="metric-showcase-grid">
-      <!-- Tarjeta 1: Alumnos Activos -->
-      <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
-        <div vzCardHeader>
-          <div>
-            <span class="metric-category">Alumnos Inscritos</span>
-            <h2 class="metric-num">1,482</h2>
-          </div>
-          <div class="metric-icon-box metric-icon-box--primary">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-          </div>
-        </div>
-        <div vzCardContent>
-          <div class="metric-trend">
-            <span class="trend-tag trend-tag--up">+12.5%</span>
-            <span class="trend-caption">vs semestre anterior</span>
-          </div>
-        </div>
-      </vz-card>
+      <div class="doc-split-showcase">
+        <div class="preview-card-container">
+          <vz-card variant="elevated" [borderedHeader]="false" [hoverable]="true">
+            <img
+              vzCardImage
+              src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=700&q=80"
+              alt="Control Escolar 2026"
+            />
 
-      <!-- Tarjeta 2: Recaudación -->
-      <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
-        <div vzCardHeader>
-          <div>
-            <span class="metric-category">Cuotas Recaudadas</span>
-            <h2 class="metric-num">$148,500</h2>
-          </div>
-          <div class="metric-icon-box metric-icon-box--success">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="1" x2="12" y2="23"></line>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-          </div>
-        </div>
-        <div vzCardContent>
-          <div class="metric-trend">
-            <span class="trend-tag trend-tag--up">+8.3%</span>
-            <span class="trend-caption">meta mensual alcanzada</span>
-          </div>
-        </div>
-      </vz-card>
-
-      <!-- Tarjeta 3: Eficiencia Terminal -->
-      <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
-        <div vzCardHeader>
-          <div>
-            <span class="metric-category">Eficiencia Terminal</span>
-            <h2 class="metric-num">94.8%</h2>
-          </div>
-          <div class="metric-icon-box metric-icon-box--info">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-          </div>
-        </div>
-        <div vzCardContent>
-          <div class="metric-trend">
-            <span class="trend-tag trend-tag--neutral">+1.2%</span>
-            <span class="trend-caption">estabilidad en egresos</span>
-          </div>
-        </div>
-      </vz-card>
-    </div>
-
-    <app-code-block [code]="metricSnippet" language="html" title="Implementación del widget métrico" />
-  </section>
-
-  <!-- Showcase 2: Tarjetas con Franja de Acento de Estado -->
-  <section id="franjas-acento" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Franjas de Acento Semánticas (Accent Cards)</h2>
-      <p class="section-subtitle">
-        Destaca estados críticos de entidades de negocio usando franjas de acento superior o lateral con soporte de color semántico o personalizado.
-      </p>
-    </div>
-
-    <div class="accent-showcase-grid">
-      <!-- Success Top -->
-      <vz-card variant="accent" accent="success" accentPosition="top" [hoverable]="true">
-        <div vzCardHeader>
-          <div>
-            <h4 vzCardTitle>Inscripción Aprobada</h4>
-            <span vzCardSubtitle>Fatima Nava Peralta · Matrícula 2926BG06P002</span>
-          </div>
-          <div vzCardActions>
-            <span class="status-pill status-pill--success">Activo</span>
-          </div>
-        </div>
-        <div vzCardContent>
-          <p>Documentación académica completa, fotografía digital validada y matrícula asignada al Grupo 402.</p>
-        </div>
-        <div vzCardFooter>
-          <span class="text-muted">Plan: Bachillerato General</span>
-          <vz-button size="sm" variant="outline">Descargar Cédula</vz-button>
-        </div>
-      </vz-card>
-
-      <!-- Warning Left -->
-      <vz-card variant="accent" accent="warning" accentPosition="left" [hoverable]="true">
-        <div vzCardHeader>
-          <div>
-            <h4 vzCardTitle>Documento en Revisión</h4>
-            <span vzCardSubtitle>Drake Bell Martinez · Matrícula 2926BG06P002</span>
-          </div>
-          <div vzCardActions>
-            <span class="status-pill status-pill--warning">Pendiente</span>
-          </div>
-        </div>
-        <div vzCardContent>
-          <p>Falta validación de la fotografía oficial de credencial. Fecha límite de subsanación: 5 días hábiles.</p>
-        </div>
-        <div vzCardFooter>
-          <span class="text-muted">Movimiento: Inscripción</span>
-          <vz-button size="sm" variant="ghost">Notificar Alumno</vz-button>
-        </div>
-      </vz-card>
-
-      <!-- Danger Top -->
-      <vz-card variant="accent" accent="danger" accentPosition="top" [hoverable]="true">
-        <div vzCardHeader>
-          <div>
-            <h4 vzCardTitle>Baja Administrativa</h4>
-            <span vzCardSubtitle>Roberto Gomez Bolañoz · Matrícula 2925BG29T002</span>
-          </div>
-          <div vzCardActions>
-            <span class="status-pill status-pill--danger">Baja</span>
-          </div>
-        </div>
-        <div vzCardContent>
-          <p>Equivalencia no acreditada para las materias del tercer periodo por duplicidad de registro curricular.</p>
-        </div>
-        <div vzCardFooter>
-          <span class="text-muted">Estatus: Inactivo</span>
-          <vz-button size="sm" variant="outline">Consultar Historial</vz-button>
-        </div>
-      </vz-card>
-    </div>
-
-    <app-code-block [code]="accentSnippet" language="html" title="Uso de franjas de acento" />
-  </section>
-
-  <!-- Showcase 3: Tarjeta Horizontal -->
-  <section id="disposicion-horizontal" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Disposición Horizontal</h2>
-      <p class="section-subtitle">
-        Ideal para listados densos, perfiles de usuarios, fichas de producto o artículos donde la imagen debe compartir el espacio horizontalmente.
-      </p>
-    </div>
-
-    <div class="horizontal-showcase-container">
-      <vz-card orientation="horizontal" variant="elevated" [hoverable]="true">
-        <img vzCardImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=80" alt="Fotografía del alumno" />
-        <div vzCardHeader>
-          <div>
-            <h4 vzCardTitle>Fatima Nava Peralta</h4>
-            <span vzCardSubtitle>Matrícula: 2926BG06P002 · CURP: KWIR040107HMNRHN92</span>
-          </div>
-          <div vzCardActions>
-            <span class="status-pill status-pill--success">Inscrita</span>
-          </div>
-        </div>
-        <div vzCardContent>
-          <p>
-            Alumna perteneciente al Plantel Central en la modalidad de Bachillerato General. Actualmente cuenta con
-            un promedio general de 9.4 con 100% de asistencia registrada en el ciclo en curso.
-          </p>
-        </div>
-        <div vzCardFooter>
-          <span class="text-muted">Último movimiento: Inscripción regular</span>
-          <vz-button size="sm" variant="primary">Expediente Completo</vz-button>
-        </div>
-      </vz-card>
-    </div>
-
-    <app-code-block [code]="horizontalSnippet" language="html" title="Tarjeta horizontal" />
-  </section>
-
-  <!-- Showcase 4: Personalización con Tokens CSS -->
-  <section id="theming-tokens" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Personalización Total (Tokens de Diseño)</h2>
-      <p class="section-subtitle">
-        Cualquier desarrollador puede adaptar las tarjetas al branding de su empresa o proyecto sobrescribiendo las variables CSS nativas sin necesidad de librerías de terceros.
-      </p>
-    </div>
-
-    <div class="doc-split-showcase">
-      <div class="preview-card-container">
-        <div class="custom-card-wrapper card-dark-pro">
-          <vz-card variant="elevated" [hoverable]="true">
-            <div vzCardHeader>
-              <div>
-                <h4 vzCardTitle>Tema Nocturno Personalizado</h4>
-                <span vzCardSubtitle>Sobrescrito 100% con Variables CSS</span>
-              </div>
-              <div vzCardActions>
-                <vz-button size="sm" variant="outline">Pro</vz-button>
-              </div>
-            </div>
             <div vzCardContent>
-              <p>
-                Observa cómo el fondo, el texto, los bordes, el radio de las esquinas y las sombras cambian
-                únicamente declarando variables CSS bajo una clase contenedora.
-              </p>
+              <div vzCardEyebrow>
+                <span vzCardBadge variant="info">INGENIERÍA &amp; DATOS</span>
+                <span vzCardRating>
+                  <svg width="14" height="14" viewBox="0 0 24 24">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  4.98
+                </span>
+              </div>
+
+              <h3 vzCardTitle>Control Escolar · Ciclo 2026-B</h3>
+              <span vzCardSubtitle>Expedientes académicos, mallas curriculares y actas digitales</span>
+
+              <div vzCardMeta>
+                <span vzCardMetaItem tone="success">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                  RVOE Activo
+                </span>
+                <span vzCardMetaItem>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#2563eb" stroke="#2563eb" stroke-width="1.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                  96% Eficiencia
+                </span>
+                <span vzCardMetaItem>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  Matutino
+                </span>
+              </div>
+
+              <hr vzCardDivider />
+
+              <div vzCardTags>
+                <span vzCardTag tone="success">🎓 Presencial</span>
+                <span vzCardTag tone="primary">💻 Lab Cómputo</span>
+                <span vzCardTag tone="warning">🏅 Beca Excelencia</span>
+              </div>
+
+              <div vzCardInfoRow>
+                <span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#dc2626" stroke="#ffffff" stroke-width="1.5">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3" fill="#ffffff"></circle>
+                  </svg>
+                  Plantel Central · Edificio A-402
+                </span>
+                <vz-button size="sm" variant="outline" class="btn-qr-outline">Ver Kárdex</vz-button>
+              </div>
             </div>
+
             <div vzCardFooter>
-              <span class="text-muted">Cero Bootstrap · 100% CSS Nativo</span>
-              <vz-button size="sm" variant="primary">Explorar</vz-button>
+              <a vzCardLink href="javascript:void(0)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                vayzen.edu/&#64;control-escolar
+              </a>
+              <vz-button size="sm" variant="primary" class="btn-pill-cta">
+                Abrir Expediente →
+              </vz-button>
             </div>
           </vz-card>
         </div>
+
+        <app-code-block [code]="completeAcademicSnippet" language="html" title="Código de Card Completa (Académica)" />
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 4. INDICADORES Y MÉTRICAS PARA DASHBOARDS                            -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="metricas-dashboard" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">4. Indicadores y Métricas para Dashboards (KPI Cards)</h2>
+        <p class="section-subtitle">
+          Composición con cabeceras limpias sin bordes, números grandes y badges de tendencia, ideal para paneles ejecutivos.
+        </p>
       </div>
 
-      <app-code-block [code]="customThemingSnippet" language="css" title="Sobrescritura de tokens CSS" />
-    </div>
-  </section>
+      <div class="metric-showcase-grid">
+        <!-- Tarjeta 1: Alumnos Activos -->
+        <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
+          <div vzCardHeader>
+            <div>
+              <span class="metric-category">Alumnos Inscritos</span>
+              <h2 class="metric-num">1,482</h2>
+            </div>
+            <div class="metric-icon-box metric-icon-box--primary">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+          </div>
+          <div vzCardContent>
+            <div class="metric-trend">
+              <span class="trend-tag trend-tag--up">+12.5%</span>
+              <span class="trend-caption">vs semestre anterior</span>
+            </div>
+          </div>
+        </vz-card>
 
-  <!-- Referencia de API -->
-  <section id="api-referencia" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Referencia de API</h2>
-    </div>
+        <!-- Tarjeta 2: Recaudación -->
+        <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
+          <div vzCardHeader>
+            <div>
+              <span class="metric-category">Cuotas Recaudadas</span>
+              <h2 class="metric-num">$148,500</h2>
+            </div>
+            <div class="metric-icon-box metric-icon-box--success">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+          </div>
+          <div vzCardContent>
+            <div class="metric-trend">
+              <span class="trend-tag trend-tag--up">+8.3%</span>
+              <span class="trend-caption">meta mensual alcanzada</span>
+            </div>
+          </div>
+        </vz-card>
 
-    <h3 class="subsection-title">Inputs de <code>&lt;vz-card&gt;</code></h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Por defecto</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of inputRows; track row[0]) {
+        <!-- Tarjeta 3: Eficiencia Terminal -->
+        <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
+          <div vzCardHeader>
+            <div>
+              <span class="metric-category">Eficiencia Terminal</span>
+              <h2 class="metric-num">94.8%</h2>
+            </div>
+            <div class="metric-icon-box metric-icon-box--info">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div vzCardContent>
+            <div class="metric-trend">
+              <span class="trend-tag trend-tag--neutral">+1.2%</span>
+              <span class="trend-caption">estabilidad en egresos</span>
+            </div>
+          </div>
+        </vz-card>
+      </div>
+
+      <app-code-block [code]="metricSnippet" language="html" title="Implementación del widget métrico" />
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 5. FRANJAS DE ACENTO SEMÁNTICAS                                      -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="franjas-acento" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">5. Franjas de Acento Semánticas (Accent Cards)</h2>
+        <p class="section-subtitle">
+          Destaca estados críticos de entidades de negocio usando franjas de acento superior o lateral con soporte de color semántico o personalizado.
+        </p>
+      </div>
+
+      <div class="accent-showcase-grid">
+        <!-- Success Top -->
+        <vz-card variant="accent" accent="success" accentPosition="top" [hoverable]="true">
+          <div vzCardHeader>
+            <div>
+              <h4 vzCardTitle>Inscripción Aprobada</h4>
+              <span vzCardSubtitle>Fatima Nava Peralta · Matrícula 2926BG06P002</span>
+            </div>
+            <div vzCardActions>
+              <span vzCardBadge variant="success">Activo</span>
+            </div>
+          </div>
+          <div vzCardContent>
+            <p>Documentación académica completa, fotografía digital validada y matrícula asignada al Grupo 402.</p>
+          </div>
+          <div vzCardFooter>
+            <span class="text-muted">Plan: Bachillerato General</span>
+            <vz-button size="sm" variant="outline">Descargar Cédula</vz-button>
+          </div>
+        </vz-card>
+
+        <!-- Warning Left -->
+        <vz-card variant="accent" accent="warning" accentPosition="left" [hoverable]="true">
+          <div vzCardHeader>
+            <div>
+              <h4 vzCardTitle>Documento en Revisión</h4>
+              <span vzCardSubtitle>Drake Bell Martinez · Matrícula 2926BG06P002</span>
+            </div>
+            <div vzCardActions>
+              <span vzCardBadge variant="warning">Pendiente</span>
+            </div>
+          </div>
+          <div vzCardContent>
+            <p>Falta validación de la fotografía oficial de credencial. Fecha límite de subsanación: 5 días hábiles.</p>
+          </div>
+          <div vzCardFooter>
+            <span class="text-muted">Movimiento: Inscripción</span>
+            <vz-button size="sm" variant="ghost">Notificar Alumno</vz-button>
+          </div>
+        </vz-card>
+
+        <!-- Danger Top -->
+        <vz-card variant="accent" accent="danger" accentPosition="top" [hoverable]="true">
+          <div vzCardHeader>
+            <div>
+              <h4 vzCardTitle>Baja Administrativa</h4>
+              <span vzCardSubtitle>Roberto Gomez Bolañoz · Matrícula 2925BG29T002</span>
+            </div>
+            <div vzCardActions>
+              <span vzCardBadge variant="danger">Baja</span>
+            </div>
+          </div>
+          <div vzCardContent>
+            <p>Equivalencia no acreditada para las materias del tercer periodo por duplicidad de registro curricular.</p>
+          </div>
+          <div vzCardFooter>
+            <span class="text-muted">Estatus: Inactivo</span>
+            <vz-button size="sm" variant="outline">Consultar Historial</vz-button>
+          </div>
+        </vz-card>
+      </div>
+
+      <app-code-block [code]="accentSnippet" language="html" title="Uso de franjas de acento" />
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 6. TARJETA HORIZONTAL COMPLETA                                       -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="disposicion-horizontal" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">6. Disposición Horizontal Completa</h2>
+        <p class="section-subtitle">
+          Ideal para listados densos, perfiles de alumnos, fichas de especialistas o catálogos donde la fotografía comparte el espacio horizontalmente con badges y chips.
+        </p>
+      </div>
+
+      <div class="horizontal-showcase-container">
+        <vz-card orientation="horizontal" variant="elevated" [borderedHeader]="false" [hoverable]="true">
+          <img vzCardImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=80" alt="Fotografía del alumno" />
+          <div vzCardContent>
+            <div vzCardEyebrow>
+              <span vzCardBadge variant="success">ALUMNA REGULAR</span>
+              <span vzCardRating>★ 9.4 Promedio</span>
+            </div>
+            <h4 vzCardTitle>Fatima Nava Peralta</h4>
+            <span vzCardSubtitle>Matrícula: 2926BG06P002 · CURP: KWIR040107HMNRHN92</span>
+            <div vzCardMeta>
+              <span vzCardMetaItem tone="success">✓ Reinscrita</span>
+              <span vzCardMetaItem>🛡️ 100% Asistencia</span>
+              <span vzCardMetaItem>🕒 Semestre 4</span>
+            </div>
+            <div vzCardTags>
+              <span vzCardTag tone="primary">Bachillerato General</span>
+              <span vzCardTag tone="success">Beca Institucional</span>
+              <span vzCardTag tone="neutral">Plantel Central</span>
+            </div>
+          </div>
+          <div vzCardFooter>
+            <a vzCardLink href="javascript:void(0)">🔗 Expediente #2926-BG</a>
+            <vz-button size="sm" variant="primary" class="btn-pill-cta">Expediente Completo →</vz-button>
+          </div>
+        </vz-card>
+      </div>
+
+      <app-code-block [code]="horizontalSnippet" language="html" title="Tarjeta horizontal con directivas ricas" />
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 7. PERSONALIZACIÓN CON TOKENS CSS                                    -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="theming-tokens" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">7. Personalización Total (Tokens de Diseño)</h2>
+        <p class="section-subtitle">
+          Cualquier desarrollador puede adaptar las tarjetas al branding de su empresa o proyecto sobrescribiendo las variables CSS nativas sin necesidad de librerías de terceros.
+        </p>
+      </div>
+
+      <div class="doc-split-showcase">
+        <div class="preview-card-container">
+          <div class="custom-card-wrapper card-dark-pro">
+            <vz-card variant="elevated" [hoverable]="true">
+              <div vzCardHeader>
+                <div>
+                  <h4 vzCardTitle>Tema Nocturno Personalizado</h4>
+                  <span vzCardSubtitle>Sobrescrito 100% con Variables CSS</span>
+                </div>
+                <div vzCardActions>
+                  <span vzCardBadge variant="info">Dark Pro</span>
+                </div>
+              </div>
+              <div vzCardContent>
+                <p>
+                  Observa cómo el fondo, el texto, los bordes, el radio de las esquinas y las sombras cambian
+                  únicamente declarando variables CSS bajo una clase contenedora.
+                </p>
+              </div>
+              <div vzCardFooter>
+                <span class="text-muted">Cero Bootstrap · 100% CSS Nativo</span>
+                <vz-button size="sm" variant="primary">Explorar</vz-button>
+              </div>
+            </vz-card>
+          </div>
+        </div>
+
+        <app-code-block [code]="customThemingSnippet" language="css" title="Sobrescritura de tokens CSS" />
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 8. REFERENCIA DE API                                                 -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="api-referencia" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">Referencia de API</h2>
+      </div>
+
+      <h3 class="subsection-title">Inputs de <code>&lt;vz-card&gt;</code></h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
             <tr>
-              <td><code>{{ row[0] }}</code></td>
-              <td><code>{{ row[1] }}</code></td>
-              <td><code>{{ row[2] }}</code></td>
-              <td>{{ row[3] }}</td>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Por defecto</th>
+              <th>Descripción</th>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            @for (row of inputRows; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td><code>{{ row[2] }}</code></td>
+                <td>{{ row[3] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-    <h3 class="subsection-title">Outputs</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of outputRows; track row[0]) {
+      <h3 class="subsection-title">Outputs</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
             <tr>
-              <td><code>{{ row[0] }}</code></td>
-              <td><code>{{ row[1] }}</code></td>
-              <td>{{ row[2] }}</td>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            @for (row of outputRows; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td>{{ row[2] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-    <h3 class="subsection-title">Directivas Semánticas de Estructura</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead>
-          <tr>
-            <th>Directiva</th>
-            <th>Uso</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of directiveRows; track row[0]) {
+      <h3 class="subsection-title">Directivas Semánticas (Básicas y Completas)</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
             <tr>
-              <td><code>{{ row[0] }}</code></td>
-              <td><code>{{ row[1] }}</code></td>
-              <td>{{ row[2] }}</td>
+              <th>Directiva</th>
+              <th>Elemento / Rol</th>
+              <th>Descripción</th>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            @for (row of directiveRows; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td>{{ row[2] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-    <h3 class="subsection-title">Variables CSS (Tokens de Diseño)</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead>
-          <tr>
-            <th>Variable</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of cssVarRows; track row[0]) {
+      <h3 class="subsection-title">Variables CSS (Tokens de Diseño)</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
             <tr>
-              <td><code>{{ row[0] }}</code></td>
-              <td>{{ row[1] }}</td>
+              <th>Variable</th>
+              <th>Descripción</th>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
+          </thead>
+          <tbody>
+            @for (row of cssVarRows; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td>{{ row[1] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
   </article>
 
-  <!-- Lateral Derecho: Studio Callout + TOC (Estilo Bootstrap / PrimeNG) -->
+  <!-- Lateral Derecho: Studio Callout + TOC -->
   <aside class="doc-toc-sidebar">
     <div class="studio-widget-card">
       <div class="widget-badge-row">
@@ -400,7 +649,7 @@
       </div>
       <h4 class="widget-title">Diseñador en Vivo</h4>
       <p class="widget-desc">
-        Abre el laboratorio interactivo para probar variantes, franjas de acento, orientación y exportar código limpio.
+        Alterna entre Cards Básicas y Cards Completas Pro en tiempo real, activa o desactiva badges, ratings, chips y exporta el código.
       </p>
       <a routerLink="/studio" [queryParams]="{ component: 'card' }" class="widget-action-btn">
         <span>Abrir en Studio</span>
@@ -414,11 +663,13 @@
     <div class="toc-container">
       <h5 class="toc-title">En esta página</h5>
       <nav class="toc-nav">
-        <a href="#ejemplo-basico" class="toc-link">Ejemplo Básico</a>
-        <a href="#metricas-dashboard" class="toc-link">Indicadores y KPIs</a>
-        <a href="#franjas-acento" class="toc-link">Franjas de Acento</a>
-        <a href="#disposicion-horizontal" class="toc-link">Disposición Horizontal</a>
-        <a href="#theming-tokens" class="toc-link">Tokens de Diseño</a>
+        <a href="#cards-basicas" class="toc-link">1. Cards Muy Básicas</a>
+        <a href="#card-completa-pro" class="toc-link">2. Card Completa (Pro)</a>
+        <a href="#card-completa-academica" class="toc-link">3. Card Académica</a>
+        <a href="#metricas-dashboard" class="toc-link">4. Indicadores y KPIs</a>
+        <a href="#franjas-acento" class="toc-link">5. Franjas de Acento</a>
+        <a href="#disposicion-horizontal" class="toc-link">6. Disposición Horizontal</a>
+        <a href="#theming-tokens" class="toc-link">7. Tokens de Diseño</a>
         <a href="#api-referencia" class="toc-link">Referencia de API</a>
       </nav>
     </div>

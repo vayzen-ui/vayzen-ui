@@ -4,3 +4,4 @@ export type VzCardAccentPosition = 'top' | 'left';
 export type VzCardDensity = 'compact' | 'comfortable' | 'spacious';
 export type VzCardOrientation = 'vertical' | 'horizontal';
 export type VzCardImagePosition = 'top' | 'bottom' | 'cover';
+export type VzCardTone = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';

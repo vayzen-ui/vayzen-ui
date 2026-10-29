@@ -3,25 +3,10 @@ export * from './card.directives';
 export * from './card.types';
 
 import { VzCardComponent } from './card.component';
-import {
-  VzCardActionsDirective,
-  VzCardContentDirective,
-  VzCardFooterDirective,
-  VzCardHeaderDirective,
-  VzCardImageDirective,
-  VzCardSubtitleDirective,
-  VzCardTitleDirective,
-} from './card.directives';
+import { VZ_CARD_DIRECTIVES } from './card.directives';
 
-/** Atajo para importar el componente Card y todas sus directivas de slot. */
+/** Atajo para importar el componente Card y todas sus directivas semánticas y de estructura. */
 export const VZ_CARD_IMPORTS = [
   VzCardComponent,
-  VzCardHeaderDirective,
-  VzCardTitleDirective,
-  VzCardSubtitleDirective,
-  VzCardActionsDirective,
-  VzCardContentDirective,
-  VzCardFooterDirective,
-  VzCardImageDirective,
+  ...VZ_CARD_DIRECTIVES,
 ] as const;
-
