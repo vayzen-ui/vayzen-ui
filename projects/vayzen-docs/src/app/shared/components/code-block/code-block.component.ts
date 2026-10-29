@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { highlightCode } from './syntax-highlighter';
 
 @Component({
   selector: 'app-code-block',
@@ -8,12 +17,20 @@ import { ChangeDetectionStrategy, Component, computed, input, signal } from '@an
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CodeBlockComponent {
+  private readonly sanitizer = inject(DomSanitizer);
+
   readonly code = input.required<string>();
   readonly language = input<string>('html');
   readonly title = input<string>('');
 
   protected readonly languageUpper = computed(() => (this.language() || '').toUpperCase());
   protected readonly copied = signal<boolean>(false);
+
+  /** Código formateado con resaltado de sintaxis estilo Bootstrap Docs / GitHub Dark */
+  protected readonly highlightedHtml = computed<SafeHtml>(() => {
+    const rawHtml = highlightCode(this.code(), this.language());
+    return this.sanitizer.bypassSecurityTrustHtml(rawHtml);
+  });
 
   protected async copyToClipboard(): Promise<void> {
     try {

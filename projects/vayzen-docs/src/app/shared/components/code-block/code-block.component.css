@@ -8,10 +8,10 @@
   display: flex;
   flex-direction: column;
   border-radius: 12px;
-  background-color: #0f172a;
-  border: 1px solid #1e293b;
+  background-color: #0d1117;
+  border: 1px solid #21262d;
   overflow: hidden;
-  box-shadow: 0 10px 24px -16px rgba(15, 23, 42, 0.45);
+  box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.55);
 }
 
 .code-block-header {
@@ -19,8 +19,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.55rem 1rem;
-  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-  border-bottom: 1px solid #334155;
+  background-color: #161b22;
+  border-bottom: 1px solid #21262d;
 }
 
 .code-meta {
@@ -42,7 +42,7 @@
 
 .code-title {
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: #8b949e;
   font-weight: 500;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
@@ -53,9 +53,9 @@
   gap: 0.4rem;
   font-size: 0.73rem;
   font-weight: 600;
-  color: #cbd5e1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid #334155;
+  color: #c9d1d9;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #30363d;
   border-radius: 7px;
   padding: 0.28rem 0.65rem;
   cursor: pointer;
@@ -64,8 +64,8 @@
 
 .copy-btn:hover {
   color: #ffffff;
-  background: #334155;
-  border-color: #475569;
+  background: #21262d;
+  border-color: #484f58;
 }
 
 .copy-icon {
@@ -73,22 +73,127 @@
 }
 
 .copy-icon.check {
-  color: #34d399;
+  color: #3fb950;
 }
 
 .code-content {
   flex: 1;
   margin: 0;
-  padding: 1.1rem 1.25rem;
+  padding: 1.15rem 1.35rem;
   overflow-x: auto;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   font-size: 0.84rem;
-  line-height: 1.65;
-  color: #e2e8f0;
+  line-height: 1.7;
+  color: #e6edf3;
   tab-size: 2;
+  background-color: #0d1117;
 }
 
 .code-content code {
   font-family: inherit;
   color: inherit;
+  display: block;
+}
+
+/* ═════════════════════════════════════════════════════════════════ */
+/* TOKENS DE RESALTADO DE SINTAXIS (Estilo Bootstrap / GitHub Dark) */
+/* ═════════════════════════════════════════════════════════════════ */
+
+/* Comentarios <!-- ... --> o /* ... * / */
+:host ::ng-deep .token-comment {
+  color: #8b949e;
+  font-style: italic;
+}
+
+/* Brackets de tags HTML < y > y </ */
+:host ::ng-deep .token-tag-bracket {
+  color: #79c0ff;
+  font-weight: 600;
+}
+
+/* Nombres de tags HTML (<vz-card, <div, <button, <span, etc.) */
+:host ::ng-deep .token-tag-name {
+  color: #ff7b72;
+  font-weight: 600;
+}
+
+/* Atributos estándar (class, variant, size, href, id) */
+:host ::ng-deep .token-attr {
+  color: #7ee787;
+}
+
+/* Directivas de Vayzen o booleanos (vzCardImage, vzCardHeader, hoverable) */
+:host ::ng-deep .token-directive {
+  color: #38bdf8;
+  font-weight: 500;
+}
+
+/* Inputs Angular [variant], [borderedHeader] */
+:host ::ng-deep .token-attr-input {
+  color: #d2a8ff;
+  font-weight: 600;
+}
+
+/* Outputs Angular (click), (clicked) */
+:host ::ng-deep .token-attr-output {
+  color: #ffa657;
+  font-weight: 600;
+}
+
+/* Two-way binding [(ngModel)] */
+:host ::ng-deep .token-attr-twoway {
+  color: #f0883e;
+  font-weight: 600;
+}
+
+/* Signo de puntuación / asignación = */
+:host ::ng-deep .token-punctuation {
+  color: #79c0ff;
+}
+
+/* Valores de atributos / Strings "..." */
+:host ::ng-deep .token-string {
+  color: #a5d6ff;
+}
+
+/* Interpolaciones Angular {{ expr }} */
+:host ::ng-deep .token-interpolation {
+  color: #d2a8ff;
+}
+
+:host ::ng-deep .token-expr {
+  color: #f0f6fc;
+}
+
+/* CSS Properties y Variables */
+:host ::ng-deep .token-prop {
+  color: #79c0ff;
+}
+
+:host ::ng-deep .token-custom-prop {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+:host ::ng-deep .token-selector {
+  color: #ff7b72;
+  font-weight: 600;
+}
+
+:host ::ng-deep .token-number {
+  color: #f0883e;
+}
+
+/* TypeScript / JavaScript */
+:host ::ng-deep .token-keyword {
+  color: #ff7b72;
+  font-weight: 600;
+}
+
+:host ::ng-deep .token-builtin {
+  color: #79c0ff;
+}
+
+:host ::ng-deep .token-decorator {
+  color: #d2a8ff;
 }
