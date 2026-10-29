@@ -1,9 +1,25 @@
-.sidebar {
-  width: 240px;
-  border-right: 1px solid #e2e8f0;
-  min-height: calc(100vh - 57px);
-  padding: 1.5rem 1rem;
+:host {
+  display: block;
+  width: 250px;
+  flex-shrink: 0;
+  height: 100%;
   background: #fafafa;
+  border-right: 1px solid #e2e8f0;
+}
+
+.sidebar {
+  height: 100%;
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
 }
 
 .nav {
@@ -29,6 +45,7 @@
   color: #334155;
   text-decoration: none;
   font-size: 0.9rem;
+  transition: all 150ms ease;
 }
 
 .nav-link:hover {
@@ -41,4 +58,3 @@
   color: #0f172a;
   font-weight: 600;
 }
-
