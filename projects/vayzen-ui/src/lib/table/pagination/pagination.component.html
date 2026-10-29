@@ -1,0 +1,65 @@
+<div class="vz-pagination">
+  @if (showInfo()) {
+    <p class="vz-pagination__info" aria-live="polite">
+      {{ lbl().showing }} <strong>{{ rangeStart() }}–{{ rangeEnd() }}</strong> {{ lbl().of }} <strong>{{ total() }}</strong>
+    </p>
+  }
+
+  <div class="vz-pagination__controls">
+    @if (showSizeSelector()) {
+      <label class="vz-pagination__size">
+        <span>{{ lbl().perPage }}</span>
+        <select class="vz-pagination__select" (change)="onSizeChange($event)">
+          @for (size of sizeOptions(); track size) {
+            <option [value]="size" [selected]="size === pageSize()">{{ size }}</option>
+          }
+        </select>
+      </label>
+    }
+
+    <nav [attr.aria-label]="lbl().navigation">
+      <ul class="vz-pagination__list">
+        <li>
+          <button type="button" class="vz-pagination__btn" [disabled]="current() === 1" [attr.aria-label]="lbl().first" [attr.title]="lbl().first" (click)="go(1)">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 3.5 4 8l4.5 4.5M12.5 3.5 8 8l4.5 4.5" /></svg>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="vz-pagination__btn" [disabled]="current() === 1" [attr.aria-label]="lbl().previous" [attr.title]="lbl().previous" (click)="go(current() - 1)">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" /></svg>
+          </button>
+        </li>
+
+        @for (p of pages(); track $index) {
+          <li>
+            @if (p === null) {
+              <span class="vz-pagination__ellipsis" aria-hidden="true">…</span>
+            } @else {
+              <button
+                type="button"
+                class="vz-pagination__btn vz-pagination__btn--page"
+                [class.is-active]="p === current()"
+                [attr.aria-label]="lbl().page + ' ' + p"
+                [attr.aria-current]="p === current() ? 'page' : null"
+                (click)="go(p)"
+              >
+                {{ p }}
+              </button>
+            }
+          </li>
+        }
+
+        <li>
+          <button type="button" class="vz-pagination__btn" [disabled]="current() === totalPages()" [attr.aria-label]="lbl().next" [attr.title]="lbl().next" (click)="go(current() + 1)">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="vz-pagination__btn" [disabled]="current() === totalPages()" [attr.aria-label]="lbl().last" [attr.title]="lbl().last" (click)="go(totalPages())">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 3.5 12 8l-4.5 4.5M3.5 3.5 8 8l-4.5 4.5" /></svg>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

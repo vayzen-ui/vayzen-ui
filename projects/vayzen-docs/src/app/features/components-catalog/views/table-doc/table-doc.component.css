@@ -1,0 +1,112 @@
+.stage {
+  padding: 1.25rem;
+  background: #f8fafc;
+}
+
+.event-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 0.7rem 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 0.8rem;
+  color: #475569;
+}
+
+.event-bar code {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: #0f172a;
+}
+
+.query-preview {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  overflow-x: auto;
+}
+
+.query-preview-title {
+  padding: 0.5rem 1.25rem;
+  background: #1e293b;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.demo-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Filtro personalizado: chips */
+.chips {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border-radius: 8px;
+  background: #e2e8f0;
+}
+
+.chips button {
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.8rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+.chips button.active {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+.dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+}
+
+/* Demo de theming: se sobrescriben solo variables CSS, sin ::ng-deep ni !important */
+.theme-violet {
+  --vz-primary: #6d28d9;
+  --vz-table-radius: 14px;
+  --vz-table-header-bg: #f5f3ff;
+  --vz-table-header-color: #5b21b6;
+  --vz-table-row-hover-bg: #faf5ff;
+  --vz-table-border-color: #ddd6fe;
+}
+
+.theme-dark {
+  --vz-table-bg: #0f172a;
+  --vz-table-color: #e2e8f0;
+  --vz-table-muted-color: #94a3b8;
+  --vz-table-border-color: #1e293b;
+  --vz-table-header-bg: #1e293b;
+  --vz-table-header-color: #cbd5e1;
+  --vz-table-row-hover-bg: #172554;
+  --vz-table-accent: #38bdf8;
+  --vz-border: #334155;
+  --vz-text-primary: #e2e8f0;
+  --vz-text-secondary: #94a3b8;
+  --vz-surface-alt: #1e293b;
+}
+
+.theme-demo-grid {
+  display: grid;
+  gap: 1.25rem;
+}

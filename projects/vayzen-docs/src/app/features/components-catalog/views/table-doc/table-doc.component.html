@@ -1,0 +1,246 @@
+<div class="doc-page">
+  <header class="doc-header">
+    <div class="doc-header-top">
+      <span class="category-tag">Componentes / Datos</span>
+      <span class="version-tag">Standalone</span>
+    </div>
+    <h1 class="doc-title">Table</h1>
+    <p class="doc-description">
+      Tabla de datos configurable: búsqueda, orden múltiple, filtros y paginación que pueden resolverse en el navegador
+      (todo el JSON en memoria) o delegarse al backend. Sin dependencias externas y con theming por variables CSS.
+    </p>
+  </header>
+
+  <!-- Playground -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Playground</h2>
+      <p class="section-subtitle">
+        Cambia entre <strong>modo cliente</strong> (87 registros en memoria) y <strong>modo servidor</strong> (una API simulada con
+        600&nbsp;ms de latencia que recibe el <code>queryChange</code> y devuelve solo la página pedida). Usa <strong>Shift + clic</strong> en
+        los encabezados para ordenar por varias columnas.
+      </p>
+    </div>
+
+    <div class="playground-card">
+      <div class="playground-controls">
+        <div class="control-group">
+          <span class="control-label">Datos:</span>
+          <div class="pill-group">
+            <button type="button" class="pill-btn" [class.active]="mode() === 'client'" (click)="mode.set('client')">Cliente (JSON completo)</button>
+            <button type="button" class="pill-btn" [class.active]="mode() === 'server'" (click)="mode.set('server')">Servidor (API simulada)</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">Densidad:</span>
+          <div class="pill-group">
+            <button type="button" class="pill-btn" [class.active]="density() === 'compact'" (click)="density.set('compact')">Compact</button>
+            <button type="button" class="pill-btn" [class.active]="density() === 'comfortable'" (click)="density.set('comfortable')">Comfortable</button>
+            <button type="button" class="pill-btn" [class.active]="density() === 'spacious'" (click)="density.set('spacious')">Spacious</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">Estado:</span>
+          <div class="pill-group">
+            <button type="button" class="pill-btn" [class.active]="viewState() === 'normal'" (click)="viewState.set('normal')">Normal</button>
+            <button type="button" class="pill-btn" [class.active]="viewState() === 'loading'" (click)="viewState.set('loading')">Loading</button>
+            <button type="button" class="pill-btn" [class.active]="viewState() === 'empty'" (click)="viewState.set('empty')">Empty</button>
+            <button type="button" class="pill-btn" [class.active]="viewState() === 'error'" (click)="viewState.set('error')">Error</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">Opciones:</span>
+          <label class="checkbox-label"><input type="checkbox" [checked]="striped()" (change)="striped.set(!striped())" /> Striped</label>
+          <label class="checkbox-label"><input type="checkbox" [checked]="hoverable()" (change)="hoverable.set(!hoverable())" /> Hoverable</label>
+          <label class="checkbox-label"><input type="checkbox" [checked]="bordered()" (change)="bordered.set(!bordered())" /> Bordered</label>
+          <label class="checkbox-label"><input type="checkbox" [checked]="selectable()" (change)="selectable.set(!selectable())" /> Selección</label>
+        </div>
+      </div>
+
+      <div class="stage">
+        @for (key of modeKey(); track key) {
+          <vz-table
+            heading="Empleados"
+            [columns]="columns"
+            [data]="tableData()"
+            [filters]="filters"
+            [config]="config()"
+            [loading]="tableLoading()"
+            [error]="tableError()"
+            [serverPage]="serverPage()"
+            (queryChange)="onQuery($event)"
+            (rowAction)="onRowAction($event)"
+            (selectionChange)="onSelection($event)"
+            (retry)="onRetry()"
+          />
+        }
+      </div>
+
+      <div class="event-bar">
+        <span>Último evento: <code>{{ lastEvent() }}</code></span>
+        <span>Modo: <code>{{ mode() }}</code></span>
+      </div>
+
+      @if (mode() === 'server' && lastQuery()) {
+        <div class="query-preview-title">Último queryChange enviado al backend</div>
+        <pre class="query-preview">{{ asJson(lastQuery()) }}</pre>
+      }
+    </div>
+  </section>
+
+  <!-- Uso básico (cliente) -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Uso básico · todos los datos en un JSON</h2>
+      <p class="section-subtitle">
+        Es el modo por defecto: la tabla busca (sin acentos ni mayúsculas), ordena, filtra y pagina por sí sola.
+      </p>
+    </div>
+    <app-code-block [code]="installSnippet" language="typescript" title="empleados.component.ts" />
+    <app-code-block [code]="clientHtmlSnippet" language="html" title="empleados.component.html" />
+  </section>
+
+  <!-- Servidor -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Modo servidor · paginación, búsqueda y orden en el backend</h2>
+      <p class="section-subtitle">
+        Con <code>mode: 'server'</code> la tabla solo pinta lo que recibe y emite <code>queryChange</code> con todo el estado de la consulta.
+        La búsqueda tiene debounce configurable y siempre reinicia a la página 1. Responde con los datos de esa página y el total en <code>serverPage</code>.
+      </p>
+    </div>
+    <app-code-block [code]="serverTsSnippet" language="typescript" title="empleados.component.ts" />
+    <app-code-block [code]="serverHtmlSnippet" language="html" title="empleados.component.html" />
+
+    <h3 class="subsection-title">Modo mixto</h3>
+    <p class="section-subtitle">
+      Cada capacidad puede elegir su modo. Por ejemplo, un backend que pagina y tiene su propio endpoint de búsqueda, pero deja el orden al navegador.
+    </p>
+    <app-code-block [code]="mixedSnippet" language="typescript" title="Configuración mixta" />
+    <p class="doc-note">
+      Si tu búsqueda requiere llamar a un método específico del backend, también puedes escuchar solo <code>(searchChange)</code>,
+      que emite el término ya con debounce y <code>minChars</code> aplicados.
+    </p>
+  </section>
+
+  <!-- Filtros y celdas personalizadas -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Filtros y celdas personalizadas</h2>
+      <p class="section-subtitle">
+        Los filtros usan un <code>&lt;select&gt;</code> nativo por defecto. Con <code>vzFilterControl</code> los reemplazas por el selector que prefieras
+        (tu combobox, chips, etc.) y con <code>vzCell</code> personalizas cualquier celda. Aquí un ejemplo con chips y un indicador de color:
+      </p>
+    </div>
+
+    <div class="demo-block">
+      <vz-table [columns]="customColumns" [data]="customData" [filters]="customFilters" [config]="smallConfig">
+        <ng-template vzFilterControl="status" let-value="value" let-options="options" let-change="change">
+          <div class="chips">
+            <button type="button" [class.active]="!value" (click)="change(null)">Todos</button>
+            @for (opt of options; track opt.value) {
+              <button type="button" [class.active]="value === opt.value" (click)="change(opt.value)">{{ opt.label }}</button>
+            }
+          </div>
+        </ng-template>
+
+        <ng-template vzCell="status" let-value="value">
+          <span class="dot" [style.background]="statusColor(value)"></span>{{ value }}
+        </ng-template>
+      </vz-table>
+    </div>
+
+    <app-code-block [code]="customFilterHtml" language="html" title="Template personalizado" />
+
+    <h3 class="subsection-title">Slots de contenido</h3>
+    <app-code-block [code]="slotsSnippet" language="html" title="vzTableTitle · vzTableActions · vzTableEmpty" />
+  </section>
+
+  <!-- Theming -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Personalización del diseño</h2>
+      <p class="section-subtitle">
+        Igual que el botón, la tabla se adapta a tu marca solo con variables CSS: globales en <code>:root</code> o por clase en una tabla concreta,
+        sin <code>::ng-deep</code> ni <code>!important</code>.
+      </p>
+    </div>
+
+    <div class="theme-demo-grid">
+      <vz-table class="theme-violet" heading="Tema violeta (--vz-primary + variables de tabla)" [columns]="customColumns" [data]="customData" [config]="smallConfig" />
+      <vz-table class="theme-dark" heading="Tema oscuro (clase propia)" [columns]="customColumns" [data]="customData" [config]="smallConfig" />
+    </div>
+
+    <app-code-block [code]="themingGlobalSnippet" language="scss" title="styles.scss" />
+    <app-code-block [code]="themingClassSnippet" language="scss" title="mi-vista.component.css" />
+    <app-code-block [code]="themingHtmlSnippet" language="html" title="mi-vista.component.html" />
+    <app-code-block [code]="labelsSnippet" language="html" title="Textos / i18n" />
+  </section>
+
+  <!-- Referencias -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">API Reference</h2>
+    </div>
+
+    <h3 class="subsection-title">Inputs de &lt;vz-table&gt;</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of inputRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td><code>{{ row[2] }}</code></td><td>{{ row[3] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">Outputs</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of outputRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">VzTableConfig</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Propiedad</th><th>Tipo</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of configRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">VzColumn</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Propiedad</th><th>Tipo</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of columnRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">Variables CSS</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Variable</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of cssVarRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td>{{ row[1] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

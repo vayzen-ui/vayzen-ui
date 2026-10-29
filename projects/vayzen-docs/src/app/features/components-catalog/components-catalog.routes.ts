@@ -16,5 +16,10 @@ export const COMPONENTS_CATALOG_ROUTES: Routes = [
     loadComponent: () =>
       import('./views/input-doc/input-doc.component').then((m) => m.InputDocComponent),
   },
+  {
+    path: 'tables',
+    loadComponent: () =>
+      import('./views/table-doc/table-doc.component').then((m) => m.TableDocComponent),
+  },
 ];
 
