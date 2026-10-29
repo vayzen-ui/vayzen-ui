@@ -14,3 +14,18 @@
   border-radius: 8px;
   background-color: #ffffff;
 }
+
+/* Ejemplo de sobrescritura limpia por el usuario final usando Variables CSS */
+.custom-emerald-pill {
+  --vz-btn-bg: #10b981;
+  --vz-btn-hover-bg: #059669;
+  --vz-btn-active-bg: #047857;
+  --vz-btn-radius: 9999px;
+}
+
+.custom-violet-square {
+  --vz-btn-bg: #8b5cf6;
+  --vz-btn-hover-bg: #7c3aed;
+  --vz-btn-active-bg: #6d28d9;
+  --vz-btn-radius: 0px;
+}

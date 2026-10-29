@@ -1,6 +1,6 @@
 <section class="doc-page">
   <h1>Button</h1>
-  <p>Componente de botón interactivo nativo con soporte para variantes de diseño y tamaños.</p>
+  <p>Componente de botón interactivo nativo con soporte para variantes de diseño, tamaños y personalización mediante Variables CSS.</p>
 
   <h2>Variantes</h2>
   <div class="demo-box">
@@ -20,5 +20,11 @@
   <h2>Estados</h2>
   <div class="demo-box">
     <vz-button [disabled]="true">Deshabilitado</vz-button>
+  </div>
+
+  <h2>Personalización Híbrida (Variables CSS)</h2>
+  <div class="demo-box">
+    <vz-button class="custom-emerald-pill">Esmeralda Pill (--vz-btn-radius: 9999px)</vz-button>
+    <vz-button class="custom-violet-square">Violeta Square (--vz-btn-bg: #8b5cf6)</vz-button>
   </div>
 </section>

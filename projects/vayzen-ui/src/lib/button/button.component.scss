@@ -4,20 +4,47 @@
   display: inline-block;
 }
 
-.vz-button {
+.vz-btn {
+  // Variables de componente híbridas:
+  // Permiten sobrescritura desde :root (--vz-btn-*), desde un contenedor padre,
+  // o heredan automáticamente de los Design Tokens globales (--vz-*).
+  --_vz-btn-bg: var(--vz-btn-bg, var(--vz-primary, #{$vz-primary}));
+  --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-primary-hover, #{$vz-primary-hover}));
+  --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-primary-active, #{$vz-primary-active}));
+  --_vz-btn-color: var(--vz-btn-color, var(--vz-primary-contrast, #{$vz-primary-contrast}));
+  --_vz-btn-border-color: var(--vz-btn-border-color, transparent);
+  --_vz-btn-hover-border-color: var(--vz-btn-hover-border-color, var(--_vz-btn-border-color));
+  --_vz-btn-radius: var(--vz-btn-radius, var(--vz-radius-md, #{$vz-radius-md}));
+  --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.5rem);
+  --_vz-btn-padding-x: var(--vz-btn-padding-x, 1rem);
+  --_vz-btn-font-size: var(--vz-btn-font-size, var(--vz-font-size-sm, #{$vz-font-size-sm}));
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--vz-space-xs, #{$vz-space-xs});
   font-family: inherit;
   font-weight: 500;
-  border-radius: var(--vz-radius-md, #{$vz-radius-md});
-  border: 1px solid transparent;
+  font-size: var(--_vz-btn-font-size);
+  padding: var(--_vz-btn-padding-y) var(--_vz-btn-padding-x);
+  background-color: var(--_vz-btn-bg);
+  color: var(--_vz-btn-color);
+  border: 1px solid var(--_vz-btn-border-color);
+  border-radius: var(--_vz-btn-radius);
   cursor: pointer;
   outline: none;
   text-decoration: none;
   user-select: none;
   transition: all var(--vz-transition-fast, #{$vz-transition-fast});
+
+  &:hover:not(:disabled) {
+    background-color: var(--_vz-btn-hover-bg);
+    border-color: var(--_vz-btn-hover-border-color);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--_vz-btn-active-bg);
+  }
 
   &:focus-visible {
     box-shadow: 0 0 0 3px rgba($vz-border-focus, 0.4);
@@ -29,62 +56,53 @@
     pointer-events: none;
   }
 
-  // --- Sizes (BEM Modifiers) ---
+  // --- Tamaños (BEM Modifiers) ---
   &--sm {
-    padding: 0.25rem 0.625rem;
-    font-size: var(--vz-font-size-xs, #{$vz-font-size-xs});
+    --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.25rem);
+    --_vz-btn-padding-x: var(--vz-btn-padding-x, 0.625rem);
+    --_vz-btn-font-size: var(--vz-btn-font-size, var(--vz-font-size-xs, #{$vz-font-size-xs}));
   }
 
   &--md {
-    padding: 0.5rem 1rem;
-    font-size: var(--vz-font-size-sm, #{$vz-font-size-sm});
+    --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.5rem);
+    --_vz-btn-padding-x: var(--vz-btn-padding-x, 1rem);
+    --_vz-btn-font-size: var(--vz-btn-font-size, var(--vz-font-size-sm, #{$vz-font-size-sm}));
   }
 
   &--lg {
-    padding: 0.75rem 1.5rem;
-    font-size: var(--vz-font-size-md, #{$vz-font-size-md});
+    --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.75rem);
+    --_vz-btn-padding-x: var(--vz-btn-padding-x, 1.5rem);
+    --_vz-btn-font-size: var(--vz-btn-font-size, var(--vz-font-size-md, #{$vz-font-size-md}));
   }
 
-  // --- Variants (BEM Modifiers) ---
+  // --- Variantes (BEM Modifiers) ---
   &--primary {
-    background-color: var(--vz-primary, #{$vz-primary});
-    color: var(--vz-primary-contrast, #{$vz-primary-contrast});
-
-    &:hover:not(:disabled) {
-      background-color: var(--vz-primary-hover, #{$vz-primary-hover});
-    }
-
-    &:active:not(:disabled) {
-      background-color: var(--vz-primary-active, #{$vz-primary-active});
-    }
+    --_vz-btn-bg: var(--vz-btn-bg, var(--vz-primary, #{$vz-primary}));
+    --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-primary-hover, #{$vz-primary-hover}));
+    --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-primary-active, #{$vz-primary-active}));
+    --_vz-btn-color: var(--vz-btn-color, var(--vz-primary-contrast, #{$vz-primary-contrast}));
   }
 
   &--secondary {
-    background-color: var(--vz-secondary, #{$vz-secondary});
-    color: var(--vz-secondary-contrast, #{$vz-secondary-contrast});
-
-    &:hover:not(:disabled) {
-      background-color: var(--vz-secondary-hover, #{$vz-secondary-hover});
-    }
+    --_vz-btn-bg: var(--vz-btn-bg, var(--vz-secondary, #{$vz-secondary}));
+    --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-secondary-hover, #{$vz-secondary-hover}));
+    --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-secondary-hover, #{$vz-secondary-hover}));
+    --_vz-btn-color: var(--vz-btn-color, var(--vz-secondary-contrast, #{$vz-secondary-contrast}));
   }
 
   &--outline {
-    background-color: transparent;
-    border-color: var(--vz-border, #{$vz-border});
-    color: var(--vz-text-primary, #{$vz-text-primary});
-
-    &:hover:not(:disabled) {
-      background-color: var(--vz-surface-alt, #{$vz-surface-alt});
-      border-color: var(--vz-border-focus, #{$vz-border-focus});
-    }
+    --_vz-btn-bg: var(--vz-btn-bg, transparent);
+    --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-surface-alt, #{$vz-surface-alt}));
+    --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-surface-alt, #{$vz-surface-alt}));
+    --_vz-btn-color: var(--vz-btn-color, var(--vz-text-primary, #{$vz-text-primary}));
+    --_vz-btn-border-color: var(--vz-btn-border-color, var(--vz-border, #{$vz-border}));
+    --_vz-btn-hover-border-color: var(--vz-btn-hover-border-color, var(--vz-border-focus, #{$vz-border-focus}));
   }
 
   &--ghost {
-    background-color: transparent;
-    color: var(--vz-text-primary, #{$vz-text-primary});
-
-    &:hover:not(:disabled) {
-      background-color: var(--vz-surface-alt, #{$vz-surface-alt});
-    }
+    --_vz-btn-bg: var(--vz-btn-bg, transparent);
+    --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-surface-alt, #{$vz-surface-alt}));
+    --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-surface-alt, #{$vz-surface-alt}));
+    --_vz-btn-color: var(--vz-btn-color, var(--vz-text-primary, #{$vz-text-primary}));
   }
 }

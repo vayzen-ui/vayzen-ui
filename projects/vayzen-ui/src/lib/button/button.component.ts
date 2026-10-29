@@ -20,7 +20,7 @@ export class VzButtonComponent {
   readonly clicked = output<MouseEvent>();
 
   protected readonly buttonClasses = computed(() => {
-    return `vz-button vz-button--${this.variant()} vz-button--${this.size()}`;
+    return `vz-btn vz-btn--${this.variant()} vz-btn--${this.size()}`;
   });
 
   protected handleClick(event: MouseEvent): void {
@@ -29,4 +29,3 @@ export class VzButtonComponent {
     }
   }
 }
-

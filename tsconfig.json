@@ -14,7 +14,8 @@
     "target": "ES2022",
     "module": "preserve",
     "paths": {
-      "vayzen-ui": ["./dist/vayzen-ui"]
+      "vayzen-ui": ["./dist/vayzen-ui"],
+      "@vayzen-ui/vayzen-core": ["./dist/vayzen-ui"]
     }
   },
   "angularCompilerOptions": {
