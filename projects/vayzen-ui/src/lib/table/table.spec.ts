@@ -194,6 +194,37 @@ describe('VzTableComponent · modo servidor', () => {
     expect(el(f).querySelector('.vz-pagination__info')?.textContent).toContain('520');
   });
 
+  it('soporta pasar un solo objeto paginado en [data] ({ items, total })', () => {
+    const f = TestBed.createComponent(VzTableComponent<Row>);
+    f.componentRef.setInput('columns', COLUMNS);
+    f.componentRef.setInput('data', {
+      items: ROWS.slice(0, 10),
+      total: 180,
+    });
+    f.detectChanges();
+
+    expect(bodyRows(f).length).toBe(10);
+    expect(el(f).querySelector('.vz-pagination__info')?.textContent).toContain('180');
+  });
+
+  it('soporta función [loader] autónoma (arquitectura de élite)', async () => {
+    const f = TestBed.createComponent(VzTableComponent<Row>);
+    f.componentRef.setInput('columns', COLUMNS);
+    f.componentRef.setInput('loader', async (q: VzTableQuery) => ({
+      items: ROWS.slice(0, 5),
+      total: 99,
+    }));
+    f.detectChanges();
+
+    // Esperar microtareas de la promesa
+    await Promise.resolve();
+    await Promise.resolve();
+    f.detectChanges();
+
+    expect(bodyRows(f).length).toBe(5);
+    expect(el(f).querySelector('.vz-pagination__info')?.textContent).toContain('99');
+  });
+
   it('con búsqueda en cliente y paginación en servidor solo avisa al backend por la paginación', () => {
     const f = setup({ mode: 'server', search: { mode: 'client' } }, ROWS.slice(0, 10));
     f.componentRef.setInput('serverPage', { total: 100 });

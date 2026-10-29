@@ -84,6 +84,39 @@ export interface VzServerPage {
   pageSize?: number;
 }
 
+/**
+ * Objeto de datos paginado devuelto habitualmente por APIs REST / GraphQL / Backend.
+ * Permite pasar la respuesta completa del backend directamente en `[data]="response"`.
+ */
+export interface VzPaginated<T = any> {
+  items?: T[];
+  data?: T[];
+  datos?: T[];
+  content?: T[];
+  rows?: T[];
+  registros?: T[];
+  total?: number;
+  totalRegistros?: number;
+  totalElementos?: number;
+  count?: number;
+  page?: number;
+  pagina?: number;
+  pageSize?: number;
+  porPagina?: number;
+}
+
+export type VzTableData<T = any> = T[] | VzPaginated<T> | null | undefined;
+
+export type VzTableLoaderResult<T = any> = T[] | VzPaginated<T>;
+
+/**
+ * Función cargadora de datos autónoma (nivel de arquitectura de élite).
+ * La tabla se encarga del ciclo completo: spinner de loading, debounce, cancelación de peticiones obsoletas y reintentos.
+ */
+export type VzTableLoader<T = any> = (
+  query: VzTableQuery,
+) => Promise<VzTableLoaderResult<T>> | { subscribe: (observer: any) => any };
+
 /** Estado completo de la consulta; es lo que se envía al backend. */
 export interface VzTableQuery {
   page: number;

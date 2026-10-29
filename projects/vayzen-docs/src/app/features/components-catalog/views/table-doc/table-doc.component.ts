@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import {
-  VZ_TABLE_IMPORTS,
+  VzCellDirective,
   VzColumn,
+  VzFilterControlDirective,
+  VzPaginationComponent,
   VzRowActionEvent,
-  VzServerPage,
+  VzTableComponent,
   VzTableConfig,
   VzTableDensity,
   VzTableFilter,
@@ -17,7 +19,12 @@ type ViewState = 'normal' | 'loading' | 'empty' | 'error';
 @Component({
   selector: 'app-table-doc',
   standalone: true,
-  imports: [...VZ_TABLE_IMPORTS, CodeBlockComponent],
+  imports: [
+    VzTableComponent,
+    VzCellDirective,
+    VzFilterControlDirective,
+    CodeBlockComponent,
+  ],
   templateUrl: './table-doc.component.html',
   styleUrls: ['../../../../shared/styles/doc-page.css', './table-doc.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -102,10 +109,6 @@ export class TableDocComponent {
 
   protected readonly tableError = computed(() => (this.viewState() === 'error' ? 'El servidor respondió con un error 500.' : null));
 
-  protected readonly serverPage = computed<VzServerPage | null>(() =>
-    this.mode() === 'server' ? { total: this.serverTotal() } : null,
-  );
-
   // ── Demo de filtro personalizado + celda personalizada ──
   protected readonly customStatus = signal<string | null>(null);
   protected readonly customColumns: VzColumn<Employee>[] = [
@@ -163,12 +166,12 @@ export class TableDocComponent {
 
   // ── Snippets ──
   protected readonly installSnippet = `import { Component } from '@angular/core';
-import { VZ_TABLE_IMPORTS, VzColumn, VzTableConfig } from 'vayzen-ui';
+import { VzTableComponent, VzColumn } from 'vayzen-ui';
 
 @Component({
   selector: 'app-empleados',
   standalone: true,
-  imports: [...VZ_TABLE_IMPORTS],
+  imports: [VzTableComponent],
   templateUrl: './empleados.component.html',
 })
 export class EmpleadosComponent {
@@ -181,62 +184,170 @@ export class EmpleadosComponent {
     { key: 'hiredAt', header: 'Ingreso', type: 'date' },
   ];
 
-  config: VzTableConfig = { rowKey: 'id' };   // mode: 'client' por defecto
-  empleados: Empleado[] = [];                 // TODOS los datos en un solo arreglo
+  empleados: Empleado[] = []; // Todos los datos en memoria: la tabla filtra, busca y pagina sola
 }`;
 
   protected readonly clientHtmlSnippet = `<vz-table
   heading="Empleados"
   [columns]="columns"
   [data]="empleados"
-  [config]="config"
+  rowKey="id"
+  striped
+  hoverable
 />`;
 
-  protected readonly serverTsSnippet = `export class EmpleadosComponent {
-  config: VzTableConfig = {
-    mode: 'server',                 // búsqueda, orden, filtros y paginación en el backend
-    rowKey: 'id',
-    search: { debounce: 400, minChars: 2 },
-  };
+  // ── Modo Servidor: 1. El Servicio (Separación de transporte y estado) ──
+  protected readonly serviceSnippet = `import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-  rows = signal<Empleado[]>([]);
-  loading = signal(false);
-  serverPage = signal<VzServerPage>({ total: 0 });
+export interface RespuestaApi<T> {
+  exito: boolean;
+  mensaje: string;
+  datos: T;
+}
 
+export interface AlumnosPaginados {
+  datos: Alumno[];
+  pagina: number;
+  totalPaginas: number;
+  totalRegistros: number;
+  porPagina: number;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AlumnosService {
   private http = inject(HttpClient);
-  private request = 0;
+  private readonly apiUrl = '/api/control_escolar/alumnos';
 
-  async load(q: VzTableQuery) {
-    const id = ++this.request;
-    this.loading.set(true);
-    // q = { page, pageSize, search, sort: [{ key, direction }], filters: { status: 'Activo' } }
-    const res = await firstValueFrom(
-      this.http.get<{ items: Empleado[]; total: number }>('/api/empleados', {
-        params: {
-          page: q.page,
-          size: q.pageSize,
-          q: q.search,
-          sort: q.sort.map(s => s.key + ':' + s.direction).join(','),
-          ...q.filters,
-        },
-      }),
-    );
-    if (id !== this.request) return;         // ignora respuestas obsoletas
-    this.rows.set(res.items);
-    this.serverPage.set({ total: res.total });
-    this.loading.set(false);
+  obtenerAlumnos(params: {
+    pagina: number;
+    porPagina: number;
+    busqueda?: string;
+  }): Observable<RespuestaApi<AlumnosPaginados>> {
+    return this.http.get<RespuestaApi<AlumnosPaginados>>(\`\${this.apiUrl}/obtener-alumnos\`, {
+      params: {
+        page: params.pagina,
+        size: params.porPagina,
+        ...(params.busqueda ? { q: params.busqueda } : {}),
+      },
+    });
   }
 }`;
 
-  protected readonly serverHtmlSnippet = `<vz-table
-  heading="Empleados"
-  [columns]="columns"
-  [data]="rows()"
-  [config]="config"
-  [loading]="loading()"
-  [serverPage]="serverPage()"
-  (queryChange)="load($event)"
-/>`;
+  // ── Modo Servidor: 2. El Componente (Flujo Estándar Empresarial) ──
+  protected readonly standardComponentSnippet = `import { Component, inject, signal } from '@angular/core';
+import { VzColumn, VzTableComponent, VzTableQuery } from 'vayzen-ui';
+import { Alumno } from './alumno.model';
+import { AlumnosService } from './alumnos.service';
+
+@Component({
+  selector: 'app-alumnos',
+  standalone: true,
+  imports: [VzTableComponent],
+  templateUrl: './alumnos.component.html',
+})
+export class AlumnosComponent {
+  private alumnosService = inject(AlumnosService);
+
+  readonly columnas: VzColumn<Alumno>[] = [
+    { key: 'numero_control', header: 'No. Control' },
+    { key: 'dt_alumno.nombre', header: 'Nombre' },
+    { key: 'dt_alumno.primer_apellido', header: 'Primer Apellido' },
+    { key: 'ct_movimiento_alumno.movimiento_alumno', header: 'Movimiento', type: 'badge' },
+  ];
+
+  readonly alumnos = signal<Alumno[]>([]);
+  readonly totalRegistros = signal<number>(0);
+  readonly cargando = signal<boolean>(false);
+
+  // queryChange emite { page, pageSize, search, sort, filters } cada vez que el usuario interactúa:
+  cargarAlumnos(q: VzTableQuery): void {
+    this.cargando.set(true);
+
+    this.alumnosService
+      .obtenerAlumnos({
+        pagina: q.page,
+        porPagina: q.pageSize,
+        busqueda: q.search,
+      })
+      .subscribe({
+        next: (res) => {
+          // Asignación directa desde la respuesta del servicio
+          this.alumnos.set(res.datos.datos);
+          this.totalRegistros.set(res.datos.totalRegistros);
+          this.cargando.set(false);
+        },
+        error: () => this.cargando.set(false),
+      });
+  }
+}`;
+
+  protected readonly standardHtmlSnippet = `<vz-table
+  heading="Listado de Alumnos"
+  [columns]="columnas"
+  [data]="alumnos()"
+  mode="server"
+  [total]="totalRegistros()"
+  [loading]="cargando()"
+  (queryChange)="cargarAlumnos($event)">
+</vz-table>`;
+
+  // ── Modo Servidor: Opción Alternativa (Un solo objeto de datos) ──
+  protected readonly singleObjectTsSnippet = `// Si prefieres guardar el payload completo 'datos' sin separar variables:
+readonly respuesta = signal<AlumnosPaginados>({ datos: [], totalRegistros: 0, pagina: 1, totalPaginas: 0, porPagina: 10 });
+readonly cargando = signal(false);
+
+cargarAlumnos(q: VzTableQuery): void {
+  this.cargando.set(true);
+  this.alumnosService.obtenerAlumnos({ pagina: q.page, porPagina: q.pageSize, busqueda: q.search })
+    .subscribe({
+      next: (res) => {
+        this.respuesta.set(res.datos); // 👈 Pasas res.datos tal cual
+        this.cargando.set(false);
+      },
+      error: () => this.cargando.set(false),
+    });
+}`;
+
+  protected readonly singleObjectHtmlSnippet = `<!-- La tabla detecta automáticamente { datos, totalRegistros } sin necesitar [total] -->
+<vz-table
+  heading="Listado de Alumnos"
+  [columns]="columnas"
+  [data]="respuesta()"
+  [loading]="cargando()"
+  (queryChange)="cargarAlumnos($event)">
+</vz-table>`;
+
+  // ── Modo Servidor: Opción Élite Autónoma (con [loader]) ──
+  protected readonly eliteLoaderTsSnippet = `import { Component, inject } from '@angular/core';
+import { map } from 'rxjs';
+import { VzColumn, VzTableComponent, VzTableQuery } from 'vayzen-ui';
+import { AlumnosService } from './alumnos.service';
+
+@Component({
+  selector: 'app-alumnos',
+  standalone: true,
+  imports: [VzTableComponent],
+  templateUrl: './alumnos.component.html',
+})
+export class AlumnosComponent {
+  private alumnosService = inject(AlumnosService);
+  readonly columnas: VzColumn<Alumno>[] = [ ... ];
+
+  // 🚀 Conectas el método del servicio a la tabla:
+  // La tabla se encarga del spinner de carga, debounce al teclear y cancelación de peticiones obsoletas:
+  readonly load = (q: VzTableQuery) =>
+    this.alumnosService
+      .obtenerAlumnos({ pagina: q.page, porPagina: q.pageSize, busqueda: q.search })
+      .pipe(map((res) => res.datos));
+}`;
+
+  protected readonly eliteLoaderHtmlSnippet = `<vz-table
+  heading="Listado de Alumnos"
+  [columns]="columnas"
+  [loader]="load">
+</vz-table>`;
 
   protected readonly mixedSnippet = `// Cada capacidad puede elegir su modo de forma independiente:
 config: VzTableConfig = {
@@ -317,15 +428,30 @@ config: VzTableConfig = {
   }" />`;
 
   protected readonly inputRows: [string, string, string, string][] = [
-    ['columns', 'VzColumn<T>[]', '[]', 'Definición de columnas.'],
-    ['data', 'T[]', '[]', 'Filas. En modo cliente, el conjunto completo; en servidor, solo la página actual.'],
-    ['config', 'VzTableConfig', '{}', 'Modos (cliente/servidor), paginación, orden, búsqueda, selección y estilos.'],
-    ['filters', 'VzTableFilter<T>[]', '[]', 'Filtros tipo selector (nativos o personalizados con *vzFilterControl).'],
-    ['heading', 'string', "''", 'Título de la barra superior.'],
-    ['loading', 'boolean', 'false', 'Muestra filas skeleton.'],
+    ['columns', 'VzColumn<T>[]', '[]', 'Definición de columnas y sus formateadores.'],
+    ['data', 'T[] | VzPaginated<T>', '[]', 'Filas o respuesta paginada ({ items, total }). Si es un objeto paginado, la tabla auto-extrae el total.'],
+    ['loader', 'VzTableLoader<T>', 'null', 'Cargador autónomo de élite: maneja loading, debounce, cancelación de llamadas obsoletas y reintentos.'],
+    ['total', 'number | null', 'null', 'Total de registros (opcional si usas loader o pasas el objeto paginado en data).'],
+    ['totalRecords', 'number | null', 'null', 'Alias de total compatible con la convención de PrimeNG.'],
+    ['mode', "'client' | 'server'", "'client'", 'Modo general de datos (cliente o backend).'],
+    ['page / [(page)]', 'number', '1', 'Página actual. Soporta binding bidireccional [(page)].'],
+    ['pageSize / [(pageSize)]', 'number', '10', 'Filas por página. Soporta binding bidireccional [(pageSize)].'],
+    ['pageSizes / pageSizeOptions', 'number[]', '[10, 25, 50, 100]', 'Opciones en el selector de filas por página.'],
+    ['pagination', 'boolean', 'true', 'Activa o desactiva la paginación directamente.'],
+    ['selection / [(selection)]', 'T[]', '[]', 'Filas seleccionadas con binding bidireccional [(selection)].'],
+    ['rowKey', 'string | (row) => unknown', 'null', 'Identificador de fila para conservar selecciones entre páginas.'],
+    ['searchable', 'boolean', 'true', 'Muestra u oculta la barra de búsqueda.'],
+    ['searchPlaceholder', 'string', "'Buscar...'", 'Placeholder del buscador.'],
+    ['searchDebounce', 'number', '300', 'Milisegundos de espera antes de filtrar o emitir query.'],
+    ['striped / hoverable / bordered', 'boolean', 'false / true / false', 'Estilos visuales configurables directamente.'],
+    ['density', "'compact' | 'comfortable' | 'spacious'", "'comfortable'", 'Densidad visual de la tabla.'],
+    ['stickyHeader / maxHeight', 'boolean / string', 'true / null', 'Encabezado fijo con altura máxima (ej. "480px").'],
+    ['loading', 'boolean', 'false', 'Muestra filas skeleton animadas.'],
     ['error', 'string | null', 'null', 'Muestra el estado de error con botón de reintento.'],
-    ['serverPage', 'VzServerPage | null', 'null', 'Total y metadatos del backend cuando la paginación es server.'],
-    ['labels', 'Partial<VzTableLabels>', '{}', 'Textos de la interfaz (i18n).'],
+    ['heading', 'string', "''", 'Título de la barra superior.'],
+    ['filters', 'VzTableFilter<T>[]', '[]', 'Filtros tipo selector (nativos o personalizados con *vzFilterControl).'],
+    ['config', 'VzTableConfig', '{}', 'Configuración avanzada o agrupada por objeto.'],
+    ['labels', 'Partial<VzTableLabels>', '{}', 'Textos de la interfaz para internacionalización (i18n).'],
   ];
 
   protected readonly outputRows: [string, string, string][] = [

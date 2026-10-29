@@ -113,7 +113,7 @@
       </thead>
 
       <tbody>
-        @if (loading()) {
+        @if (isLoading()) {
           @for (r of skeletonRows(); track $index) {
             <tr class="vz-table__row" aria-hidden="true">
               @if (cfg().selectable) {
@@ -133,8 +133,8 @@
                   <path d="M12 7.5v5.5M12 16.5h.01" />
                 </svg>
                 <strong>{{ lbl().errorTitle }}</strong>
-                @if (error()) {
-                  <p>{{ error() }}</p>
+                @if (effectiveError()) {
+                  <p>{{ effectiveError() }}</p>
                 }
                 <button type="button" class="vz-table__retry" (click)="onRetry()">{{ lbl().retry }}</button>
               </div>

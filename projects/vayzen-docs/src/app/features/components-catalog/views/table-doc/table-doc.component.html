@@ -67,7 +67,7 @@
             [config]="config()"
             [loading]="tableLoading()"
             [error]="tableError()"
-            [serverPage]="serverPage()"
+            [total]="mode() === 'server' ? serverTotal() : null"
             (queryChange)="onQuery($event)"
             (rowAction)="onRowAction($event)"
             (selectionChange)="onSelection($event)"
@@ -103,18 +103,44 @@
   <!-- Servidor -->
   <section class="doc-section">
     <div class="section-heading">
-      <h2 class="section-title">Modo servidor · paginación, búsqueda y orden en el backend</h2>
+      <h2 class="section-title">Modo servidor · arquitectura limpia y autónoma</h2>
       <p class="section-subtitle">
-        Con <code>mode: 'server'</code> la tabla solo pinta lo que recibe y emite <code>queryChange</code> con todo el estado de la consulta.
-        La búsqueda tiene debounce configurable y siempre reinicia a la página 1. Responde con los datos de esa página y el total en <code>serverPage</code>.
+        Diseñada bajo los más altos estándares de arquitectura en Angular. La lógica de transporte y llamadas HTTP pertenece a un <strong>Servicio</strong>,
+        mientras que el componente se encarga únicamente de recibir los datos y alimentar la tabla.
       </p>
     </div>
-    <app-code-block [code]="serverTsSnippet" language="typescript" title="empleados.component.ts" />
-    <app-code-block [code]="serverHtmlSnippet" language="html" title="empleados.component.html" />
+
+    <h3 class="subsection-title">1. El Servicio de Datos (Transporte y Parámetros)</h3>
+    <p class="section-subtitle">
+      El servicio encapsula <code>HttpClient</code> y se encarga de consultar tu endpoint paginado (con su modelo de respuesta):
+    </p>
+    <app-code-block [code]="serviceSnippet" language="typescript" title="alumnos.service.ts" />
+
+    <h3 class="subsection-title">2. Consumo en el Componente (Flujo Estándar)</h3>
+    <p class="section-subtitle">
+      El componente inyecta el servicio y en <code>cargarAlumnos</code> actualiza las filas y el total al recibir la respuesta:
+    </p>
+    <app-code-block [code]="standardComponentSnippet" language="typescript" title="alumnos.component.ts" />
+    <app-code-block [code]="standardHtmlSnippet" language="html" title="alumnos.component.html" />
+
+    <h3 class="subsection-title">3. Alternativa · Un solo objeto de datos</h3>
+    <p class="section-subtitle">
+      Si prefieres no separar variables, puedes pasar el payload de la API (ej. <code>&#123; datos: [...], totalRegistros: 16 &#125;</code>) directamente en <code>[data]</code>.
+      La tabla detecta automáticamente las filas y el total:
+    </p>
+    <app-code-block [code]="singleObjectTsSnippet" language="typescript" title="alumnos.component.ts" />
+    <app-code-block [code]="singleObjectHtmlSnippet" language="html" title="alumnos.component.html" />
+
+    <h3 class="subsection-title">4. Alternativa Élite · Función autónoma <code>[loader]</code></h3>
+    <p class="section-subtitle">
+      La tabla gestiona el ciclo completo: spinner de carga, debounce al teclear en el buscador y cancelación de respuestas obsoletas:
+    </p>
+    <app-code-block [code]="eliteLoaderTsSnippet" language="typescript" title="alumnos.component.ts" />
+    <app-code-block [code]="eliteLoaderHtmlSnippet" language="html" title="alumnos.component.html" />
 
     <h3 class="subsection-title">Modo mixto</h3>
     <p class="section-subtitle">
-      Cada capacidad puede elegir su modo. Por ejemplo, un backend que pagina y tiene su propio endpoint de búsqueda, pero deja el orden al navegador.
+      Cada capacidad puede configurarse de forma independiente si lo deseas (ej. backend pagina y busca, frontend ordena):
     </p>
     <app-code-block [code]="mixedSnippet" language="typescript" title="Configuración mixta" />
     <p class="doc-note">

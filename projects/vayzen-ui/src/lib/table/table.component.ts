@@ -22,22 +22,29 @@ import {
   VzBadgeVariant,
   VzColumn,
   VzDataMode,
+  VzPaginated,
   VzRowAction,
   VzRowActionEvent,
   VzServerPage,
   VzSortState,
   VzTableConfig,
+  VzTableData,
   VzTableDensity,
   VzTableFilter,
   VzTableLabels,
+  VzTableLoader,
+  VzTableLoaderResult,
   VzTableQuery,
 } from './table.types';
 import {
   compareValues,
+  extractRows,
+  extractTotal,
   formatValue,
   getByPath,
   hasFilterValue,
   isNil,
+  isPaginated,
   normalizeText,
   parseDateValue,
   resolveConfig,
@@ -59,7 +66,15 @@ export class VzTableComponent<T = any> implements OnInit {
 
   // ───────────────────────── Inputs directos (DX Amigable) ─────────────────────────
   readonly columns = input<VzColumn<T>[]>([]);
-  readonly data = input<T[]>([]);
+  readonly data = input<VzTableData<T>>([]);
+
+  /**
+   * Cargador de datos autónomo (nivel de arquitectura élite).
+   * Si se pasa, la tabla se encarga de todo el ciclo de vida:
+   * spinner de carga, debounce, cancelación de llamadas obsoletas y reintentos.
+   * Admite funciones que retornen una Promesa o un Observable de RxJS.
+   */
+  readonly loader = input<VzTableLoader<T> | null>(null);
 
   /**
    * Total de filas para la paginación.
@@ -146,10 +161,22 @@ export class VzTableComponent<T = any> implements OnInit {
   private readonly filterValues = signal<Record<string, unknown>>({});
   private readonly selected = signal<ReadonlyMap<unknown, T>>(new Map());
 
+  // Estado del loader autónomo
+  private readonly loaderData = signal<VzTableLoaderResult<T> | null>(null);
+  private readonly loaderLoading = signal<boolean>(false);
+  private readonly loaderError = signal<string | null>(null);
+  private loaderRequestId = 0;
+  private activeLoaderSub: { unsubscribe: () => void } | null = null;
+
   // ───────────────────────── Derivados ─────────────────────────
-  protected readonly cfg = computed(() =>
-    resolveConfig(this.config(), {
-      mode: this.mode(),
+  private readonly rawData = computed(() => (this.loader() ? this.loaderData() : this.data()));
+  private readonly isRawPaginated = computed(() => isPaginated(this.rawData()));
+
+  protected readonly cfg = computed(() => {
+    const autoServer = !!this.loader() || this.isRawPaginated();
+    const effectiveMode = this.mode() ?? (autoServer ? 'server' : null);
+    return resolveConfig(this.config(), {
+      mode: effectiveMode,
       searchable: this.searchable(),
       searchDebounce: this.searchDebounce(),
       searchMinChars: this.searchMinChars(),
@@ -172,13 +199,16 @@ export class VzTableComponent<T = any> implements OnInit {
       maxHeight: this.maxHeight(),
       showCount: this.showCount(),
       emitInitialQuery: this.emitInitialQuery(),
-    }),
-  );
+    });
+  });
 
   protected readonly lbl = computed(() => ({ ...VZ_TABLE_DEFAULT_LABELS, ...this.labels() }));
   protected readonly visibleColumns = computed(() => this.columns().filter((c) => !c.hidden));
   protected readonly colspan = computed(() => this.visibleColumns().length + (this.cfg().selectable ? 1 : 0));
-  protected readonly hasError = computed(() => this.error() !== null && this.error() !== undefined);
+
+  protected readonly isLoading = computed(() => this.loading() || this.loaderLoading());
+  protected readonly effectiveError = computed(() => this.error() ?? this.loaderError());
+  protected readonly hasError = computed(() => this.effectiveError() !== null && this.effectiveError() !== undefined);
 
   protected readonly activePageSize = computed(
     () => this.pageSize() ?? this.pageSizeState() ?? this.cfg().pagination.defaultPageSize,
@@ -186,7 +216,7 @@ export class VzTableComponent<T = any> implements OnInit {
 
   private readonly processedRows = computed(() => {
     const cfg = this.cfg();
-    let rows: T[] = this.data() ?? [];
+    let rows: T[] = extractRows(this.rawData());
     if (cfg.filters.mode === 'client') rows = this.applyFilters(rows);
     if (cfg.search.enabled && cfg.search.mode === 'client') rows = this.applySearch(rows);
     if (cfg.sort.enabled && cfg.sort.mode === 'client') rows = this.applySort(rows);
@@ -197,6 +227,10 @@ export class VzTableComponent<T = any> implements OnInit {
     const directTotal = this.total() ?? this.totalRecords() ?? this.serverPage()?.total;
     if (directTotal !== null && directTotal !== undefined) {
       return directTotal;
+    }
+    const extracted = extractTotal(this.rawData());
+    if (extracted !== null && extracted !== undefined) {
+      return extracted;
     }
     return this.processedRows().length;
   });
@@ -317,14 +351,76 @@ export class VzTableComponent<T = any> implements OnInit {
       });
     });
 
-    this.destroyRef.onDestroy(() => this.clearSearchTimer());
+    // Observar loader y cargar datos automáticamente al cambiar la consulta
+    effect(() => {
+      const fn = this.loader();
+      if (!fn) return;
+      const q = this.query();
+      untracked(() => {
+        this.fetchFromLoader(fn, q);
+      });
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.clearSearchTimer();
+      this.activeLoaderSub?.unsubscribe();
+    });
   }
 
   ngOnInit(): void {
     const cfg = this.cfg();
-    if (cfg.anyServer && cfg.emitInitialQuery) {
+    if (cfg.anyServer && cfg.emitInitialQuery && !this.loader()) {
       // En microtarea para no modificar el estado del padre durante su detección de cambios.
       Promise.resolve().then(() => this.queryChange.emit(this.query()));
+    }
+  }
+
+  private fetchFromLoader(fn: VzTableLoader<T>, query: VzTableQuery): void {
+    const reqId = ++this.loaderRequestId;
+    this.loaderLoading.set(true);
+    this.loaderError.set(null);
+
+    let res: unknown;
+    try {
+      res = fn(query);
+    } catch (err: any) {
+      if (reqId === this.loaderRequestId) {
+        this.loaderLoading.set(false);
+        this.loaderError.set(err?.message || 'Error al cargar los datos');
+      }
+      return;
+    }
+
+    if (res && typeof (res as any).subscribe === 'function') {
+      this.activeLoaderSub?.unsubscribe();
+      this.activeLoaderSub = (res as any).subscribe({
+        next: (data: VzTableLoaderResult<T>) => {
+          if (reqId === this.loaderRequestId) {
+            this.loaderData.set(data);
+            this.loaderLoading.set(false);
+          }
+        },
+        error: (err: any) => {
+          if (reqId === this.loaderRequestId) {
+            this.loaderLoading.set(false);
+            this.loaderError.set(err?.message || 'Error al cargar los datos');
+          }
+        },
+      });
+    } else if (res && typeof (res as any).then === 'function') {
+      (res as Promise<VzTableLoaderResult<T>>)
+        .then((data) => {
+          if (reqId === this.loaderRequestId) {
+            this.loaderData.set(data);
+            this.loaderLoading.set(false);
+          }
+        })
+        .catch((err: any) => {
+          if (reqId === this.loaderRequestId) {
+            this.loaderLoading.set(false);
+            this.loaderError.set(err?.message || 'Error al cargar los datos');
+          }
+        });
     }
   }
 
@@ -498,6 +594,10 @@ export class VzTableComponent<T = any> implements OnInit {
   }
 
   protected onRetry(): void {
+    const fn = this.loader();
+    if (fn) {
+      this.fetchFromLoader(fn, this.query());
+    }
     this.retry.emit();
   }
 

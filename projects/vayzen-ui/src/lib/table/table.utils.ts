@@ -1,4 +1,12 @@
-import type { VzColumn, VzDataMode, VzResolvedTableConfig, VzTableConfig, VzTableOverrides } from './table.types';
+import type {
+  VzColumn,
+  VzDataMode,
+  VzPaginated,
+  VzResolvedTableConfig,
+  VzTableConfig,
+  VzTableData,
+  VzTableOverrides,
+} from './table.types';
 
 export function getByPath(obj: unknown, path: string): unknown {
   if (obj === null || obj === undefined || !path) return undefined;
@@ -89,6 +97,40 @@ export function buildPageList(current: number, total: number): (number | null)[]
 
 export function hasFilterValue(value: unknown): boolean {
   return value !== null && value !== undefined && value !== '';
+}
+
+export function isPaginated<T>(value: unknown): value is VzPaginated<T> {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return false;
+  const v = value as Record<string, unknown>;
+  return (
+    'items' in v ||
+    'data' in v ||
+    'datos' in v ||
+    'registros' in v ||
+    'content' in v ||
+    'rows' in v ||
+    'total' in v ||
+    'totalRegistros' in v ||
+    'totalElementos' in v
+  );
+}
+
+export function extractRows<T>(value: VzTableData<T>): T[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  if (isPaginated<T>(value)) {
+    return (value.items ?? value.data ?? value.datos ?? value.registros ?? value.content ?? value.rows ?? []) as T[];
+  }
+  return [];
+}
+
+export function extractTotal<T>(value: VzTableData<T>): number | null {
+  if (!value || Array.isArray(value)) return null;
+  if (isPaginated<T>(value)) {
+    const t = value.total ?? value.totalRegistros ?? value.totalElementos ?? value.count;
+    return typeof t === 'number' ? t : null;
+  }
+  return null;
 }
 
 export function resolveConfig(
