@@ -1,0 +1,288 @@
+<div class="doc-page">
+  <header class="doc-header">
+    <div class="doc-breadcrumb">
+      <span>Componentes</span>
+      <span class="separator">/</span>
+      <span class="current">Card</span>
+    </div>
+    <div class="title-with-badge">
+      <h1 class="doc-title">Card</h1>
+      <span class="badge">Standalone</span>
+    </div>
+    <p class="doc-lead">
+      Contenedor flexible y elegante para presentar contenido relacionado, información estructurada, multimedia y acciones.
+      Soporta variantes de elevación, densidades, estados interactivos y composición modular con directivas semánticas.
+    </p>
+  </header>
+
+  <!-- Playground -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Playground interactivo</h2>
+      <p class="section-subtitle">
+        Experimenta con las variantes visuales, densidades, interactividad y estados de carga en tiempo real.
+      </p>
+    </div>
+
+    <div class="playground-card">
+      <div class="toolbar">
+        <div class="control-group">
+          <span class="control-label">Variante:</span>
+          <div class="segmented-control">
+            <button type="button" [class.active]="variant() === 'elevated'" (click)="variant.set('elevated')">Elevated</button>
+            <button type="button" [class.active]="variant() === 'outlined'" (click)="variant.set('outlined')">Outlined</button>
+            <button type="button" [class.active]="variant() === 'flat'" (click)="variant.set('flat')">Flat</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Densidad:</span>
+          <div class="segmented-control">
+            <button type="button" [class.active]="density() === 'compact'" (click)="density.set('compact')">Compact</button>
+            <button type="button" [class.active]="density() === 'comfortable'" (click)="density.set('comfortable')">Comfortable</button>
+            <button type="button" [class.active]="density() === 'spacious'" (click)="density.set('spacious')">Spacious</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Opciones:</span>
+          <label class="checkbox-label"><input type="checkbox" [checked]="hoverable()" (change)="hoverable.set(!hoverable())" /> Hoverable</label>
+          <label class="checkbox-label"><input type="checkbox" [checked]="clickable()" (change)="clickable.set(!clickable())" /> Clickable</label>
+          <label class="checkbox-label"><input type="checkbox" [checked]="loading()" (change)="loading.set(!loading())" /> Loading</label>
+          <label class="checkbox-label"><input type="checkbox" [checked]="disabled()" (change)="disabled.set(!disabled())" /> Disabled</label>
+          <label class="checkbox-label"><input type="checkbox" [checked]="showImage()" (change)="showImage.set(!showImage())" /> Con Imagen</label>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="card-stage-container">
+          @if (showImage()) {
+            <vz-card
+              [variant]="variant()"
+              [density]="density()"
+              [hoverable]="hoverable()"
+              [clickable]="clickable()"
+              [loading]="loading()"
+              [disabled]="disabled()"
+              (clicked)="onCardClick()"
+            >
+              <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
+              <div vzCardHeader>
+                <div>
+                  <h3 vzCardTitle>Control Escolar 2026</h3>
+                  <span vzCardSubtitle>Plantel Central · Grupo 402</span>
+                </div>
+                <div vzCardActions>
+                  <vz-button size="sm" variant="ghost">Ver</vz-button>
+                </div>
+              </div>
+              <div vzCardContent>
+                <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
+              </div>
+              <div vzCardFooter>
+                <span class="text-muted">16 Alumnos inscritos</span>
+                <vz-button size="sm" variant="primary">Ingresar</vz-button>
+              </div>
+            </vz-card>
+          } @else {
+            <vz-card
+              [variant]="variant()"
+              [density]="density()"
+              [hoverable]="hoverable()"
+              [clickable]="clickable()"
+              [loading]="loading()"
+              [disabled]="disabled()"
+              title="Control Escolar 2026"
+              subtitle="Plantel Central"
+              (clicked)="onCardClick()"
+            >
+              <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
+            </vz-card>
+          }
+        </div>
+      </div>
+
+      @if (clickable()) {
+        <div class="event-bar">
+          <span>Estado del evento: <code>{{ lastEvent() }}</code></span>
+        </div>
+      }
+
+      <app-code-block [code]="playgroundCode()" language="html" title="Código generado en tiempo real" />
+    </div>
+  </section>
+
+  <!-- Casos de Uso del Mundo Real -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Casos de uso reales</h2>
+      <p class="section-subtitle">
+        Diseños versátiles construidos fácilmente combinando <code>vz-card</code> con otros componentes del sistema.
+      </p>
+    </div>
+
+    <div class="showcase-grid">
+      <!-- 1. Métrica / Estadística -->
+      <vz-card variant="outlined" [hoverable]="true">
+        <div vzCardHeader>
+          <div>
+            <span class="stat-category">Total de Estudiantes</span>
+            <h3 class="stat-value">1,482</h3>
+          </div>
+          <div class="stat-badge">+12.4%</div>
+        </div>
+        <div vzCardContent>
+          <p class="text-muted stat-desc">Comparado con el semestre anterior (1,318 alumnos activos).</p>
+        </div>
+      </vz-card>
+
+      <!-- 2. Expediente de Alumno -->
+      <vz-card variant="elevated" [hoverable]="true">
+        <div vzCardHeader>
+          <div class="student-header">
+            <div class="student-avatar">FB</div>
+            <div>
+              <h3 vzCardTitle>Fatima Nava Peralta</h3>
+              <span vzCardSubtitle>2926BG06P002 · INSCRIPCIÓN</span>
+            </div>
+          </div>
+        </div>
+        <div vzCardContent>
+          <div class="student-info-row">
+            <span class="info-label">CURP:</span>
+            <span class="info-val">KWIR040107HMNRHN92</span>
+          </div>
+          <div class="student-info-row">
+            <span class="info-label">Estatus:</span>
+            <span class="badge badge-success">Activo</span>
+          </div>
+        </div>
+        <div vzCardFooter>
+          <vz-button size="sm" variant="outline">Historial</vz-button>
+          <vz-button size="sm" variant="primary">Expediente</vz-button>
+        </div>
+      </vz-card>
+
+      <!-- 3. Malla Curricular / Curso -->
+      <vz-card variant="outlined" [hoverable]="true">
+        <div vzCardHeader>
+          <div>
+            <span class="course-code">MALLA-2026-B</span>
+            <h3 vzCardTitle>Bachillerato Tecnológico</h3>
+            <span vzCardSubtitle>Especialidad en Programación</span>
+          </div>
+        </div>
+        <div vzCardContent>
+          <p>Plan modular basado en competencias con enfoque en desarrollo web, móvil y bases de datos.</p>
+        </div>
+        <div vzCardFooter>
+          <span class="text-muted">6 Semestres</span>
+          <vz-button size="sm" variant="ghost">Ver Malla</vz-button>
+        </div>
+      </vz-card>
+    </div>
+  </section>
+
+  <!-- Modalidades: Declarativa vs Componible -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Modalidades de Implementación</h2>
+      <p class="section-subtitle">
+        Elige entre la sintaxis declarativa rápida para tarjetas simples, o la estructura modular con directivas para interfaces complejas.
+      </p>
+    </div>
+
+    <h3 class="subsection-title">1. Uso Declarativo Rápido (Props directos)</h3>
+    <app-code-block [code]="declarativeSnippet" language="typescript" title="declarative-card.component.ts" />
+
+    <h3 class="subsection-title">2. Uso Componible y Modular (Directivas)</h3>
+    <app-code-block [code]="composableSnippet" language="typescript" title="composable-card.component.ts" />
+    <app-code-block [code]="composableHtmlSnippet" language="html" title="composable-card.component.html" />
+  </section>
+
+  <!-- Theming y Variables CSS -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">Personalización del diseño (Tokens CSS)</h2>
+      <p class="section-subtitle">
+        Personaliza cualquier aspecto visual mediante Variables CSS en tu hoja de estilos global o en el CSS de tu componente.
+      </p>
+    </div>
+
+    <div class="theme-demo-row">
+      <vz-card class="card-personalizada" variant="elevated" [hoverable]="true">
+        <div vzCardHeader>
+          <div>
+            <h3 vzCardTitle>Tema Oscuro Personalizado</h3>
+            <span vzCardSubtitle>Sobrescrito con variables CSS</span>
+          </div>
+        </div>
+        <div vzCardContent>
+          <p>Esta tarjeta utiliza variables como <code>--vz-card-bg: #0f172a</code> y esquinas más redondeadas (<code>--vz-card-radius: 1.25rem</code>).</p>
+        </div>
+        <div vzCardFooter>
+          <span class="text-muted">Tokens Activos</span>
+          <vz-button size="sm" variant="primary">Explorar</vz-button>
+        </div>
+      </vz-card>
+    </div>
+
+    <app-code-block [code]="themingSnippet" language="scss" title="card-custom.scss" />
+  </section>
+
+  <!-- Referencia API -->
+  <section class="doc-section">
+    <div class="section-heading">
+      <h2 class="section-title">API Reference</h2>
+    </div>
+
+    <h3 class="subsection-title">Inputs de &lt;vz-card&gt;</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of inputRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td><code>{{ row[2] }}</code></td><td>{{ row[3] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">Outputs</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of outputRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">Directivas de Composición</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Directiva</th><th>Ubicación</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of directiveRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">Design Tokens (Variables CSS)</h3>
+    <div class="table-container">
+      <table class="doc-table">
+        <thead><tr><th>Variable</th><th>Descripción</th></tr></thead>
+        <tbody>
+          @for (row of cssVarRows; track row[0]) {
+            <tr><td><code>{{ row[0] }}</code></td><td>{{ row[1] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+

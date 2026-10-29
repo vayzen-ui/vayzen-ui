@@ -303,7 +303,7 @@ cargarAlumnos(q: VzTableQuery): void {
   this.alumnosService.obtenerAlumnos({ pagina: q.page, porPagina: q.pageSize, busqueda: q.search })
     .subscribe({
       next: (res) => {
-        this.respuesta.set(res.datos); // 👈 Pasas res.datos tal cual
+        this.respuesta.set(res.datos); // Pasas res.datos tal cual
         this.cargando.set(false);
       },
       error: () => this.cargando.set(false),

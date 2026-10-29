@@ -1,0 +1,136 @@
+import { Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { VzCardComponent } from './card.component';
+import {
+  VzCardActionsDirective,
+  VzCardContentDirective,
+  VzCardFooterDirective,
+  VzCardHeaderDirective,
+  VzCardSubtitleDirective,
+  VzCardTitleDirective,
+} from './card.directives';
+
+@Component({
+  standalone: true,
+  imports: [
+    VzCardComponent,
+    VzCardHeaderDirective,
+    VzCardTitleDirective,
+    VzCardSubtitleDirective,
+    VzCardActionsDirective,
+    VzCardContentDirective,
+    VzCardFooterDirective,
+  ],
+  template: `
+    <vz-card>
+      <div vzCardHeader>
+        <h4 vzCardTitle>Título Slotted</h4>
+        <span vzCardSubtitle>Subtítulo Slotted</span>
+        <div vzCardActions><button type="button">Acción</button></div>
+      </div>
+      <div vzCardContent>Contenido Slotted</div>
+      <div vzCardFooter>Pie Slotted</div>
+    </vz-card>
+  `,
+})
+class TestSlottedCardComponent {}
+
+describe('VzCardComponent', () => {
+  it('se crea con valores por defecto (elevated, comfortable)', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+
+    expect(el.classList.contains('vz-card--elevated')).toBe(true);
+    expect(el.classList.contains('vz-card--comfortable')).toBe(true);
+  });
+
+  it('aplica las clases de variante correctamente', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('variant', 'outlined');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--outlined')).toBe(true);
+
+    fixture.componentRef.setInput('variant', 'flat');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--flat')).toBe(true);
+  });
+
+  it('aplica las clases de densidad correctamente', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('density', 'compact');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--compact')).toBe(true);
+
+    fixture.componentRef.setInput('density', 'spacious');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--spacious')).toBe(true);
+  });
+
+  it('renderiza título y subtítulo declarativos', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('title', 'Mi Tarjeta');
+    fixture.componentRef.setInput('subtitle', 'Detalle breve');
+    fixture.detectChanges();
+
+    const titleEl = fixture.nativeElement.querySelector('.vz-card__title');
+    const subEl = fixture.nativeElement.querySelector('.vz-card__subtitle');
+
+    expect(titleEl?.textContent?.trim()).toBe('Mi Tarjeta');
+    expect(subEl?.textContent?.trim()).toBe('Detalle breve');
+  });
+
+  it('soporta estructura componible mediante slots y directivas', () => {
+    const fixture = TestBed.createComponent(TestSlottedCardComponent);
+    fixture.detectChanges();
+
+    const titleEl = fixture.nativeElement.querySelector('.vz-card__title');
+    const subEl = fixture.nativeElement.querySelector('.vz-card__subtitle');
+    const contentEl = fixture.nativeElement.querySelector('.vz-card__content');
+    const footerEl = fixture.nativeElement.querySelector('.vz-card__footer');
+
+    expect(titleEl?.textContent?.trim()).toBe('Título Slotted');
+    expect(subEl?.textContent?.trim()).toBe('Subtítulo Slotted');
+    expect(contentEl?.textContent?.trim()).toBe('Contenido Slotted');
+    expect(footerEl?.textContent?.trim()).toBe('Pie Slotted');
+  });
+
+  it('emite clicked cuando clickable es true y se hace clic', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('clickable', true);
+    fixture.detectChanges();
+
+    let clicked = false;
+    fixture.componentInstance.clicked.subscribe(() => (clicked = true));
+
+    fixture.nativeElement.click();
+    expect(clicked).toBe(true);
+  });
+
+  it('no emite clicked si está deshabilitado', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('clickable', true);
+    fixture.componentRef.setInput('disabled', true);
+    fixture.detectChanges();
+
+    let clicked = false;
+    fixture.componentInstance.clicked.subscribe(() => (clicked = true));
+
+    fixture.nativeElement.click();
+    expect(clicked).toBe(false);
+  });
+
+  it('renderiza skeleton loader cuando loading es true', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('title', 'Mi Tarjeta');
+    fixture.componentRef.setInput('loading', true);
+    fixture.detectChanges();
+
+    const skeleton = fixture.nativeElement.querySelector('.vz-card__skeleton');
+    const titleEl = fixture.nativeElement.querySelector('.vz-card__title');
+
+    expect(skeleton).toBeTruthy();
+    expect(titleEl).toBeFalsy();
+  });
+});
+

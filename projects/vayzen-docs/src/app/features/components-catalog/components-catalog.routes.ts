@@ -12,9 +12,9 @@ export const COMPONENTS_CATALOG_ROUTES: Routes = [
       import('./views/button-doc/button-doc.component').then((m) => m.ButtonDocComponent),
   },
   {
-    path: 'inputs',
+    path: 'cards',
     loadComponent: () =>
-      import('./views/input-doc/input-doc.component').then((m) => m.InputDocComponent),
+      import('./views/card-doc/card-doc.component').then((m) => m.CardDocComponent),
   },
   {
     path: 'tables',

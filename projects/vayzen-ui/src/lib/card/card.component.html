@@ -1,0 +1,46 @@
+@if (loading()) {
+  <div class="vz-card__skeleton" aria-hidden="true">
+    @if (imageUrl()) {
+      <div class="vz-card__skeleton-media"></div>
+    }
+    <div class="vz-card__skeleton-content">
+      <div class="vz-card__skeleton-line vz-card__skeleton-line--title"></div>
+      <div class="vz-card__skeleton-line vz-card__skeleton-line--subtitle"></div>
+      <div class="vz-card__skeleton-line"></div>
+      <div class="vz-card__skeleton-line vz-card__skeleton-line--short"></div>
+    </div>
+  </div>
+} @else {
+  @if (imageUrl()) {
+    <div class="vz-card__media">
+      <img [src]="imageUrl()" [alt]="imageAlt()" class="vz-card__img" />
+    </div>
+  }
+
+  <ng-content select="[vzCardImage], img[vzCardImage]" />
+
+  <ng-content select="[vzCardHeader]" />
+
+  @if (!hasHeaderSlot() && (title() || subtitle())) {
+    <div class="vz-card__header">
+      <div class="vz-card__header-content">
+        @if (title()) {
+          <h3 class="vz-card__title">{{ title() }}</h3>
+        }
+        @if (subtitle()) {
+          <p class="vz-card__subtitle">{{ subtitle() }}</p>
+        }
+      </div>
+      <ng-content select="[vzCardActions]" />
+    </div>
+  }
+
+  <ng-content select="[vzCardContent]" />
+
+  <div class="vz-card__body">
+    <ng-content />
+  </div>
+
+  <ng-content select="[vzCardFooter]" />
+}
+
