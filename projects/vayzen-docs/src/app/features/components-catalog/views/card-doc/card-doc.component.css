@@ -1,33 +1,84 @@
-.card-stage-container {
-  max-width: 440px;
-  width: 100%;
-  margin: 0 auto;
-  transition: max-width 0.25s ease;
-}
-
-.card-stage-container--horizontal {
-  max-width: 720px;
-}
-
-.event-stream {
+/* ── Studio Banner Callout ── */
+.studio-banner {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.75rem 1.25rem;
-  background-color: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-  font-size: 0.85rem;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.04);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
-.event-label {
+.studio-banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.studio-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.725rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #1d4ed8;
+}
+
+.studio-banner-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #2563eb;
+}
+
+.studio-banner-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.studio-banner-desc {
+  font-size: 0.875rem;
+  color: #475569;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.studio-banner-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background-color: #2563eb;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #64748b;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+  }
 }
 
-.event-value {
-  color: #0284c7;
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 0.825rem;
+.preview-card-container {
+  max-width: 440px;
+  margin: 1.25rem 0;
 }
 
 /* ── Grids de Muestra ── */

@@ -11,162 +11,59 @@
     </p>
   </header>
 
-  <!-- 1. Playground Interactivo -->
+  <!-- Banner Acceso a Vayzen Studio -->
+  <div class="studio-banner">
+    <div class="studio-banner-content">
+      <div class="studio-banner-badge">
+        <span class="studio-banner-dot"></span>
+        <span>Vayzen Studio</span>
+      </div>
+      <h3 class="studio-banner-title">¿Deseas personalizar y probar esta Card en tiempo real?</h3>
+      <p class="studio-banner-desc">
+        Abre el laboratorio interactivo para probar variantes, franjas de acento, orientación horizontal, estados y exportar código.
+      </p>
+    </div>
+    <a routerLink="/studio" [queryParams]="{ component: 'card' }" class="studio-banner-action">
+      <span>Abrir en Studio</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </a>
+  </div>
+
+  <!-- 1. Ejemplo Básico -->
   <section class="doc-section">
     <div class="section-heading">
-      <h2 class="section-title">Playground interactivo</h2>
+      <h2 class="section-title">Ejemplo Básico</h2>
       <p class="section-subtitle">
-        Prueba las variantes visuales, franjas de acento, orientación y densidades en tiempo real.
+        Estructura recomendada combinando imagen de cabecera, títulos semánticos, acciones y pie.
       </p>
     </div>
 
-    <div class="playground-card">
-      <div class="playground-controls">
-        <div class="control-group">
-          <label class="control-label">Variante:</label>
-          <div class="pill-group">
-            <button type="button" class="pill-btn" [class.active]="variant() === 'elevated'" (click)="variant.set('elevated')">Elevated</button>
-            <button type="button" class="pill-btn" [class.active]="variant() === 'outlined'" (click)="variant.set('outlined')">Outlined</button>
-            <button type="button" class="pill-btn" [class.active]="variant() === 'flat'" (click)="variant.set('flat')">Flat</button>
-            <button type="button" class="pill-btn" [class.active]="variant() === 'accent'" (click)="variant.set('accent')">Accent</button>
+    <div class="preview-card-container">
+      <vz-card variant="elevated" [hoverable]="true">
+        <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
+        <div vzCardHeader>
+          <div>
+            <h3 vzCardTitle>Control Escolar 2026</h3>
+            <span vzCardSubtitle>Plantel Central · Grupo 402</span>
+          </div>
+          <div vzCardActions>
+            <vz-button size="sm" variant="ghost">Ver</vz-button>
           </div>
         </div>
-
-        @if (variant() === 'accent') {
-          <div class="control-group">
-            <label class="control-label">Color de acento:</label>
-            <div class="pill-group">
-              <button type="button" class="pill-btn" [class.active]="accent() === 'primary'" (click)="accent.set('primary')">Primary</button>
-              <button type="button" class="pill-btn" [class.active]="accent() === 'success'" (click)="accent.set('success')">Success</button>
-              <button type="button" class="pill-btn" [class.active]="accent() === 'warning'" (click)="accent.set('warning')">Warning</button>
-              <button type="button" class="pill-btn" [class.active]="accent() === 'danger'" (click)="accent.set('danger')">Danger</button>
-              <button type="button" class="pill-btn" [class.active]="accent() === 'info'" (click)="accent.set('info')">Info</button>
-            </div>
-          </div>
-
-          <div class="control-group">
-            <label class="control-label">Posición de acento:</label>
-            <div class="pill-group">
-              <button type="button" class="pill-btn" [class.active]="accentPosition() === 'top'" (click)="accentPosition.set('top')">Top</button>
-              <button type="button" class="pill-btn" [class.active]="accentPosition() === 'left'" (click)="accentPosition.set('left')">Left</button>
-            </div>
-          </div>
-        }
-
-        <div class="control-group">
-          <label class="control-label">Orientación:</label>
-          <div class="pill-group">
-            <button type="button" class="pill-btn" [class.active]="orientation() === 'vertical'" (click)="orientation.set('vertical')">Vertical</button>
-            <button type="button" class="pill-btn" [class.active]="orientation() === 'horizontal'" (click)="orientation.set('horizontal')">Horizontal</button>
-          </div>
+        <div vzCardContent>
+          <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
         </div>
-
-        <div class="control-group">
-          <label class="control-label">Densidad:</label>
-          <div class="pill-group">
-            <button type="button" class="pill-btn" [class.active]="density() === 'compact'" (click)="density.set('compact')">Compact</button>
-            <button type="button" class="pill-btn" [class.active]="density() === 'comfortable'" (click)="density.set('comfortable')">Comfortable</button>
-            <button type="button" class="pill-btn" [class.active]="density() === 'spacious'" (click)="density.set('spacious')">Spacious</button>
-          </div>
+        <div vzCardFooter>
+          <span class="text-muted">16 Alumnos inscritos</span>
+          <vz-button size="sm" variant="primary">Ingresar</vz-button>
         </div>
-
-        <div class="control-group flex-wrap">
-          <label class="checkbox-label">
-            <input type="checkbox" [checked]="borderedHeader()" (change)="borderedHeader.set(!borderedHeader())" />
-            <span>Borde Cabecera</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" [checked]="borderedFooter()" (change)="borderedFooter.set(!borderedFooter())" />
-            <span>Borde Pie</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" [checked]="hoverable()" (change)="hoverable.set(!hoverable())" />
-            <span>Hoverable</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" [checked]="clickable()" (change)="clickable.set(!clickable())" />
-            <span>Clickable</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" [checked]="loading()" (change)="loading.set(!loading())" />
-            <span>Loading</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" [checked]="disabled()" (change)="disabled.set(!disabled())" />
-            <span>Disabled</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" [checked]="showImage()" (change)="showImage.set(!showImage())" />
-            <span>Con Imagen</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="playground-preview">
-        <div class="card-stage-container" [class.card-stage-container--horizontal]="orientation() === 'horizontal'">
-          @if (showImage()) {
-            <vz-card
-              [variant]="variant()"
-              [accent]="accent()"
-              [accentPosition]="accentPosition()"
-              [orientation]="orientation()"
-              [density]="density()"
-              [borderedHeader]="borderedHeader()"
-              [borderedFooter]="borderedFooter()"
-              [hoverable]="hoverable()"
-              [clickable]="clickable()"
-              [loading]="loading()"
-              [disabled]="disabled()"
-              (clicked)="onCardClick()"
-            >
-              <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
-              <div vzCardHeader>
-                <div>
-                  <h3 vzCardTitle>Control Escolar 2026</h3>
-                  <span vzCardSubtitle>Plantel Central · Grupo 402</span>
-                </div>
-                <div vzCardActions>
-                  <vz-button size="sm" variant="ghost">Ver</vz-button>
-                </div>
-              </div>
-              <div vzCardContent>
-                <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
-              </div>
-              <div vzCardFooter>
-                <span class="text-muted">16 Alumnos inscritos</span>
-                <vz-button size="sm" variant="primary">Ingresar</vz-button>
-              </div>
-            </vz-card>
-          } @else {
-            <vz-card
-              [variant]="variant()"
-              [accent]="accent()"
-              [accentPosition]="accentPosition()"
-              [orientation]="orientation()"
-              [density]="density()"
-              [borderedHeader]="borderedHeader()"
-              [borderedFooter]="borderedFooter()"
-              [hoverable]="hoverable()"
-              [clickable]="clickable()"
-              [loading]="loading()"
-              [disabled]="disabled()"
-              title="Control Escolar 2026"
-              subtitle="Plantel Central"
-              (clicked)="onCardClick()"
-            >
-              <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
-            </vz-card>
-          }
-        </div>
-      </div>
-
-      <div class="event-stream">
-        <span class="event-label">Último evento:</span>
-        <span class="event-value">{{ lastEvent() }}</span>
-      </div>
-
-      <app-code-block [code]="playgroundCode()" language="html" title="Código generado" />
+      </vz-card>
     </div>
+
+    <app-code-block [code]="starterSnippet" language="html" title="Código de ejemplo" />
   </section>
 
   <!-- Showcase 1: Widgets de Métricas (Dashboard Style) -->

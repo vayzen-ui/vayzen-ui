@@ -58,3 +58,22 @@
   color: #0f172a;
   font-weight: 600;
 }
+
+.nav-link--studio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.studio-nav-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.12rem 0.45rem;
+  border-radius: 9999px;
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  line-height: 1;
+}

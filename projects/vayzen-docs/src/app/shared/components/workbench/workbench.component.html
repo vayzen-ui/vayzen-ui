@@ -1,0 +1,121 @@
+<div class="workbench-container">
+  <!-- Header Bar -->
+  <header class="workbench-header">
+    <div class="workbench-header-left">
+      <div class="workbench-badge">
+        <span class="workbench-badge-dot"></span>
+        <span class="workbench-badge-title">{{ title() }}</span>
+      </div>
+
+      <!-- Mode Tabs -->
+      <div class="workbench-tabs">
+        <button
+          type="button"
+          class="workbench-tab-btn"
+          [class.active]="activeTab() === 'preview'"
+          (click)="activeTab.set('preview')"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>Vista Previa</span>
+        </button>
+
+        @if (code()) {
+          <button
+            type="button"
+            class="workbench-tab-btn"
+            [class.active]="activeTab() === 'code'"
+            (click)="activeTab.set('code')"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Código</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="workbench-header-right">
+      @if (lastEvent()) {
+        <div class="workbench-event-pill" title="Último evento emitido">
+          <span class="event-dot"></span>
+          <span class="event-text">{{ lastEvent() }}</span>
+        </div>
+      }
+
+      @if (activeTab() === 'preview') {
+        <div class="workbench-bg-selector" title="Textura de fondo">
+          <button
+            type="button"
+            class="bg-btn"
+            [class.active]="canvasBg() === 'dots'"
+            (click)="canvasBg.set('dots')"
+            title="Cuadrícula punteada"
+          >
+            <span class="bg-icon bg-icon--dots"></span>
+          </button>
+          <button
+            type="button"
+            class="bg-btn"
+            [class.active]="canvasBg() === 'white'"
+            (click)="canvasBg.set('white')"
+            title="Blanco liso"
+          >
+            <span class="bg-icon bg-icon--white"></span>
+          </button>
+          <button
+            type="button"
+            class="bg-btn"
+            [class.active]="canvasBg() === 'slate'"
+            (click)="canvasBg.set('slate')"
+            title="Gris neutro"
+          >
+            <span class="bg-icon bg-icon--slate"></span>
+          </button>
+        </div>
+      }
+    </div>
+  </header>
+
+  <!-- Body -->
+  @if (activeTab() === 'preview') {
+    <div class="workbench-body">
+      <!-- Canvas Stage -->
+      <main class="workbench-stage" [class]="'workbench-stage--' + canvasBg()">
+        <div class="workbench-canvas">
+          <ng-content select="[stage], [canvas]" />
+        </div>
+      </main>
+
+      <!-- Inspector Panel (Side) -->
+      <aside class="workbench-inspector">
+        <div class="inspector-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+          <span>Propiedades</span>
+        </div>
+        <div class="inspector-content">
+          <ng-content select="[controls], [inspector]" />
+        </div>
+      </aside>
+    </div>
+  } @else {
+    <div class="workbench-code-view">
+      <app-code-block [code]="code()" language="html" />
+    </div>
+  }
+</div>
+

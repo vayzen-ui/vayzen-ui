@@ -24,6 +24,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'studio',
+        loadComponent: () =>
+          import('./features/studio/studio.component').then((m) => m.StudioComponent),
+      },
+      {
         path: 'components',
         loadChildren: () =>
           import('./features/components-catalog/components-catalog.routes').then(

@@ -1,19 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   VzButtonComponent,
-  VzCardAccent,
-  VzCardAccentPosition,
   VzCardActionsDirective,
   VzCardComponent,
   VzCardContentDirective,
-  VzCardDensity,
   VzCardFooterDirective,
   VzCardHeaderDirective,
   VzCardImageDirective,
-  VzCardOrientation,
   VzCardSubtitleDirective,
   VzCardTitleDirective,
-  VzCardVariant,
 } from 'vayzen-ui';
 import { CodeBlockComponent } from '../../../../shared/components/code-block/code-block.component';
 
@@ -21,6 +17,7 @@ import { CodeBlockComponent } from '../../../../shared/components/code-block/cod
   selector: 'app-card-doc',
   standalone: true,
   imports: [
+    RouterLink,
     VzCardComponent,
     VzCardHeaderDirective,
     VzCardTitleDirective,
@@ -37,57 +34,9 @@ import { CodeBlockComponent } from '../../../../shared/components/code-block/cod
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardDocComponent {
-  // ── Playground States ──
-  protected readonly variant = signal<VzCardVariant>('elevated');
-  protected readonly density = signal<VzCardDensity>('comfortable');
-  protected readonly orientation = signal<VzCardOrientation>('vertical');
-  protected readonly accent = signal<VzCardAccent>('primary');
-  protected readonly accentPosition = signal<VzCardAccentPosition>('top');
-  protected readonly borderedHeader = signal(true);
-  protected readonly borderedFooter = signal(true);
-  protected readonly hoverable = signal(true);
-  protected readonly clickable = signal(false);
-  protected readonly loading = signal(false);
-  protected readonly disabled = signal(false);
-  protected readonly showImage = signal(true);
-
-  protected readonly lastEvent = signal('Haz clic en la tarjeta o usa los controles.');
-
-  protected readonly playgroundCode = computed(() => {
-    const v = this.variant();
-    const d = this.density();
-    const o = this.orientation();
-    const a = this.accent();
-    const ap = this.accentPosition();
-    const bh = this.borderedHeader();
-    const bf = this.borderedFooter();
-    const h = this.hoverable();
-    const c = this.clickable();
-    const l = this.loading();
-    const dis = this.disabled();
-    const img = this.showImage();
-
-    const attrs = [
-      v !== 'elevated' ? `variant="${v}"` : '',
-      v === 'accent' && a !== 'primary' ? `accent="${a}"` : '',
-      v === 'accent' && ap !== 'top' ? `accentPosition="${ap}"` : '',
-      o !== 'vertical' ? `orientation="${o}"` : '',
-      d !== 'comfortable' ? `density="${d}"` : '',
-      !bh ? '[borderedHeader]="false"' : '',
-      !bf ? '[borderedFooter]="false"' : '',
-      h ? 'hoverable' : '',
-      c ? 'clickable (clicked)="onCardClick($event)"' : '',
-      l ? '[loading]="true"' : '',
-      dis ? '[disabled]="true"' : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    const attrStr = attrs ? ` ${attrs}` : '';
-
-    if (img) {
-      return `<vz-card${attrStr}>
-  <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula" />
+  // ── Snippet Inicial ──
+  protected readonly starterSnippet = `<vz-card variant="elevated" hoverable>
+  <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
   <div vzCardHeader>
     <div>
       <h3 vzCardTitle>Control Escolar 2026</h3>
@@ -98,42 +47,13 @@ export class CardDocComponent {
     </div>
   </div>
   <div vzCardContent>
-    <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones.</p>
+    <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
   </div>
   <div vzCardFooter>
     <span class="text-muted">16 Alumnos inscritos</span>
     <vz-button size="sm" variant="primary">Ingresar</vz-button>
   </div>
 </vz-card>`;
-    }
-
-    return `<vz-card${attrStr} title="Control Escolar 2026" subtitle="Plantel Central">
-  <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones.</p>
-</vz-card>`;
-  });
-
-  protected onCardClick(): void {
-    this.lastEvent.set(`clicked → Evento emitido a las ${new Date().toLocaleTimeString()}`);
-  }
-
-  // ── Snippets de Ejemplo ──
-  protected readonly declarativeSnippet = `import { Component } from '@angular/core';
-import { VzCardComponent } from 'vayzen-ui';
-
-@Component({
-  standalone: true,
-  imports: [VzCardComponent],
-  template: \`
-    <vz-card
-      title="Expediente de Alumno"
-      subtitle="Matrícula: 2926BG06P002"
-      variant="elevated"
-      hoverable>
-      <p>Estudiante regular inscrito en el 4to semestre.</p>
-    </vz-card>
-  \`,
-})
-export class MiComponente {}`;
 
   protected readonly accentSnippet = `<div class="status-cards-grid">
   <!-- Tarjeta con estado Aprobado / Éxito -->
@@ -171,7 +91,7 @@ export class MiComponente {}`;
       <span vzCardSubtitle>Matrícula: 2926BG06P002</span>
     </div>
     <div vzCardActions>
-      <span class="vz-badge vz-badge--success">Inscrita</span>
+      <span class="status-pill status-pill--success">Inscrita</span>
     </div>
   </div>
   <div vzCardContent>

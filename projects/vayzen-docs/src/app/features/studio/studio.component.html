@@ -1,0 +1,421 @@
+<div class="doc-page">
+  <!-- Studio Header -->
+  <header class="doc-header">
+    <div class="doc-header-top">
+      <span class="category-tag">Herramientas / Laboratorio</span>
+      <span class="version-tag">Studio v1.0</span>
+    </div>
+    <div class="studio-title-row">
+      <h1 class="doc-title">Vayzen Studio</h1>
+      <span class="studio-live-pill">
+        <span class="pulse-indicator"></span>
+        Entorno en Vivo
+      </span>
+    </div>
+    <p class="doc-description">
+      El taller centralizado de diseño interactivo. Selecciona un componente, ajusta sus propiedades visuales, tokens de diseño y comportamiento, y copia el código listo para producción.
+    </p>
+
+    <!-- Component Selection Strip -->
+    <div class="component-selector-strip">
+      @for (item of componentCatalog; track item.id) {
+        <button
+          type="button"
+          class="component-selector-card"
+          [class.active]="activeComponent() === item.id"
+          (click)="activeComponent.set(item.id)"
+        >
+          <span class="selector-icon">{{ item.icon }}</span>
+          <div class="selector-info">
+            <span class="selector-name">{{ item.name }}</span>
+            <span class="selector-summary">{{ item.summary }}</span>
+          </div>
+        </button>
+      }
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 1. CARD STUDIO -->
+  <!-- ══════════════════════════════════════════════ -->
+  @if (activeComponent() === 'card') {
+    <section class="doc-section">
+      <div class="section-heading">
+        <div class="section-title-with-link">
+          <h2 class="section-title">Diseñador de Card</h2>
+          <a routerLink="/components/cards" class="doc-link-btn">
+            <span>Ver Documentación de Card</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <app-workbench
+        title="VzCard Studio"
+        [code]="cardCode()"
+        [lastEvent]="cardLastEvent()"
+      >
+        <!-- Canvas Stage Slot -->
+        <div canvas class="card-stage-container" [class.card-stage-container--horizontal]="cardOrientation() === 'horizontal'">
+          @if (cardShowImage()) {
+            <vz-card
+              [variant]="cardVariant()"
+              [accent]="cardAccent()"
+              [accentPosition]="cardAccentPosition()"
+              [orientation]="cardOrientation()"
+              [density]="cardDensity()"
+              [borderedHeader]="cardBorderedHeader()"
+              [borderedFooter]="cardBorderedFooter()"
+              [hoverable]="cardHoverable()"
+              [clickable]="cardClickable()"
+              [loading]="cardLoading()"
+              [disabled]="cardDisabled()"
+              (clicked)="onCardClick()"
+            >
+              <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
+              <div vzCardHeader>
+                <div>
+                  <h3 vzCardTitle>Control Escolar 2026</h3>
+                  <span vzCardSubtitle>Plantel Central · Grupo 402</span>
+                </div>
+                <div vzCardActions>
+                  <vz-button size="sm" variant="ghost">Ver</vz-button>
+                </div>
+              </div>
+              <div vzCardContent>
+                <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
+              </div>
+              <div vzCardFooter>
+                <span class="text-muted">16 Alumnos inscritos</span>
+                <vz-button size="sm" variant="primary">Ingresar</vz-button>
+              </div>
+            </vz-card>
+          } @else {
+            <vz-card
+              [variant]="cardVariant()"
+              [accent]="cardAccent()"
+              [accentPosition]="cardAccentPosition()"
+              [orientation]="cardOrientation()"
+              [density]="cardDensity()"
+              [borderedHeader]="cardBorderedHeader()"
+              [borderedFooter]="cardBorderedFooter()"
+              [hoverable]="cardHoverable()"
+              [clickable]="cardClickable()"
+              [loading]="cardLoading()"
+              [disabled]="cardDisabled()"
+              title="Control Escolar 2026"
+              subtitle="Plantel Central"
+              (clicked)="onCardClick()"
+            >
+              <p>Gestión integral de expedientes académicos, mallas curriculares y calificaciones para el ciclo en curso.</p>
+            </vz-card>
+          }
+        </div>
+
+        <!-- Controls / Inspector Slot -->
+        <div controls>
+          <!-- Sección 1: Apariencia -->
+          <div class="wb-section">
+            <h4 class="wb-section-title">Apariencia</h4>
+            <div class="wb-field">
+              <label class="wb-label">Variante:</label>
+              <div class="wb-segmented">
+                <button type="button" class="wb-seg-btn" [class.active]="cardVariant() === 'elevated'" (click)="cardVariant.set('elevated')">Elevated</button>
+                <button type="button" class="wb-seg-btn" [class.active]="cardVariant() === 'outlined'" (click)="cardVariant.set('outlined')">Outlined</button>
+                <button type="button" class="wb-seg-btn" [class.active]="cardVariant() === 'flat'" (click)="cardVariant.set('flat')">Flat</button>
+                <button type="button" class="wb-seg-btn" [class.active]="cardVariant() === 'accent'" (click)="cardVariant.set('accent')">Accent</button>
+              </div>
+            </div>
+
+            @if (cardVariant() === 'accent') {
+              <div class="wb-field">
+                <label class="wb-label">Color de Acento:</label>
+                <div class="wb-segmented">
+                  <button type="button" class="wb-seg-btn" [class.active]="cardAccent() === 'primary'" (click)="cardAccent.set('primary')">Blue</button>
+                  <button type="button" class="wb-seg-btn" [class.active]="cardAccent() === 'success'" (click)="cardAccent.set('success')">Green</button>
+                  <button type="button" class="wb-seg-btn" [class.active]="cardAccent() === 'warning'" (click)="cardAccent.set('warning')">Amber</button>
+                  <button type="button" class="wb-seg-btn" [class.active]="cardAccent() === 'danger'" (click)="cardAccent.set('danger')">Red</button>
+                  <button type="button" class="wb-seg-btn" [class.active]="cardAccent() === 'info'" (click)="cardAccent.set('info')">Purple</button>
+                </div>
+              </div>
+
+              <div class="wb-field">
+                <label class="wb-label">Posición de Acento:</label>
+                <div class="wb-segmented">
+                  <button type="button" class="wb-seg-btn" [class.active]="cardAccentPosition() === 'top'" (click)="cardAccentPosition.set('top')">Superior (Top)</button>
+                  <button type="button" class="wb-seg-btn" [class.active]="cardAccentPosition() === 'left'" (click)="cardAccentPosition.set('left')">Lateral (Left)</button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Sección 2: Disposición -->
+          <div class="wb-section">
+            <h4 class="wb-section-title">Disposición</h4>
+            <div class="wb-field">
+              <label class="wb-label">Orientación:</label>
+              <div class="wb-segmented">
+                <button type="button" class="wb-seg-btn" [class.active]="cardOrientation() === 'vertical'" (click)="cardOrientation.set('vertical')">Vertical</button>
+                <button type="button" class="wb-seg-btn" [class.active]="cardOrientation() === 'horizontal'" (click)="cardOrientation.set('horizontal')">Horizontal</button>
+              </div>
+            </div>
+
+            <div class="wb-field">
+              <label class="wb-label">Densidad:</label>
+              <div class="wb-segmented">
+                <button type="button" class="wb-seg-btn" [class.active]="cardDensity() === 'compact'" (click)="cardDensity.set('compact')">Compact</button>
+                <button type="button" class="wb-seg-btn" [class.active]="cardDensity() === 'comfortable'" (click)="cardDensity.set('comfortable')">Normal</button>
+                <button type="button" class="wb-seg-btn" [class.active]="cardDensity() === 'spacious'" (click)="cardDensity.set('spacious')">Spacious</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 3: Comportamiento -->
+          <div class="wb-section">
+            <h4 class="wb-section-title">Comportamiento</h4>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Efecto Hover (Hoverable)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="cardHoverable()" (change)="cardHoverable.set(!cardHoverable())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Interactivo (Clickable)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="cardClickable()" (change)="cardClickable.set(!cardClickable())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Estado Carga (Loading)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="cardLoading()" (change)="cardLoading.set(!cardLoading())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Imagen Superior</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="cardShowImage()" (change)="cardShowImage.set(!cardShowImage())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Borde Cabecera</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="cardBorderedHeader()" (change)="cardBorderedHeader.set(!cardBorderedHeader())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Borde Pie</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="cardBorderedFooter()" (change)="cardBorderedFooter.set(!cardBorderedFooter())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Deshabilitado (Disabled)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="cardDisabled()" (change)="cardDisabled.set(!cardDisabled())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </app-workbench>
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 2. BUTTON STUDIO -->
+  <!-- ══════════════════════════════════════════════ -->
+  @if (activeComponent() === 'button') {
+    <section class="doc-section">
+      <div class="section-heading">
+        <div class="section-title-with-link">
+          <h2 class="section-title">Diseñador de Button</h2>
+          <a routerLink="/components/buttons" class="doc-link-btn">
+            <span>Ver Documentación de Button</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <app-workbench
+        title="VzButton Studio"
+        [code]="btnCode()"
+        [lastEvent]="btnLastEvent()"
+      >
+        <div canvas class="button-stage-container">
+          <vz-button
+            [variant]="btnVariant()"
+            [size]="btnSize()"
+            [disabled]="btnDisabled()"
+            (clicked)="onBtnClick()"
+          >
+            {{ btnText() }}
+          </vz-button>
+        </div>
+
+        <div controls>
+          <div class="wb-section">
+            <h4 class="wb-section-title">Apariencia</h4>
+            <div class="wb-field">
+              <label class="wb-label">Variante:</label>
+              <div class="wb-segmented">
+                <button type="button" class="wb-seg-btn" [class.active]="btnVariant() === 'primary'" (click)="btnVariant.set('primary')">Primary</button>
+                <button type="button" class="wb-seg-btn" [class.active]="btnVariant() === 'secondary'" (click)="btnVariant.set('secondary')">Secondary</button>
+                <button type="button" class="wb-seg-btn" [class.active]="btnVariant() === 'outline'" (click)="btnVariant.set('outline')">Outline</button>
+                <button type="button" class="wb-seg-btn" [class.active]="btnVariant() === 'ghost'" (click)="btnVariant.set('ghost')">Ghost</button>
+              </div>
+            </div>
+
+            <div class="wb-field">
+              <label class="wb-label">Tamaño:</label>
+              <div class="wb-segmented">
+                <button type="button" class="wb-seg-btn" [class.active]="btnSize() === 'sm'" (click)="btnSize.set('sm')">Small</button>
+                <button type="button" class="wb-seg-btn" [class.active]="btnSize() === 'md'" (click)="btnSize.set('md')">Medium</button>
+                <button type="button" class="wb-seg-btn" [class.active]="btnSize() === 'lg'" (click)="btnSize.set('lg')">Large</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="wb-section">
+            <h4 class="wb-section-title">Contenido y Estado</h4>
+            <div class="wb-field">
+              <label class="wb-label">Texto del Botón:</label>
+              <input
+                type="text"
+                class="wb-input-text"
+                [ngModel]="btnText()"
+                (ngModelChange)="btnText.set($event)"
+              />
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Deshabilitado (Disabled)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="btnDisabled()" (change)="btnDisabled.set(!btnDisabled())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </app-workbench>
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- 3. TABLE STUDIO -->
+  <!-- ══════════════════════════════════════════════ -->
+  @if (activeComponent() === 'table') {
+    <section class="doc-section">
+      <div class="section-heading">
+        <div class="section-title-with-link">
+          <h2 class="section-title">Diseñador de Table</h2>
+          <a routerLink="/components/tables" class="doc-link-btn">
+            <span>Ver Documentación de Table</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <app-workbench
+        title="VzTable Studio"
+        [code]="tableCode()"
+        [lastEvent]="tableLastEvent()"
+      >
+        <div canvas class="table-stage-container">
+          <vz-table
+            [columns]="tableColumns"
+            [data]="tableData"
+            [density]="tableDensity()"
+            [striped]="tableStriped()"
+            [hoverable]="tableHoverable()"
+            [bordered]="tableBordered()"
+            [selectable]="tableSelectable()"
+            [loading]="tableLoading()"
+            (rowAction)="onTableRowAction($event)"
+          />
+        </div>
+
+        <div controls>
+          <div class="wb-section">
+            <h4 class="wb-section-title">Formato y Densidad</h4>
+            <div class="wb-field">
+              <label class="wb-label">Densidad:</label>
+              <div class="wb-segmented">
+                <button type="button" class="wb-seg-btn" [class.active]="tableDensity() === 'compact'" (click)="tableDensity.set('compact')">Compact</button>
+                <button type="button" class="wb-seg-btn" [class.active]="tableDensity() === 'comfortable'" (click)="tableDensity.set('comfortable')">Normal</button>
+                <button type="button" class="wb-seg-btn" [class.active]="tableDensity() === 'spacious'" (click)="tableDensity.set('spacious')">Spacious</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="wb-section">
+            <h4 class="wb-section-title">Opciones Visuales</h4>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Filas Cebradas (Striped)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="tableStriped()" (change)="tableStriped.set(!tableStriped())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Hover en Filas (Hoverable)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="tableHoverable()" (change)="tableHoverable.set(!tableHoverable())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Bordes Completos (Bordered)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="tableBordered()" (change)="tableBordered.set(!tableBordered())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Casillas de Selección (Selectable)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="tableSelectable()" (change)="tableSelectable.set(!tableSelectable())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+
+            <div class="wb-field wb-field--row">
+              <span class="wb-label">Estado de Carga (Loading)</span>
+              <label class="wb-switch">
+                <input type="checkbox" [checked]="tableLoading()" (change)="tableLoading.set(!tableLoading())" />
+                <span class="wb-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </app-workbench>
+    </section>
+  }
+</div>
+
