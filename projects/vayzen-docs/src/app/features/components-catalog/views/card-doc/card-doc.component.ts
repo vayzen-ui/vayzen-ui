@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
   VZ_CARD_IMPORTS,
@@ -6,10 +7,19 @@ import {
 } from 'vayzen-ui';
 import { CodeBlockComponent } from '../../../../shared/components/code-block/code-block.component';
 
+export interface ComentarioItem {
+  id: string;
+  nombreUsuario: string;
+  texto: string;
+  tiempo: string;
+  esComprador: boolean;
+}
+
 @Component({
   selector: 'app-card-doc',
   standalone: true,
   imports: [
+    FormsModule,
     RouterLink,
     ...VZ_CARD_IMPORTS,
     VzButtonComponent,
@@ -93,12 +103,144 @@ export class CardDocComponent {
 
   <!-- Pie con Enlace Directo y CTA Principal -->
   <div vzCardFooter>
-    <a vzCardLink href="javascript:void(0)">🔗 kintab.app/@nexus-hardw</a>
+    <a vzCardLink href="javascript:void(0)">🔗 nexus.store/@nexus-hardware</a>
     <vz-button size="sm" variant="primary" class="btn-pill-cta">Ver Catálogo →</vz-button>
   </div>
 </vz-card>`;
 
-  // ── 3. Snippet: Card Muy Completa (Académica / Enterprise) ──
+  // ── 3. Snippet: Card Social & Marketplace con Drawer Lateral de Comentarios ──
+  protected readonly socialCardSnippet = `<vz-card
+  variant="elevated"
+  [borderedHeader]="false"
+  [borderedFooter]="false"
+  [drawerOpen]="mostrarComentarios()"
+  [hoverable]="true"
+>
+  <!-- 1. Panel Lateral Izquierdo de Comentarios (aparece al activar) -->
+  @if (mostrarComentarios()) {
+    <aside vzCardDrawer class="feed-comments-panel">
+      <div class="feed-comments-header">
+        <div>
+          <h5 class="feed-comments-title">
+            💬 Comentarios ({{ listaComentarios().length }})
+          </h5>
+          <span class="feed-community-badge">🛡️ Comunidad Verificada</span>
+        </div>
+        <button type="button" class="btn-close-comments" (click)="alternarComentarios()">✕</button>
+      </div>
+
+      <!-- Lista con scroll interior -->
+      <div class="feed-comments-list">
+        @for (c of listaComentarios(); track c.id) {
+          <div class="feed-comment-item">
+            <div class="comment-avatar">👤</div>
+            <div class="comment-body">
+              <div class="comment-meta">
+                <strong class="comment-author">{{ c.nombreUsuario }}</strong>
+                @if (c.esComprador) {
+                  <span class="badge-buyer">✓ Comprador</span>
+                }
+                <span class="comment-time">{{ c.tiempo }}</span>
+              </div>
+              <p class="comment-text">{{ c.texto }}</p>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Formulario para agregar comentario -->
+      <form class="feed-comment-form" (ngSubmit)="agregarComentario()">
+        <input
+          type="text"
+          [ngModel]="textoNuevoComentario()"
+          (ngModelChange)="textoNuevoComentario.set($event)"
+          name="comentario"
+          placeholder="Pregunta sobre este producto..."
+        />
+        <button type="submit" class="btn-send-comment">➤</button>
+      </form>
+    </aside>
+  }
+
+  <!-- 2. Encabezado de la Publicación (Logo, Tienda y Enlace) -->
+  <div vzCardHeader class="feed-card-header">
+    <div class="feed-store-info">
+      <img src="avatar.jpg" alt="Nexus Hardware Lab" class="feed-avatar" />
+      <div>
+        <div class="feed-store-row">
+          <h4 vzCardTitle>Nexus Hardware Lab</h4>
+          <span class="badge-verified">✓</span>
+        </div>
+        <span vzCardSubtitle>Hace 35 minutos • @nexus-hardware</span>
+      </div>
+    </div>
+    <div vzCardActions>
+      <vz-button size="sm" variant="outline">Tienda ↗</vz-button>
+    </div>
+  </div>
+
+  <!-- 3. Contenido y Multimedia Edge-to-Edge con Píldora Flotante -->
+  <div vzCardContent class="feed-card-content">
+    <div class="feed-text-zone">
+      <p class="feed-post-text">
+        ¡Acaban de ingresar 8 unidades del Teclado Mecánico Custom 65% con switches lubricados!
+        Disponibles para entrega hoy mismo en Punto Seguro o envío programado con pago protegido.
+      </p>
+      <div class="feed-hashtags">
+        <span>#Hardware</span>
+        <span>#CustomKeyboard</span>
+        <span>#EntregaHoy</span>
+      </div>
+    </div>
+
+    <!-- Contenedor Multimedia Edge-to-Edge -->
+    <div class="feed-media-container">
+      <img src="teclado-mecanico-custom.jpg" alt="Teclado Mecánico Custom 65% RGB" class="feed-media-img" />
+
+      <!-- Píldora Flotante con Glassmorphism -->
+      <div vzCardProductOverlay>
+        <div class="product-overlay-info">
+          <span vzCardBadge variant="primary">STOCK LIMITADO</span>
+          <strong class="product-overlay-title">Teclado Mecánico Pro 65% RGB</strong>
+        </div>
+        <div class="product-overlay-price-box">
+          <span class="price-main">$1850 MXN</span>
+          <span class="price-strikethrough">$2199</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Logística Edge-to-Edge -->
+    <div class="feed-logistics-bar">
+      <span>📅 Punto de Encuentro: <strong>Entrega programada hoy de 16:00 a 19:00 hrs</strong></span>
+    </div>
+  </div>
+
+  <!-- 4. Barra de Acciones (Likes, Comentarios, Chat, Agendar) -->
+  <div vzCardFooter class="feed-card-footer">
+    <div class="feed-social-actions">
+      <button type="button" class="btn-social-action" (click)="alDarMeGusta()">
+        {{ leGusta() ? '❤️' : '🤍' }} {{ totalMeGusta() }}
+      </button>
+      <button
+        type="button"
+        class="btn-social-action"
+        [class.active]="mostrarComentarios()"
+        (click)="alternarComentarios()"
+      >
+        💬 {{ listaComentarios().length }}
+      </button>
+      <button type="button" class="btn-social-action">✉️ Mensaje</button>
+      <button type="button" class="btn-social-action">↗ 4</button>
+    </div>
+
+    <vz-button size="sm" variant="primary" class="btn-schedule-order">
+      📅 Agendar Pedido
+    </vz-button>
+  </div>
+</vz-card>`;
+
+  // ── 4. Snippet: Card Muy Completa (Académica / Enterprise) ──
   protected readonly completeAcademicSnippet = `<vz-card variant="elevated" [borderedHeader]="false" hoverable>
   <img
     vzCardImage
@@ -192,11 +334,12 @@ export class CardDocComponent {
     <div vzCardTags>
       <span vzCardTag tone="primary">Bachillerato General</span>
       <span vzCardTag tone="success">Beca Institucional</span>
+      <span vzCardTag tone="neutral">Plantel Central</span>
     </div>
   </div>
   <div vzCardFooter>
     <a vzCardLink href="javascript:void(0)">🔗 Expediente #2926-BG</a>
-    <vz-button size="sm" variant="primary">Expediente Completo →</vz-button>
+    <vz-button size="sm" variant="primary" class="btn-pill-cta">Expediente Completo →</vz-button>
   </div>
 </vz-card>`;
 
@@ -234,6 +377,58 @@ export class CardDocComponent {
   --vz-card-footer-bg: #0b1120;
 }`;
 
+  // ── ESTADO REACTIVO: Card Social & Marketplace ──
+  protected readonly mostrarComentarios = signal(false);
+  protected readonly listaComentarios = signal<ComentarioItem[]>([
+    {
+      id: 'c1',
+      nombreUsuario: 'Carlos Mendoza',
+      texto: '¿Hacen entregas hoy mismo en Metro Insurgentes después de las 5pm?',
+      tiempo: 'Hace 20 min',
+      esComprador: false,
+    },
+    {
+      id: 'c2',
+      nombreUsuario: 'Sofía Romero',
+      texto: 'Excelente ensamble, los switches lubricados suenan perfecto y el tacto es 10/10 🚀',
+      tiempo: 'Hace 10 min',
+      esComprador: true,
+    },
+  ]);
+  protected readonly textoNuevoComentario = signal('');
+  protected readonly leGusta = signal(false);
+  protected readonly totalMeGusta = signal(28);
+
+  protected alternarComentarios(): void {
+    this.mostrarComentarios.update((v) => !v);
+  }
+
+  protected alDarMeGusta(): void {
+    if (this.leGusta()) {
+      this.leGusta.set(false);
+      this.totalMeGusta.update((n) => n - 1);
+    } else {
+      this.leGusta.set(true);
+      this.totalMeGusta.update((n) => n + 1);
+    }
+  }
+
+  protected agregarComentario(): void {
+    const texto = this.textoNuevoComentario().trim();
+    if (!texto) return;
+
+    const nuevo: ComentarioItem = {
+      id: `c-${Date.now()}`,
+      nombreUsuario: 'Tú (Usuario Verificado)',
+      texto,
+      tiempo: 'Justo ahora',
+      esComprador: true,
+    };
+
+    this.listaComentarios.update((items) => [...items, nuevo]);
+    this.textoNuevoComentario.set('');
+  }
+
   // ── Tablas de Referencia ──
   protected readonly inputRows: [string, string, string, string][] = [
     ['variant', "'elevated' | 'outlined' | 'flat' | 'accent'", "'elevated'", 'Variante visual del contenedor.'],
@@ -241,6 +436,7 @@ export class CardDocComponent {
     ['accentPosition', "'top' | 'left'", "'top'", 'Posición de la franja de acento.'],
     ['orientation', "'vertical' | 'horizontal'", "'vertical'", 'Disposición de imagen y contenido.'],
     ['density', "'compact' | 'comfortable' | 'spacious'", "'comfortable'", 'Espaciado interno (padding) de la tarjeta.'],
+    ['drawerOpen', 'boolean', 'false', 'Activa la disposición en 2 columnas para acoplar el drawer de comentarios o filtros a la izquierda.'],
     ['borderedHeader', 'boolean', 'true', 'Muestra u oculta el borde inferior de la cabecera.'],
     ['borderedFooter', 'boolean', 'true', 'Muestra u oculta el borde superior y fondo del pie.'],
     ['title', 'string', "''", 'Título declarativo de la tarjeta (para cards básicas rápidas).'],
@@ -265,6 +461,8 @@ export class CardDocComponent {
     ['[vzCardContent]', 'Contenedor', 'Área para el contenido o cuerpo principal de la tarjeta.'],
     ['[vzCardFooter]', 'Contenedor', 'Área de pie con borde divisor para enlaces y botones CTA.'],
     ['[vzCardImage]', 'Elemento <img>', 'Ajusta y recorta la imagen respetando los radios y orientación de la tarjeta.'],
+    ['[vzCardDrawer]', 'Panel Lateral', 'Panel / drawer con scroll interior acoplable a la izquierda en desktop (ej. comentarios o filtros).'],
+    ['[vzCardProductOverlay]', 'Píldora Flotante', 'Caja flotante con efecto blur glassmorphism sobre imágenes (nombre, badge y precio destacado).'],
     ['[vzCardEyebrow]', 'Fila Superior', 'Alinea un badge de categoría a la izquierda y un rating/estado a la derecha.'],
     ['[vzCardBadge]', 'Pastilla (Pill)', 'Badge semántico (variant="primary" | "success" | "warning" | "danger" | "info" | "neutral").'],
     ['[vzCardRating]', 'Indicador', 'Muestra puntaje o calificación en tono ámbar destacado (ej. ★ 4.95).'],
@@ -287,6 +485,7 @@ export class CardDocComponent {
     ['--vz-card-shadow-hover', 'Sombra al pasar el cursor (cuando hoverable=true)'],
     ['--vz-card-padding', 'Espaciado interno de las secciones (header, content, footer)'],
     ['--vz-card-image-height', 'Altura máxima de la imagen superior (default: 210px)'],
+    ['--vz-card-drawer-bg', 'Color de fondo del panel lateral / drawer (default: #f8fafc)'],
     ['--vz-card-title-color', 'Color del título principal (default: #0f172a)'],
     ['--vz-card-title-size', 'Tamaño de fuente del título'],
     ['--vz-card-title-weight', 'Peso tipográfico del título (default: 700)'],

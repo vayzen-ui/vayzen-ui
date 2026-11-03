@@ -316,7 +316,7 @@ export class StudioComponent implements OnInit {
     }
     lines.push(`  </div>`);
     lines.push(`  <div vzCardFooter>`);
-    lines.push(`    <a vzCardLink href="javascript:void(0)">🔗 kintab.app/@nexus-hardw</a>`);
+    lines.push(`    <a vzCardLink href="javascript:void(0)">🔗 nexus.store/@nexus-hardware</a>`);
     lines.push(`    <vz-button size="sm" variant="primary">Ver Catálogo →</vz-button>`);
     lines.push(`  </div>`);
     lines.push(`</vz-card>`);

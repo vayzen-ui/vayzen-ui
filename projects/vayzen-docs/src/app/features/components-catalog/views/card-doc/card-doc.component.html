@@ -189,7 +189,7 @@
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                 </svg>
-                kintab.app/&#64;nexus-hardw
+                nexus.store/&#64;nexus-hardware
               </a>
               <vz-button size="sm" variant="primary" class="btn-pill-cta">
                 Ver Catálogo →
@@ -203,7 +203,279 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════════════════ -->
-    <!-- 3. CARD MUY COMPLETA: GESTIÓN ACADÉMICA / ENTERPRISE                 -->
+    <!-- 3. CARD SOCIAL & MARKETPLACE CON DRAWER LATERAL DE COMENTARIOS       -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <section id="card-social-drawer" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">3. Card Social &amp; Marketplace (Feed con Drawer de Comentarios)</h2>
+        <p class="section-subtitle">
+          Patrón avanzado para publicaciones de marketplace y redes sociales. Incorpora el panel lateral interactivo <code>[vzCardDrawer]</code> (con scroll interno de comentarios y formulario en vivo) y la píldora flotante <code>[vzCardProductOverlay]</code> con efecto blur glassmorphism sobre la imagen.
+        </p>
+      </div>
+
+      <!-- Live interactive showcase -->
+      <div class="interactive-social-showcase">
+        <vz-card
+          variant="elevated"
+          [borderedHeader]="false"
+          [borderedFooter]="false"
+          [drawerOpen]="mostrarComentarios()"
+          [hoverable]="true"
+          class="social-feed-card"
+        >
+          <!-- 1. Drawer Lateral de Comentarios (Aparece a la izquierda) -->
+          @if (mostrarComentarios()) {
+            <aside vzCardDrawer class="feed-comments-panel">
+              <!-- Cabecera del panel de comentarios -->
+              <div class="feed-comments-header">
+                <div class="comments-header-info">
+                  <h5 class="comments-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#2563eb" stroke="none">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Comentarios ({{ listaComentarios().length }})
+                  </h5>
+                  <span class="community-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="1.5">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Comunidad Verificada
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-close-comments"
+                  (click)="alternarComentarios()"
+                  title="Cerrar comentarios"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Lista con scroll interior de comentarios -->
+              <div class="feed-comments-list">
+                @for (c of listaComentarios(); track c.id) {
+                  <div class="feed-comment-item">
+                    <div class="comment-avatar">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <div class="comment-content">
+                      <div class="comment-meta">
+                        <span class="comment-user">{{ c.nombreUsuario }}</span>
+                        @if (c.esComprador) {
+                          <span class="badge-buyer">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <polyline points="9 12 11 14 15 10"></polyline>
+                            </svg>
+                            Comprador
+                          </span>
+                        }
+                        <span class="comment-time">{{ c.tiempo }}</span>
+                      </div>
+                      <p class="comment-text">{{ c.texto }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <!-- Formulario fijado al pie para agregar comentario -->
+              <form class="feed-comment-form" (ngSubmit)="agregarComentario()">
+                <div class="comment-input-box">
+                  <input
+                    type="text"
+                    [ngModel]="textoNuevoComentario()"
+                    (ngModelChange)="textoNuevoComentario.set($event)"
+                    name="comentarioTexto"
+                    placeholder="Pregunta sobre este producto..."
+                    autocomplete="off"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    class="btn-send-comment"
+                    [disabled]="!textoNuevoComentario().trim()"
+                    title="Publicar comentario"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="22" y1="2" x2="11" y2="13"></line>
+                      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </aside>
+          }
+
+          <!-- 2. Encabezado de la Publicación (Logo, Tienda y Enlace) -->
+          <div vzCardHeader class="feed-card-header">
+            <div class="feed-store-info">
+              <img
+                src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=120&q=80"
+                alt="Nexus Hardware Lab"
+                class="feed-avatar"
+              />
+              <div class="feed-store-names">
+                <div class="feed-store-row">
+                  <h4 vzCardTitle class="store-name">Nexus Hardware Lab</h4>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                </div>
+                <span vzCardSubtitle class="store-meta">Hace 35 minutos • &#64;nexus-hardware</span>
+              </div>
+            </div>
+
+            <div vzCardActions>
+              <button type="button" class="btn-store-link">
+                <span>Tienda</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Contenido y Multimedia con Píldora Flotante (Edge-to-Edge) -->
+          <div vzCardContent class="feed-card-content">
+            <div class="feed-text-zone">
+              <p class="feed-post-text">
+                ¡Acaban de ingresar 8 unidades del Teclado Mecánico Custom 65% con switches lubricados! Disponibles para entrega hoy mismo en Punto Seguro o envío programado con pago protegido.
+              </p>
+              <div class="feed-hashtags">
+                <span class="hashtag">#Hardware</span>
+                <span class="hashtag">#CustomKeyboard</span>
+                <span class="hashtag">#EntregaHoy</span>
+              </div>
+            </div>
+
+            <!-- Contenedor Multimedia Edge-to-Edge -->
+            <div class="feed-media-container">
+              <img
+                src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=1200&q=80"
+                alt="Teclado Mecánico Custom 65% RGB"
+                class="feed-media-img"
+              />
+
+              <!-- Píldora Flotante de Producto (Efecto Glassmorphism Blur) -->
+              <div vzCardProductOverlay>
+                <div class="product-overlay-info">
+                  <span vzCardBadge variant="primary" class="stock-badge">STOCK LIMITADO</span>
+                  <strong class="product-overlay-title">Teclado Mecánico Pro 65% RGB</strong>
+                </div>
+                <div class="product-overlay-price-box">
+                  <span class="price-main">$1850 MXN</span>
+                  <span class="price-strikethrough">$2199</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Barra de Logística / Punto de Encuentro Edge-to-Edge -->
+            <div class="feed-logistics-bar">
+              <div class="logistics-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Punto de Encuentro: <strong>Entrega programada hoy de 16:00 a 19:00 hrs</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Barra de Acciones Sociales (Likes, Comentarios, Chat, Agendar) -->
+          <div vzCardFooter class="feed-card-footer">
+            <div class="feed-social-buttons">
+              <!-- Botón Me Gusta -->
+              <button
+                type="button"
+                class="btn-social-action"
+                [class.is-liked]="leGusta()"
+                (click)="alDarMeGusta()"
+                title="Me gusta"
+              >
+                @if (leGusta()) {
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                } @else {
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                }
+                <span>{{ totalMeGusta() }}</span>
+              </button>
+
+              <!-- Botón que activa / desactiva el panel lateral -->
+              <button
+                type="button"
+                class="btn-social-action"
+                [class.is-active]="mostrarComentarios()"
+                (click)="alternarComentarios()"
+                title="Ver o escribir comentarios"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>{{ listaComentarios().length }}</span>
+              </button>
+
+              <!-- Botón Mensaje -->
+              <button type="button" class="btn-social-action">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#2563eb" stroke="none">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6" stroke="#ffffff" stroke-width="2" fill="none"></polyline>
+                </svg>
+                <span>Mensaje</span>
+              </button>
+
+              <!-- Botón Compartir -->
+              <button type="button" class="btn-social-action" title="Compartir">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                <span>4</span>
+              </button>
+            </div>
+
+            <!-- Botón CTA Agendar Pedido -->
+            <button type="button" class="btn-schedule-order">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <line x1="12" y1="14" x2="12" y2="18"></line>
+                <line x1="10" y1="16" x2="14" y2="16"></line>
+              </svg>
+              <span>Agendar Pedido</span>
+            </button>
+          </div>
+        </vz-card>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <app-code-block [code]="socialCardSnippet" language="html" title="Código de Card Social con Drawer [vzCardDrawer]" />
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- 4. CARD MUY COMPLETA: GESTIÓN ACADÉMICA / ENTERPRISE                 -->
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <section id="card-completa-academica" class="doc-section">
       <div class="section-heading">
@@ -665,11 +937,12 @@
       <nav class="toc-nav">
         <a href="#cards-basicas" class="toc-link">1. Cards Muy Básicas</a>
         <a href="#card-completa-pro" class="toc-link">2. Card Completa (Pro)</a>
-        <a href="#card-completa-academica" class="toc-link">3. Card Académica</a>
-        <a href="#metricas-dashboard" class="toc-link">4. Indicadores y KPIs</a>
-        <a href="#franjas-acento" class="toc-link">5. Franjas de Acento</a>
-        <a href="#disposicion-horizontal" class="toc-link">6. Disposición Horizontal</a>
-        <a href="#theming-tokens" class="toc-link">7. Tokens de Diseño</a>
+        <a href="#card-social-drawer" class="toc-link">3. Card Social con Drawer</a>
+        <a href="#card-completa-academica" class="toc-link">4. Card Académica</a>
+        <a href="#metricas-dashboard" class="toc-link">5. Indicadores y KPIs</a>
+        <a href="#franjas-acento" class="toc-link">6. Franjas de Acento</a>
+        <a href="#disposicion-horizontal" class="toc-link">7. Disposición Horizontal</a>
+        <a href="#theming-tokens" class="toc-link">8. Tokens de Diseño</a>
         <a href="#api-referencia" class="toc-link">Referencia de API</a>
       </nav>
     </div>

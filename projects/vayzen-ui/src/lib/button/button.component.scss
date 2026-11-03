@@ -1,7 +1,8 @@
 @use '../styles/variables' as *;
 
 :host {
-  display: inline-block;
+  display: inline-flex;
+  border-radius: var(--vz-btn-radius, var(--vz-radius-md, #{$vz-radius-md}));
 }
 
 .vz-btn {
@@ -18,19 +19,24 @@
   --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.5rem);
   --_vz-btn-padding-x: var(--vz-btn-padding-x, 1rem);
   --_vz-btn-font-size: var(--vz-btn-font-size, var(--vz-font-size-sm, #{$vz-font-size-sm}));
+  --_vz-btn-font-weight: var(--vz-btn-font-weight, 600);
+  --_vz-btn-gap: var(--vz-btn-gap, 0.45rem);
+  --_vz-btn-shadow: var(--vz-btn-shadow, none);
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--vz-space-xs, #{$vz-space-xs});
+  gap: var(--_vz-btn-gap);
   font-family: inherit;
-  font-weight: 500;
+  font-weight: var(--_vz-btn-font-weight);
   font-size: var(--_vz-btn-font-size);
+  line-height: 1.25;
   padding: var(--_vz-btn-padding-y) var(--_vz-btn-padding-x);
   background-color: var(--_vz-btn-bg);
   color: var(--_vz-btn-color);
   border: 1px solid var(--_vz-btn-border-color);
   border-radius: var(--_vz-btn-radius);
+  box-shadow: var(--_vz-btn-shadow);
   cursor: pointer;
   outline: none;
   text-decoration: none;

@@ -197,7 +197,7 @@ export class VzCardTagDirective {
 export class VzCardInfoRowDirective {}
 
 /**
- * Enlace estilizado para el pie de la tarjeta (ej. "kintab.app/@nexus-hardw").
+ * Enlace estilizado para el pie de la tarjeta (ej. "nexus.store/@nexus-hardware").
  */
 @Directive({
   selector: '[vzCardLink]',
@@ -207,6 +207,32 @@ export class VzCardInfoRowDirective {}
   },
 })
 export class VzCardLinkDirective {}
+
+/**
+ * Panel lateral / drawer para la tarjeta (ej. panel de comentarios, filtros o detalles).
+ * Se acopla en el lateral izquierdo en escritorio y se apila en móviles.
+ */
+@Directive({
+  selector: '[vzCardDrawer]',
+  standalone: true,
+  host: {
+    class: 'vz-card__drawer',
+  },
+})
+export class VzCardDrawerDirective {}
+
+/**
+ * Píldora o tarjeta flotante sobre elementos multimedia con efecto glassmorphism
+ * (ej. ficha de producto destacado sobre imagen con precio y nombre).
+ */
+@Directive({
+  selector: '[vzCardProductOverlay]',
+  standalone: true,
+  host: {
+    class: 'vz-card__product-overlay',
+  },
+})
+export class VzCardProductOverlayDirective {}
 
 export const VZ_CARD_DIRECTIVES = [
   VzCardHeaderDirective,
@@ -226,4 +252,6 @@ export const VZ_CARD_DIRECTIVES = [
   VzCardTagDirective,
   VzCardInfoRowDirective,
   VzCardLinkDirective,
+  VzCardDrawerDirective,
+  VzCardProductOverlayDirective,
 ] as const;

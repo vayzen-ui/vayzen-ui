@@ -31,7 +31,7 @@ import { VZ_CARD_DIRECTIVES } from './card.directives';
         Contenido Slotted
       </div>
       <div vzCardFooter>
-        <a vzCardLink href="javascript:void(0)">kintab.app</a>
+        <a vzCardLink href="javascript:void(0)">vayzen.io</a>
         Pie Slotted
       </div>
     </vz-card>
@@ -140,7 +140,7 @@ describe('VzCardComponent', () => {
     expect(ratingEl?.textContent?.trim()).toBe('4.95');
     expect(metaItemEl?.textContent?.trim()).toBe('Verificado');
     expect(tagEl?.textContent?.trim()).toBe('Efectivo');
-    expect(linkEl?.textContent?.trim()).toBe('kintab.app');
+    expect(linkEl?.textContent?.trim()).toBe('vayzen.io');
   });
 
   it('emite clicked cuando clickable es true y se hace clic', () => {

@@ -258,7 +258,7 @@
   ::ng-deep [vzCardHeader],
   ::ng-deep .vz-card__header {
     border-bottom: none;
-    padding-bottom: 0.25rem;
+    padding-bottom: 0.5rem;
   }
 }
 
@@ -540,7 +540,7 @@
   }
 }
 
-// 8. Footer Link (ej. "kintab.app/@nexus-hardw")
+// 8. Footer Link (ej. "nexus.store/@nexus-hardware")
 ::ng-deep [vzCardLink],
 ::ng-deep .vz-card__link {
   display: inline-flex;
@@ -577,7 +577,55 @@
   ::ng-deep .vz-card__footer {
     border-top: none;
     background-color: transparent;
-    padding-top: 0;
+  }
+}
+
+// ── Overlay flotante de producto sobre imagen (Glassmorphism) ──
+::ng-deep [vzCardProductOverlay],
+::ng-deep .vz-card__product-overlay {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #ffffff;
+  z-index: 3;
+}
+
+// ── Drawer lateral (para comentarios, filtros o sidebars) ──
+:host(.vz-card--drawer-open),
+.vz-card--drawer-open {
+  @media (min-width: 860px) {
+    display: grid !important;
+    grid-template-columns: 380px minmax(0, 1fr) !important;
+    align-items: stretch !important;
+  }
+}
+
+::ng-deep [vzCardDrawer],
+::ng-deep .vz-card__drawer {
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: var(--vz-card-drawer-bg, #f8fafc);
+  border-right: 1px solid var(--vz-card-border-color, #e2e8f0);
+  height: 100% !important;
+  min-height: 0 !important;
+  align-self: stretch !important;
+  overflow: hidden;
+
+  @media (max-width: 859px) {
+    order: 2;
+    border-right: none;
+    border-top: 1px solid var(--vz-card-border-color, #e2e8f0);
   }
 }
 

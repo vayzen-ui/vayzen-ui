@@ -50,6 +50,7 @@ export class VzCardComponent {
   readonly clickable = input<boolean>(false);
   readonly loading = input<boolean>(false);
   readonly disabled = input<boolean>(false);
+  readonly drawerOpen = input<boolean>(false);
 
   // ── Outputs ──
   readonly clicked = output<MouseEvent | KeyboardEvent>();
@@ -78,6 +79,7 @@ export class VzCardComponent {
       !this.borderedFooter() ? 'vz-card--seamless-footer' : '',
       this.hoverable() || this.clickable() ? 'is-hoverable' : '',
       this.clickable() ? 'is-clickable' : '',
+      this.drawerOpen() ? 'vz-card--drawer-open' : '',
       this.loading() ? 'is-loading' : '',
       this.disabled() ? 'is-disabled' : '',
     ];
