@@ -43,5 +43,7 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
-# Ignored local directories
+# Ignored local directories & agent rules
 AdminT/
+AGENTS.md
+.agents/
