@@ -47,3 +47,5 @@ Thumbs.db
 AdminT/
 AGENTS.md
 .agents/
+.agent/
+skills-lock.json
