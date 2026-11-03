@@ -165,6 +165,7 @@ export class StudioComponent implements OnInit {
   // CARD STUDIO STATE & COMPUTEDS
   // ══════════════════════════════════════════
   protected readonly cardComplexity = signal<StudioCardComplexity>('complete');
+  protected readonly cardTheme = signal<'light' | 'dark'>('light');
   protected readonly cardVariant = signal<VzCardVariant>('elevated');
   protected readonly cardAccent = signal<VzCardAccent>('primary');
   protected readonly cardAccentPosition = signal<VzCardAccentPosition>('top');
@@ -200,6 +201,7 @@ export class StudioComponent implements OnInit {
 
   protected resetCardDefaults(): void {
     this.cardComplexity.set('complete');
+    this.cardTheme.set('light');
     this.cardVariant.set('elevated');
     this.cardAccent.set('primary');
     this.cardAccentPosition.set('top');
@@ -221,6 +223,7 @@ export class StudioComponent implements OnInit {
 
   protected readonly cardCode = computed(() => {
     const mode = this.cardComplexity();
+    const th = this.cardTheme();
     const v = this.cardVariant();
     const a = this.cardAccent();
     const ap = this.cardAccentPosition();
@@ -235,6 +238,7 @@ export class StudioComponent implements OnInit {
     const img = this.cardShowImage();
 
     const attrs = [
+      th === 'dark' ? 'theme="dark"' : '',
       v !== 'elevated' ? `variant="${v}"` : '',
       v === 'accent' && a !== 'primary' ? `accent="${a}"` : '',
       v === 'accent' && ap !== 'top' ? `accentPosition="${ap}"` : '',

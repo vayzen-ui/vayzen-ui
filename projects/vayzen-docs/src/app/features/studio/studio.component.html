@@ -195,6 +195,7 @@
               @if (cardComplexity() === 'complete') {
                 <!-- MODO COMPLETA (PRO / MARKETPLACE) -->
                 <vz-card
+                  [theme]="cardTheme()"
                   [variant]="cardVariant()"
                   [accent]="cardAccent()"
                   [accentPosition]="cardAccentPosition()"
@@ -297,6 +298,7 @@
                 <!-- MODO BÁSICA (MINIMALISTA) -->
                 @if (cardShowImage()) {
                   <vz-card
+                    [theme]="cardTheme()"
                     [variant]="cardVariant()"
                     [accent]="cardAccent()"
                     [accentPosition]="cardAccentPosition()"
@@ -311,23 +313,20 @@
                     (clicked)="onCardClick()"
                   >
                     <img vzCardImage src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Aula de estudio" />
-                    <div vzCardHeader>
-                      <div>
-                        <span vzCardBadge variant="neutral" style="margin-bottom: 0.35rem;">TRÁMITE RÁPIDO</span>
-                        <h3 vzCardTitle>Constancia de Estudios</h3>
-                        <span vzCardSubtitle>Emisión digital inmediata</span>
-                      </div>
-                    </div>
                     <div vzCardContent>
-                      <p>Descarga tu documento oficial con sello digital y código QR de validación institucional.</p>
+                      <span vzCardBadge variant="primary">DESTACADO</span>
+                      <h3 vzCardTitle>Constancia de Estudios Oficial</h3>
+                      <span vzCardSubtitle>Emisión digital con firma electrónica</span>
+                      <p>Descarga tu documento oficial con sello digital y código QR de validación institucional al instante.</p>
                     </div>
                     <div vzCardFooter>
-                      <span class="text-muted">Tiempo: 1 min</span>
-                      <vz-button size="sm" variant="primary">Solicitar</vz-button>
+                      <span>🕒 Tiempo estimado: 1 min</span>
+                      <vz-button size="sm" variant="primary">Solicitar →</vz-button>
                     </div>
                   </vz-card>
                 } @else {
                   <vz-card
+                    [theme]="cardTheme()"
                     [variant]="cardVariant()"
                     [accent]="cardAccent()"
                     [accentPosition]="cardAccentPosition()"
@@ -343,7 +342,11 @@
                     subtitle="Actualización programada · Viernes 22:00 hrs"
                     (clicked)="onCardClick()"
                   >
-                    <p style="margin: 0; color: #475569;">El portal de servicios escolares permanecerá en mantenimiento preventivo durante 45 minutos.</p>
+                    <p>El portal de servicios permanecerá en mantenimiento preventivo programado durante 45 minutos.</p>
+                    <div vzCardFooter>
+                      <span>● Ventana programada</span>
+                      <a vzCardLink href="javascript:void(0)">Ver estado →</a>
+                    </div>
                   </vz-card>
                 }
               }
@@ -534,6 +537,14 @@
               <button type="button" class="seg-btn" [class.active]="cardOrientation() === 'horizontal'" (click)="cardOrientation.set('horizontal')">
                 <span>Horizontal</span>
               </button>
+            </div>
+          </div>
+
+          <div class="control-box">
+            <label class="control-caption">Tema Nativo (Theme)</label>
+            <div class="segmented-track">
+              <button type="button" class="seg-btn" [class.active]="cardTheme() === 'light'" (click)="cardTheme.set('light')">☀️ Claro</button>
+              <button type="button" class="seg-btn" [class.active]="cardTheme() === 'dark'" (click)="cardTheme.set('dark')">🌙 Oscuro</button>
             </div>
           </div>
 

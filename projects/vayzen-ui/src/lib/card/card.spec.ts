@@ -39,6 +39,18 @@ import { VZ_CARD_DIRECTIVES } from './card.directives';
 })
 class TestSlottedCardComponent {}
 
+@Component({
+  standalone: true,
+  imports: [VzCardComponent, ...VZ_CARD_DIRECTIVES],
+  template: `
+    <vz-card [drawerOpen]="true">
+      <aside vzCardDrawer class="mi-drawer-custom">Panel Personalizado</aside>
+      <div vzCardContent>Contenido Principal</div>
+    </vz-card>
+  `,
+})
+class TestCustomDrawerCardComponent {}
+
 describe('VzCardComponent', () => {
   it('se crea con valores por defecto (elevated, comfortable, vertical)', () => {
     const fixture = TestBed.createComponent(VzCardComponent);
@@ -179,5 +191,71 @@ describe('VzCardComponent', () => {
 
     expect(skeleton).toBeTruthy();
     expect(titleEl).toBeFalsy();
+  });
+
+  it('arma automáticamente el panel de comentarios por defecto al activar drawerOpen y pasar comments', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('drawerOpen', true);
+    fixture.componentRef.setInput('drawerTitle', 'Comentarios');
+    fixture.componentRef.setInput('drawerBadge', 'Comunidad Verificada');
+    fixture.componentRef.setInput('comments', [
+      { id: 1, author: 'Carlos Mendoza', text: '¿Tienen stock disponible?', time: 'Hace 5 min' },
+      { id: 2, author: 'Sofía Romero', text: 'Excelente producto', verifiedBuyer: true },
+    ]);
+    fixture.detectChanges();
+
+    const autoDrawer: HTMLElement | null = fixture.nativeElement.querySelector('.vz-card__drawer--auto');
+    const items = fixture.nativeElement.querySelectorAll('.vz-card__comment-item');
+    const buyerBadge = fixture.nativeElement.querySelector('.vz-card__comment-buyer-badge');
+
+    expect(autoDrawer).toBeTruthy();
+    expect(items.length).toBe(2);
+    expect(buyerBadge?.textContent?.trim()).toBe('Comprador');
+
+    // Simular envío de nuevo comentario en el formulario integrado
+    let emittedComment = '';
+    fixture.componentInstance.commentAdded.subscribe((txt) => (emittedComment = txt));
+
+    const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('.vz-card__comment-input-box input');
+    const formEl: HTMLFormElement = fixture.nativeElement.querySelector('.vz-card__comment-form');
+    inputEl.value = 'Nuevo comentario de prueba';
+    inputEl.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    formEl.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(emittedComment).toBe('Nuevo comentario de prueba');
+  });
+
+  it('permite reemplazar el panel automático si el usuario proyecta <aside vzCardDrawer>', () => {
+    const fixture = TestBed.createComponent(TestCustomDrawerCardComponent);
+    fixture.detectChanges();
+
+    const customDrawer = fixture.nativeElement.querySelector('.mi-drawer-custom');
+    const autoDrawer = fixture.nativeElement.querySelector('.vz-card__drawer--auto');
+
+    expect(customDrawer?.textContent?.trim()).toBe('Panel Personalizado');
+    expect(autoDrawer).toBeFalsy();
+  });
+
+  it('soporta modo oscuro nativo mediante theme="dark", [dark]="true" o theme="auto"', () => {
+    const fixture = TestBed.createComponent(VzCardComponent);
+    fixture.componentRef.setInput('theme', 'dark');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--dark')).toBe(true);
+    expect(fixture.nativeElement.getAttribute('data-vz-theme')).toBe('dark');
+
+    fixture.componentRef.setInput('theme', 'light');
+    fixture.componentRef.setInput('dark', true);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--dark')).toBe(true);
+    expect(fixture.nativeElement.getAttribute('data-vz-theme')).toBe('dark');
+
+    fixture.componentRef.setInput('dark', false);
+    fixture.componentRef.setInput('theme', 'auto');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.classList.contains('vz-card--theme-auto')).toBe(true);
+    expect(fixture.nativeElement.getAttribute('data-vz-theme')).toBe('auto');
   });
 });

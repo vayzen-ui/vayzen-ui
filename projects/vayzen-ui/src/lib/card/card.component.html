@@ -17,7 +17,119 @@
     </div>
   }
 
+  <!-- 1. Modo Personalizado: Si el usuario proyecta <aside vzCardDrawer>, se usa su diseño -->
   <ng-content select="[vzCardDrawer]" />
+
+  <!-- 2. Modo Automático por Defecto: VzCard construye el panel de comentarios solo con recibir [drawerOpen] y [comments] -->
+  @if (!hasCustomDrawerSlot() && drawerOpen()) {
+    <aside class="vz-card__drawer vz-card__drawer--auto" aria-label="Panel de comentarios">
+      <!-- Cabecera del panel -->
+      <div class="vz-card__drawer-header">
+        <div class="vz-card__drawer-header-info">
+          <h5 class="vz-card__drawer-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="#2563eb" stroke="none" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>{{ drawerTitle() }} ({{ (comments() ?? []).length }})</span>
+          </h5>
+          @if (drawerBadge()) {
+            <span class="vz-card__drawer-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="1.5" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span>{{ drawerBadge() }}</span>
+            </span>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="vz-card__drawer-close"
+          (click)="closeDrawer($event)"
+          title="Cerrar panel"
+          aria-label="Cerrar panel"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Lista con scroll interior de comentarios -->
+      <div class="vz-card__comments-list">
+        @if ((comments() ?? []).length === 0) {
+          <div class="vz-card__comments-empty">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <p>{{ drawerEmptyText() }}</p>
+          </div>
+        } @else {
+          @for (comment of comments() ?? []; track comment.id) {
+            <div class="vz-card__comment-item">
+              <div class="vz-card__comment-avatar">
+                @if (comment.avatarUrl) {
+                  <img [src]="comment.avatarUrl" [alt]="comment.author" />
+                } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                }
+              </div>
+              <div class="vz-card__comment-content">
+                <div class="vz-card__comment-meta">
+                  <span class="vz-card__comment-author">{{ comment.author }}</span>
+                  @if (comment.verifiedBuyer) {
+                    <span class="vz-card__comment-buyer-badge">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="9 12 11 14 15 10"></polyline>
+                      </svg>
+                      <span>{{ comment.badgeText || buyerBadgeLabel() }}</span>
+                    </span>
+                  }
+                  @if (comment.time) {
+                    <span class="vz-card__comment-time">{{ comment.time }}</span>
+                  }
+                </div>
+                <p class="vz-card__comment-text">{{ comment.text }}</p>
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Formulario fijado al pie para publicar comentario -->
+      @if (showCommentForm()) {
+        <form class="vz-card__comment-form" (submit)="onCommentSubmit($event)">
+          <div class="vz-card__comment-input-box">
+            <input
+              type="text"
+              [value]="draftComment()"
+              (input)="onCommentInput($event)"
+              [placeholder]="commentPlaceholder()"
+              autocomplete="off"
+              aria-label="Escribir un comentario"
+            />
+            <button
+              type="submit"
+              class="vz-card__comment-send"
+              [disabled]="!draftComment().trim()"
+              title="Publicar comentario"
+              aria-label="Publicar comentario"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </form>
+      }
+    </aside>
+  }
 
   <ng-content select="[vzCardImage], img[vzCardImage]" />
 
@@ -25,7 +137,7 @@
     <ng-content select="[vzCardHeader]" />
 
     @if (!hasHeaderSlot() && (title() || subtitle())) {
-      <div class="vz-card__header">
+      <div class="vz-card__header vz-card__header--declarative">
         <div class="vz-card__header-content">
           @if (title()) {
             <h3 class="vz-card__title">{{ title() }}</h3>
@@ -40,9 +152,9 @@
 
     <ng-content select="[vzCardContent]" />
 
-    <div class="vz-card__body">
-      <ng-content />
-    </div>
+    @if (!hasContentSlot()) {
+      <div class="vz-card__body"><ng-content /></div>
+    }
 
     <ng-content select="[vzCardFooter]" />
   </div>

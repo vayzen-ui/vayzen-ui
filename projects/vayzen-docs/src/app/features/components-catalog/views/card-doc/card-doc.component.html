@@ -1,4 +1,4 @@
-<div class="doc-layout">
+<div class="doc-layout" [attr.data-theme]="previewTheme()">
   <article class="doc-main-content">
     <header class="doc-header">
       <div class="doc-header-top">
@@ -7,7 +7,7 @@
       </div>
       <h1 class="doc-title">Card</h1>
       <p class="doc-description">
-        Sistema modular de tarjetas diseñado para cubrir desde <strong>cards muy básicas y minimalistas</strong> (avisos rápidos, notas, contenedores limpios) hasta <strong>cards muy completas de nivel empresarial y marketplace</strong> con badges de categoría, calificaciones, métricas de confianza, chips semánticos, ubicación, QR y acciones.
+        Sistema modular de tarjetas diseñado para cubrir desde <strong>cards muy básicas y minimalistas</strong> (avisos rápidos, notas, contenedores limpios) hasta <strong>cards muy completas de nivel empresarial y marketplace</strong> con modo oscuro nativo integrado de fábrica (<code>theme="dark"</code>), badges de categoría, calificaciones, métricas de confianza, chips semánticos, ubicación, QR y acciones.
       </p>
       <div class="doc-meta-chips">
         <span class="doc-meta-chip">
@@ -19,9 +19,21 @@
           17 Directivas Componibles
         </span>
         <span class="doc-meta-chip">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Básicas &amp; Completas Pro
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          Modo Oscuro Nativo
         </span>
+        <button
+          type="button"
+          class="doc-theme-switch-btn"
+          [class.is-dark]="previewTheme() === 'dark'"
+          (click)="alternarTemaPreview()"
+        >
+          @if (previewTheme() === 'dark') {
+            <span>🌙 Viendo Cards en Modo Oscuro · Cambiar a Claro ☀️</span>
+          } @else {
+            <span>☀️ Viendo Cards en Modo Claro · Probar Modo Oscuro 🌙</span>
+          }
+        </button>
       </div>
     </header>
 
@@ -32,43 +44,76 @@
       <div class="section-heading">
         <h2 class="section-title">1. Cards Muy Básicas (Esenciales y Minimalistas)</h2>
         <p class="section-subtitle">
-          Para casos donde necesitas máxima limpieza y velocidad: usa inputs declarativos (<code>title</code>, <code>subtitle</code>) sin necesidad de declarar directivas, o una estructura ligera de cabecera, texto breve y acción.
+          Tres patrones esenciales de tarjetas limpias y ligeras: <strong>Simple Card</strong> (todo en cuerpo directo sin líneas divisorias), <strong>Card con Header y Footer</strong> (cabecera de categoría, cuerpo y pie de acción) y <strong>Card Declarativa</strong> usando inputs directos (<code>title</code>, <code>subtitle</code>).
         </p>
       </div>
 
       <div class="doc-split-showcase">
         <div class="preview-card-container preview-card-container--stack">
-          <!-- Card Ultra Básica Declarativa -->
+          <!-- 1. Simple Card (Todo en Cuerpo · Sin divisiones internas) -->
+          <vz-card [theme]="previewTheme()" variant="elevated" [hoverable]="true">
+            <div vzCardContent>
+              <span vzCardBadge variant="primary">DESTACADO</span>
+              <h3 vzCardTitle>Actualización de Plataforma v2.4</h3>
+              <p>
+                Se optimizaron las consultas en tiempo real y se habilitó la descarga masiva de reportes ejecutivos en un clic.
+              </p>
+              <vz-button size="sm" variant="primary">Explorar mejoras →</vz-button>
+            </div>
+          </vz-card>
+
+          <!-- 2. Card Básica con Header y Footer -->
+          <vz-card [theme]="previewTheme()" variant="elevated" [hoverable]="true">
+            <div vzCardHeader>
+              <span class="basic-header-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Servicios Escolares
+              </span>
+              <span vzCardBadge variant="success">● En línea</span>
+            </div>
+            <div vzCardContent>
+              <h3 vzCardTitle>Constancia de Estudios Oficial</h3>
+              <span vzCardSubtitle>Emisión digital con firma electrónica</span>
+              <p>
+                Descarga tu documento oficial con sello digital y código QR de validación institucional al instante.
+              </p>
+            </div>
+            <div vzCardFooter>
+              <span class="basic-footer-meta">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Tiempo estimado: 1 min
+              </span>
+              <vz-button size="sm" variant="primary">Solicitar →</vz-button>
+            </div>
+          </vz-card>
+
+          <!-- 3. Card Ultra Básica Declarativa (Con inputs directos sin directivas de cabecera) -->
           <vz-card
+            [theme]="previewTheme()"
             variant="outlined"
             title="Aviso de Mantenimiento"
             subtitle="Actualización programada · Viernes 22:00 hrs"
           >
-            <p style="margin: 0; color: #475569;">
-              El portal de servicios escolares permanecerá en mantenimiento preventivo durante 45 minutos.
+            <p>
+              El portal de servicios permanecerá en mantenimiento preventivo programado durante 45 minutos.
             </p>
-          </vz-card>
-
-          <!-- Card Básica con Acción -->
-          <vz-card variant="elevated" [hoverable]="true">
-            <div vzCardHeader>
-              <div>
-                <span vzCardBadge variant="neutral" style="margin-bottom: 0.4rem;">TRÁMITE RÁPIDO</span>
-                <h3 vzCardTitle>Constancia de Estudios</h3>
-                <span vzCardSubtitle>Emisión digital inmediata</span>
-              </div>
-            </div>
-            <div vzCardContent>
-              <p>Descarga tu documento oficial con sello digital y código QR de validación institucional.</p>
-            </div>
             <div vzCardFooter>
-              <span class="text-muted">Tiempo estimado: 1 min</span>
-              <vz-button size="sm" variant="primary">Solicitar</vz-button>
+              <span class="basic-footer-meta">
+                <span class="basic-status-dot"></span>
+                Ventana programada
+              </span>
+              <a vzCardLink href="javascript:void(0)">Ver estado →</a>
             </div>
           </vz-card>
         </div>
 
-        <app-code-block [code]="basicCardSnippet" language="html" title="Cards Básicas (Declarativa y con Acción)" />
+        <app-code-block [code]="basicCardSnippet" language="html" title="Cards Básicas (Simple Card, con Header/Footer y Declarativa)" />
       </div>
     </section>
 
@@ -85,7 +130,7 @@
 
       <div class="doc-split-showcase">
         <div class="preview-card-container">
-          <vz-card variant="elevated" [borderedHeader]="false" [hoverable]="true">
+          <vz-card [theme]="previewTheme()" variant="elevated" [borderedHeader]="false" [hoverable]="true">
             <img
               vzCardImage
               src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=700&q=80"
@@ -171,7 +216,7 @@
                   CDMX · Entregas Zona Centro
                 </span>
                 <vz-button size="sm" variant="outline" class="btn-qr-outline">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="7" height="7"></rect>
                     <rect x="14" y="3" width="7" height="7"></rect>
                     <rect x="14" y="14" width="7" height="7"></rect>
@@ -207,270 +252,303 @@
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <section id="card-social-drawer" class="doc-section">
       <div class="section-heading">
-        <h2 class="section-title">3. Card Social &amp; Marketplace (Feed con Drawer de Comentarios)</h2>
+        <h2 class="section-title">3. Card Social &amp; Marketplace (Menú Lateral Automático o a Medida)</h2>
         <p class="section-subtitle">
-          Patrón avanzado para publicaciones de marketplace y redes sociales. Incorpora el panel lateral interactivo <code>[vzCardDrawer]</code> (con scroll interno de comentarios y formulario en vivo) y la píldora flotante <code>[vzCardProductOverlay]</code> con efecto blur glassmorphism sobre la imagen.
+          <code>&lt;vz-card&gt;</code> ofrece una arquitectura híbrida para su panel lateral: <strong>por defecto construye todo el menú de comentarios por su cuenta</strong> recibiendo únicamente parámetros, o bien permite <strong>reemplazarlo por un diseño personalizado a la medida</strong> proyectando <code>&lt;aside vzCardDrawer&gt;</code>.
         </p>
       </div>
 
-      <!-- Live interactive showcase -->
-      <div class="interactive-social-showcase">
-        <vz-card
-          variant="elevated"
-          [borderedHeader]="false"
-          [borderedFooter]="false"
-          [drawerOpen]="mostrarComentarios()"
-          [hoverable]="true"
-          class="social-feed-card"
-        >
-          <!-- 1. Drawer Lateral de Comentarios (Aparece a la izquierda) -->
-          @if (mostrarComentarios()) {
-            <aside vzCardDrawer class="feed-comments-panel">
-              <!-- Cabecera del panel de comentarios -->
-              <div class="feed-comments-header">
-                <div class="comments-header-info">
-                  <h5 class="comments-title">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#2563eb" stroke="none">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    Comentarios ({{ listaComentarios().length }})
-                  </h5>
-                  <span class="community-badge">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="1.5">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                    Comunidad Verificada
-                  </span>
-                </div>
+      <!-- ── 3.1 OPCIÓN A: CONFIGURACIÓN POR DEFECTO (AUTOMÁTICA) ── -->
+      <div class="drawer-mode-card">
+        <div class="drawer-mode-header">
+          <span class="drawer-mode-badge drawer-mode-badge--default">Opción A · Configuración por Defecto</span>
+          <h3 class="drawer-mode-title">3.1 El componente construye el menú lateral por su cuenta</h3>
+          <p class="drawer-mode-desc">
+            No necesitas maquetar el <code>&lt;aside&gt;</code>, ni el bucle <code>&#64;for</code>, ni el formulario. Solo enlaza <code>[(drawerOpen)]</code>, pasa tu arreglo tipado con <code>[comments]="listaComentarios()"</code> y escucha <code>(commentAdded)="agregarComentario($event)"</code>. Haz clic en el botón de comentarios (<strong>💬 {{ listaComentarios().length }}</strong>) para probarlo en vivo:
+          </p>
+        </div>
 
-                <button
-                  type="button"
-                  class="btn-close-comments"
-                  (click)="alternarComentarios()"
-                  title="Cerrar comentarios"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
+        <!-- Live interactive showcase (Panel Automático por Defecto de VzCard) -->
+        <div class="interactive-social-showcase">
+          <vz-card
+            [theme]="previewTheme()"
+            variant="elevated"
+            [borderedHeader]="false"
+            [borderedFooter]="false"
+            [(drawerOpen)]="mostrarComentarios"
+            [comments]="listaComentarios()"
+            drawerTitle="Comentarios"
+            drawerBadge="Comunidad Verificada"
+            commentPlaceholder="Pregunta sobre este producto..."
+            (commentAdded)="agregarComentario($event)"
+            [hoverable]="true"
+            class="social-feed-card"
+          >
+            <!-- 1. Encabezado de la Publicación (Logo, Tienda y Enlace) -->
+            <div vzCardHeader class="feed-card-header">
+              <div class="feed-store-info">
+                <img
+                  vzCardAvatar
+                  src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=120&q=80"
+                  alt="Nexus Hardware Lab"
+                  class="feed-avatar"
+                />
+                <div class="feed-store-names">
+                  <div class="feed-store-row">
+                    <h4 vzCardTitle class="store-name">Nexus Hardware Lab</h4>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="9 12 11 14 15 10"></polyline>
+                    </svg>
+                  </div>
+                  <span vzCardSubtitle class="store-meta">Hace 35 minutos • &#64;nexus-hardware</span>
+                </div>
+              </div>
+
+              <div vzCardActions>
+                <button type="button" class="btn-store-link">
+                  <span>Tienda</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
                   </svg>
                 </button>
               </div>
+            </div>
 
-              <!-- Lista con scroll interior de comentarios -->
-              <div class="feed-comments-list">
-                @for (c of listaComentarios(); track c.id) {
-                  <div class="feed-comment-item">
-                    <div class="comment-avatar">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                      </svg>
-                    </div>
-                    <div class="comment-content">
-                      <div class="comment-meta">
-                        <span class="comment-user">{{ c.nombreUsuario }}</span>
-                        @if (c.esComprador) {
-                          <span class="badge-buyer">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2">
-                              <circle cx="12" cy="12" r="10"></circle>
-                              <polyline points="9 12 11 14 15 10"></polyline>
-                            </svg>
-                            Comprador
-                          </span>
-                        }
-                        <span class="comment-time">{{ c.tiempo }}</span>
-                      </div>
-                      <p class="comment-text">{{ c.texto }}</p>
-                    </div>
+            <!-- 2. Contenido y Multimedia con Píldora Flotante (Edge-to-Edge) -->
+            <div vzCardContent class="feed-card-content">
+              <div class="feed-text-zone">
+                <p class="feed-post-text">
+                  ¡Acaban de ingresar 8 unidades del Teclado Mecánico Custom 65% con switches lubricados! Disponibles para entrega hoy mismo en Punto Seguro o envío programado con pago protegido.
+                </p>
+                <div class="feed-hashtags">
+                  <span class="hashtag">#Hardware</span>
+                  <span class="hashtag">#CustomKeyboard</span>
+                  <span class="hashtag">#EntregaHoy</span>
+                </div>
+              </div>
+
+              <!-- Contenedor Multimedia Edge-to-Edge -->
+              <div vzCardMedia class="feed-media-container">
+                <img
+                  src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=1200&q=80"
+                  alt="Teclado Mecánico Custom 65% RGB"
+                  class="feed-media-img"
+                />
+
+                <!-- Píldora Flotante de Producto (Efecto Glassmorphism Blur) -->
+                <div vzCardProductOverlay>
+                  <div class="product-overlay-info">
+                    <span vzCardBadge variant="primary" class="stock-badge">STOCK LIMITADO</span>
+                    <strong class="product-overlay-title">Teclado Mecánico Pro 65% RGB</strong>
                   </div>
-                }
+                  <div class="product-overlay-price-box">
+                    <span class="price-main">$1850 MXN</span>
+                    <span class="price-strikethrough">$2199</span>
+                  </div>
+                </div>
               </div>
 
-              <!-- Formulario fijado al pie para agregar comentario -->
-              <form class="feed-comment-form" (ngSubmit)="agregarComentario()">
-                <div class="comment-input-box">
-                  <input
-                    type="text"
-                    [ngModel]="textoNuevoComentario()"
-                    (ngModelChange)="textoNuevoComentario.set($event)"
-                    name="comentarioTexto"
-                    placeholder="Pregunta sobre este producto..."
-                    autocomplete="off"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    class="btn-send-comment"
-                    [disabled]="!textoNuevoComentario().trim()"
-                    title="Publicar comentario"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="22" y1="2" x2="11" y2="13"></line>
-                      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                  </button>
-                </div>
-              </form>
-            </aside>
-          }
-
-          <!-- 2. Encabezado de la Publicación (Logo, Tienda y Enlace) -->
-          <div vzCardHeader class="feed-card-header">
-            <div class="feed-store-info">
-              <img
-                src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=120&q=80"
-                alt="Nexus Hardware Lab"
-                class="feed-avatar"
-              />
-              <div class="feed-store-names">
-                <div class="feed-store-row">
-                  <h4 vzCardTitle class="store-name">Nexus Hardware Lab</h4>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="#059669" stroke="#ffffff" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="9 12 11 14 15 10"></polyline>
+              <!-- Barra de Logística / Punto de Encuentro Edge-to-Edge -->
+              <div vzCardLogistics class="feed-logistics-bar">
+                <div class="logistics-item">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
                   </svg>
-                </div>
-                <span vzCardSubtitle class="store-meta">Hace 35 minutos • &#64;nexus-hardware</span>
-              </div>
-            </div>
-
-            <div vzCardActions>
-              <button type="button" class="btn-store-link">
-                <span>Tienda</span>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- 3. Contenido y Multimedia con Píldora Flotante (Edge-to-Edge) -->
-          <div vzCardContent class="feed-card-content">
-            <div class="feed-text-zone">
-              <p class="feed-post-text">
-                ¡Acaban de ingresar 8 unidades del Teclado Mecánico Custom 65% con switches lubricados! Disponibles para entrega hoy mismo en Punto Seguro o envío programado con pago protegido.
-              </p>
-              <div class="feed-hashtags">
-                <span class="hashtag">#Hardware</span>
-                <span class="hashtag">#CustomKeyboard</span>
-                <span class="hashtag">#EntregaHoy</span>
-              </div>
-            </div>
-
-            <!-- Contenedor Multimedia Edge-to-Edge -->
-            <div class="feed-media-container">
-              <img
-                src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=1200&q=80"
-                alt="Teclado Mecánico Custom 65% RGB"
-                class="feed-media-img"
-              />
-
-              <!-- Píldora Flotante de Producto (Efecto Glassmorphism Blur) -->
-              <div vzCardProductOverlay>
-                <div class="product-overlay-info">
-                  <span vzCardBadge variant="primary" class="stock-badge">STOCK LIMITADO</span>
-                  <strong class="product-overlay-title">Teclado Mecánico Pro 65% RGB</strong>
-                </div>
-                <div class="product-overlay-price-box">
-                  <span class="price-main">$1850 MXN</span>
-                  <span class="price-strikethrough">$2199</span>
+                  <span>Punto de Encuentro: <strong>Entrega programada hoy de 16:00 a 19:00 hrs</strong></span>
                 </div>
               </div>
             </div>
 
-            <!-- Barra de Logística / Punto de Encuentro Edge-to-Edge -->
-            <div class="feed-logistics-bar">
-              <div class="logistics-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+            <!-- 3. Barra de Acciones Sociales (Likes, Comentarios, Chat, Agendar) -->
+            <div vzCardFooter class="feed-card-footer">
+              <div class="feed-social-buttons">
+                <!-- Botón Me Gusta -->
+                <button
+                  type="button"
+                  vzCardSocialAction
+                  [liked]="leGusta()"
+                  class="btn-social-action"
+                  [class.is-liked]="leGusta()"
+                  (click)="alDarMeGusta()"
+                  title="Me gusta"
+                >
+                  @if (leGusta()) {
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                  } @else {
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                  }
+                  <span>{{ totalMeGusta() }}</span>
+                </button>
+
+                <!-- Botón que activa / desactiva el panel lateral automático -->
+                <button
+                  type="button"
+                  vzCardSocialAction
+                  [active]="mostrarComentarios()"
+                  class="btn-social-action"
+                  [class.is-active]="mostrarComentarios()"
+                  (click)="alternarComentarios()"
+                  title="Ver o escribir comentarios"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <span>{{ listaComentarios().length }}</span>
+                </button>
+
+                <!-- Botón Mensaje -->
+                <button type="button" vzCardSocialAction class="btn-social-action">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#2563eb" stroke="none">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6" stroke="#ffffff" stroke-width="2" fill="none"></polyline>
+                  </svg>
+                  <span>Mensaje</span>
+                </button>
+
+                <!-- Botón Compartir -->
+                <button type="button" vzCardSocialAction class="btn-social-action" title="Compartir">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                  </svg>
+                  <span>4</span>
+                </button>
+              </div>
+
+              <!-- Botón CTA Agendar Pedido -->
+              <button type="button" vzCardCta class="btn-schedule-order">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
                   <line x1="8" y1="2" x2="8" y2="6"></line>
                   <line x1="3" y1="10" x2="21" y2="10"></line>
+                  <line x1="12" y1="14" x2="12" y2="18"></line>
+                  <line x1="10" y1="16" x2="14" y2="16"></line>
                 </svg>
-                <span>Punto de Encuentro: <strong>Entrega programada hoy de 16:00 a 19:00 hrs</strong></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 4. Barra de Acciones Sociales (Likes, Comentarios, Chat, Agendar) -->
-          <div vzCardFooter class="feed-card-footer">
-            <div class="feed-social-buttons">
-              <!-- Botón Me Gusta -->
-              <button
-                type="button"
-                class="btn-social-action"
-                [class.is-liked]="leGusta()"
-                (click)="alDarMeGusta()"
-                title="Me gusta"
-              >
-                @if (leGusta()) {
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
-                } @else {
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
-                }
-                <span>{{ totalMeGusta() }}</span>
-              </button>
-
-              <!-- Botón que activa / desactiva el panel lateral -->
-              <button
-                type="button"
-                class="btn-social-action"
-                [class.is-active]="mostrarComentarios()"
-                (click)="alternarComentarios()"
-                title="Ver o escribir comentarios"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span>{{ listaComentarios().length }}</span>
-              </button>
-
-              <!-- Botón Mensaje -->
-              <button type="button" class="btn-social-action">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#2563eb" stroke="none">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6" stroke="#ffffff" stroke-width="2" fill="none"></polyline>
-                </svg>
-                <span>Mensaje</span>
-              </button>
-
-              <!-- Botón Compartir -->
-              <button type="button" class="btn-social-action" title="Compartir">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="18" cy="5" r="3"></circle>
-                  <circle cx="6" cy="12" r="3"></circle>
-                  <circle cx="18" cy="19" r="3"></circle>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                </svg>
-                <span>4</span>
+                <span>Agendar Pedido</span>
               </button>
             </div>
+          </vz-card>
+        </div>
 
-            <!-- Botón CTA Agendar Pedido -->
-            <button type="button" class="btn-schedule-order">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-                <line x1="12" y1="14" x2="12" y2="18"></line>
-                <line x1="10" y1="16" x2="14" y2="16"></line>
-              </svg>
-              <span>Agendar Pedido</span>
-            </button>
-          </div>
-        </vz-card>
+        <div class="code-stack">
+          <app-code-block [code]="socialCardSnippet" language="html" title="HTML · Configuración por Defecto (VzCard construye el menú lateral solo)" />
+          <app-code-block [code]="socialCardTsSnippet" language="typescript" title="TypeScript · Arreglo de Comentarios (VzCardComment[]) y evento (commentAdded)" />
+        </div>
       </div>
 
-      <div style="margin-top: 1.5rem;">
-        <app-code-block [code]="socialCardSnippet" language="html" title="Código de Card Social con Drawer [vzCardDrawer]" />
+      <!-- ── 3.2 OPCIÓN B: CONFIGURACIÓN PERSONALIZADA A LA MEDIDA ([vzCardDrawer]) ── -->
+      <div class="drawer-mode-card drawer-mode-card--custom">
+        <div class="drawer-mode-header">
+          <span class="drawer-mode-badge drawer-mode-badge--custom">Opción B · Desarrollo a la Medida</span>
+          <h3 class="drawer-mode-title">3.2 Menú lateral 100% personalizado con <code>&lt;aside vzCardDrawer&gt;</code></h3>
+          <p class="drawer-mode-desc">
+            Cuando tu caso de uso requiere un panel lateral distinto al de comentarios (por ejemplo: <strong>ficha de especificaciones técnicas, rastreo de envío en tiempo real, desglose de costos o filtros avanzados</strong>), proyecta un elemento con la directiva <code>vzCardDrawer</code>. <code>&lt;vz-card&gt;</code> lo detecta automáticamente y reemplaza el panel por defecto por tu propio diseño:
+          </p>
+        </div>
+
+        <!-- Live interactive showcase (Panel Personalizado a la Medida con [vzCardDrawer]) -->
+        <div class="interactive-social-showcase">
+          <vz-card
+            [theme]="previewTheme()"
+            variant="elevated"
+            [borderedHeader]="false"
+            [borderedFooter]="false"
+            [(drawerOpen)]="mostrarPanelCustom"
+            [hoverable]="true"
+            class="social-feed-card"
+          >
+            @if (mostrarPanelCustom()) {
+              <aside vzCardDrawer class="custom-tech-drawer">
+                <div class="custom-drawer-header">
+                  <div>
+                    <h5 class="custom-drawer-title">⚙️ Ficha Técnica &amp; Garantía</h5>
+                    <span class="custom-drawer-subtitle">Panel diseñado a medida con [vzCardDrawer]</span>
+                  </div>
+                  <button type="button" class="btn-close-comments" (click)="mostrarPanelCustom.set(false)" title="Cerrar ficha">✕</button>
+                </div>
+
+                <div class="custom-drawer-body">
+                  <div class="spec-item">
+                    <span class="spec-label">Switches instalados</span>
+                    <strong class="spec-value">Gateron Oil King · Lubricados con Krytox 205g0</strong>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">Arquitectura de montaje</span>
+                    <strong class="spec-value">Gasket Mount con placa flexible de Policarbonato</strong>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">Conectividad Tri-Modo</span>
+                    <strong class="spec-value">USB-C Cableado · Wireless 2.4GHz · Bluetooth 5.1</strong>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">Garantía de ensamble</span>
+                    <strong class="spec-value">12 Meses de cobertura directa en laboratorio</strong>
+                  </div>
+                </div>
+              </aside>
+            }
+
+            <div vzCardHeader class="feed-card-header">
+              <div class="feed-store-info">
+                <img
+                  vzCardAvatar
+                  src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=120&q=80"
+                  alt="Nexus Hardware Lab"
+                  class="feed-avatar"
+                />
+                <div class="feed-store-names">
+                  <div class="feed-store-row">
+                    <h4 vzCardTitle class="store-name">Nexus Hardware Lab · Custom Build</h4>
+                  </div>
+                  <span vzCardSubtitle class="store-meta">Ejemplo con Drawer Personalizado · Serie Pro</span>
+                </div>
+              </div>
+            </div>
+
+            <div vzCardContent class="feed-card-content">
+              <div class="feed-text-zone">
+                <p class="feed-post-text">
+                  En este ejemplo, el desarrollador proyectó su propio <code>&lt;aside vzCardDrawer&gt;</code> para mostrar una ficha de especificaciones técnicas a la izquierda en lugar del panel de comentarios por defecto.
+                </p>
+              </div>
+            </div>
+
+            <div vzCardFooter class="feed-card-footer">
+              <button
+                type="button"
+                vzCardSocialAction
+                [active]="mostrarPanelCustom()"
+                class="btn-social-action"
+                [class.is-active]="mostrarPanelCustom()"
+                (click)="alternarPanelCustom()"
+              >
+                <span>⚙️ {{ mostrarPanelCustom() ? 'Ocultar Ficha Técnica' : 'Abrir Ficha Técnica (Drawer a Medida)' }}</span>
+              </button>
+
+              <button type="button" vzCardCta class="btn-schedule-order">
+                <span>Solicitar Ensamble</span>
+              </button>
+            </div>
+          </vz-card>
+        </div>
+
+        <div class="code-stack">
+          <app-code-block [code]="socialCustomDrawerSnippet" language="html" title="HTML · Configuración Personalizada con <aside vzCardDrawer>" />
+        </div>
       </div>
     </section>
 
@@ -479,7 +557,7 @@
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <section id="card-completa-academica" class="doc-section">
       <div class="section-heading">
-        <h2 class="section-title">3. Card Muy Completa (Académica &amp; Enterprise)</h2>
+        <h2 class="section-title">4. Card Muy Completa (Académica &amp; Enterprise)</h2>
         <p class="section-subtitle">
           La misma arquitectura de directivas aplicada a un módulo institucional: acreditaciones, métricas de eficiencia, becas activas, ubicación en campus y acceso directo al expediente.
         </p>
@@ -487,7 +565,7 @@
 
       <div class="doc-split-showcase">
         <div class="preview-card-container">
-          <vz-card variant="elevated" [borderedHeader]="false" [hoverable]="true">
+          <vz-card [theme]="previewTheme()" variant="elevated" [borderedHeader]="false" [hoverable]="true">
             <img
               vzCardImage
               src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=700&q=80"
@@ -575,7 +653,7 @@
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <section id="metricas-dashboard" class="doc-section">
       <div class="section-heading">
-        <h2 class="section-title">4. Indicadores y Métricas para Dashboards (KPI Cards)</h2>
+        <h2 class="section-title">5. Indicadores y Métricas para Dashboards (KPI Cards)</h2>
         <p class="section-subtitle">
           Composición con cabeceras limpias sin bordes, números grandes y badges de tendencia, ideal para paneles ejecutivos.
         </p>
@@ -583,7 +661,7 @@
 
       <div class="metric-showcase-grid">
         <!-- Tarjeta 1: Alumnos Activos -->
-        <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
+        <vz-card [theme]="previewTheme()" variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
           <div vzCardHeader>
             <div>
               <span class="metric-category">Alumnos Inscritos</span>
@@ -607,7 +685,7 @@
         </vz-card>
 
         <!-- Tarjeta 2: Recaudación -->
-        <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
+        <vz-card [theme]="previewTheme()" variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
           <div vzCardHeader>
             <div>
               <span class="metric-category">Cuotas Recaudadas</span>
@@ -629,7 +707,7 @@
         </vz-card>
 
         <!-- Tarjeta 3: Eficiencia Terminal -->
-        <vz-card variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
+        <vz-card [theme]="previewTheme()" variant="elevated" [borderedHeader]="false" [borderedFooter]="false" [hoverable]="true">
           <div vzCardHeader>
             <div>
               <span class="metric-category">Eficiencia Terminal</span>
@@ -659,7 +737,7 @@
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <section id="franjas-acento" class="doc-section">
       <div class="section-heading">
-        <h2 class="section-title">5. Franjas de Acento Semánticas (Accent Cards)</h2>
+        <h2 class="section-title">6. Franjas de Acento Semánticas (Accent Cards)</h2>
         <p class="section-subtitle">
           Destaca estados críticos de entidades de negocio usando franjas de acento superior o lateral con soporte de color semántico o personalizado.
         </p>
@@ -667,7 +745,7 @@
 
       <div class="accent-showcase-grid">
         <!-- Success Top -->
-        <vz-card variant="accent" accent="success" accentPosition="top" [hoverable]="true">
+        <vz-card [theme]="previewTheme()" variant="accent" accent="success" accentPosition="top" [hoverable]="true">
           <div vzCardHeader>
             <div>
               <h4 vzCardTitle>Inscripción Aprobada</h4>
@@ -687,7 +765,7 @@
         </vz-card>
 
         <!-- Warning Left -->
-        <vz-card variant="accent" accent="warning" accentPosition="left" [hoverable]="true">
+        <vz-card [theme]="previewTheme()" variant="accent" accent="warning" accentPosition="left" [hoverable]="true">
           <div vzCardHeader>
             <div>
               <h4 vzCardTitle>Documento en Revisión</h4>
@@ -707,7 +785,7 @@
         </vz-card>
 
         <!-- Danger Top -->
-        <vz-card variant="accent" accent="danger" accentPosition="top" [hoverable]="true">
+        <vz-card [theme]="previewTheme()" variant="accent" accent="danger" accentPosition="top" [hoverable]="true">
           <div vzCardHeader>
             <div>
               <h4 vzCardTitle>Baja Administrativa</h4>
@@ -735,14 +813,14 @@
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <section id="disposicion-horizontal" class="doc-section">
       <div class="section-heading">
-        <h2 class="section-title">6. Disposición Horizontal Completa</h2>
+        <h2 class="section-title">7. Disposición Horizontal Completa</h2>
         <p class="section-subtitle">
           Ideal para listados densos, perfiles de alumnos, fichas de especialistas o catálogos donde la fotografía comparte el espacio horizontalmente con badges y chips.
         </p>
       </div>
 
       <div class="horizontal-showcase-container">
-        <vz-card orientation="horizontal" variant="elevated" [borderedHeader]="false" [hoverable]="true">
+        <vz-card [theme]="previewTheme()" orientation="horizontal" variant="elevated" [borderedHeader]="false" [hoverable]="true">
           <img vzCardImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=80" alt="Fotografía del alumno" />
           <div vzCardContent>
             <div vzCardEyebrow>
@@ -773,44 +851,70 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════════════════ -->
-    <!-- 7. PERSONALIZACIÓN CON TOKENS CSS                                    -->
+    <!-- 8. MODO OSCURO NATIVO Y PERSONALIZACIÓN CON TOKENS CSS               -->
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <section id="theming-tokens" class="doc-section">
       <div class="section-heading">
-        <h2 class="section-title">7. Personalización Total (Tokens de Diseño)</h2>
+        <h2 class="section-title">8. Modo Oscuro Nativo &amp; Personalización (Tokens de Diseño)</h2>
         <p class="section-subtitle">
-          Cualquier desarrollador puede adaptar las tarjetas al branding de su empresa o proyecto sobrescribiendo las variables CSS nativas sin necesidad de librerías de terceros.
+          <code>&lt;vz-card&gt;</code> incluye <strong>Modo Oscuro de fábrica</strong>: basta con pasar <code>theme="dark"</code>, el atributo <code>dark</code>, o colocar <code>data-theme="dark"</code> en tu contenedor o <code>&lt;html&gt;</code> sin escribir ni una línea de CSS. Y si necesitas un color corporativo a medida, puedes sobrescribir sus variables CSS nativas.
         </p>
       </div>
 
       <div class="doc-split-showcase">
-        <div class="preview-card-container">
-          <div class="custom-card-wrapper card-dark-pro">
+        <div class="preview-card-container preview-card-container--stack preview-card-container--dark-stage">
+          <!-- 1. Modo Oscuro Nativo Integrado (Cero CSS) -->
+          <vz-card theme="dark" variant="elevated" [hoverable]="true">
+            <div vzCardHeader>
+              <div>
+                <h4 vzCardTitle>Modo Oscuro Nativo</h4>
+                <span vzCardSubtitle>Activado de fábrica con theme="dark"</span>
+              </div>
+              <div vzCardActions>
+                <span vzCardBadge variant="primary">Built-in Dark</span>
+              </div>
+            </div>
+            <div vzCardContent>
+              <p>
+                Todos los elementos internos (badges, chips, metadatos, botones y el panel de comentarios) adaptan su paleta automáticamente sin escribir CSS manual.
+              </p>
+              <div vzCardTags>
+                <span vzCardTag tone="success">✓ Cero CSS extra</span>
+                <span vzCardTag tone="primary">🌙 Auto data-theme</span>
+              </div>
+            </div>
+            <div vzCardFooter>
+              <span>Soporta light · dark · auto</span>
+              <vz-button size="sm" variant="primary">Explorar →</vz-button>
+            </div>
+          </vz-card>
+
+          <!-- 2. Tema de Marca Personalizado con Variables CSS -->
+          <div class="custom-card-wrapper card-brand-indigo">
             <vz-card variant="elevated" [hoverable]="true">
               <div vzCardHeader>
                 <div>
-                  <h4 vzCardTitle>Tema Nocturno Personalizado</h4>
-                  <span vzCardSubtitle>Sobrescrito 100% con Variables CSS</span>
+                  <h4 vzCardTitle>Branding Personalizado (Indigo)</h4>
+                  <span vzCardSubtitle>Sobrescrito con Tokens CSS</span>
                 </div>
                 <div vzCardActions>
-                  <span vzCardBadge variant="info">Dark Pro</span>
+                  <span vzCardBadge variant="info">Custom Tokens</span>
                 </div>
               </div>
               <div vzCardContent>
                 <p>
-                  Observa cómo el fondo, el texto, los bordes, el radio de las esquinas y las sombras cambian
-                  únicamente declarando variables CSS bajo una clase contenedora.
+                  También puedes crear temas corporativos propios declarando variables <code>--vz-card-*</code> en cualquier clase contenedora.
                 </p>
               </div>
               <div vzCardFooter>
-                <span class="text-muted">Cero Bootstrap · 100% CSS Nativo</span>
-                <vz-button size="sm" variant="primary">Explorar</vz-button>
+                <span>100% Variables CSS Nativas</span>
+                <vz-button size="sm" variant="primary">Ver Tokens</vz-button>
               </div>
             </vz-card>
           </div>
         </div>
 
-        <app-code-block [code]="customThemingSnippet" language="css" title="Sobrescritura de tokens CSS" />
+        <app-code-block [code]="customThemingSnippet" language="html" title="Modo Oscuro Nativo (theme='dark') y Tokens CSS" />
       </div>
     </section>
 

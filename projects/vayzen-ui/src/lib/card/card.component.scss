@@ -1,22 +1,26 @@
 // ── Host & Base Card Styles ──
 :host,
 .vz-card {
+  --vz-primary: #2563eb;
+  --vz-primary-hover: #1d4ed8;
+  --vz-primary-active: #1e40af;
   --vz-card-bg: var(--vz-surface, #ffffff);
   --vz-card-color: var(--vz-text, #1e293b);
   --vz-card-border-color: var(--vz-border, #e2e8f0);
   --vz-card-border-width: 1px;
   --vz-card-border-style: solid;
-  --vz-card-border-radius: var(--vz-radius-lg, 1rem);
-  --vz-card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
-  --vz-card-shadow-hover: 0 16px 32px -6px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
+  --vz-card-border-radius: var(--vz-radius-lg, 0.875rem);
+  --vz-card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 4px 14px -2px rgba(15, 23, 42, 0.06);
+  --vz-card-shadow-hover: 0 14px 28px -6px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
   --vz-card-padding: 1.25rem 1.375rem;
+  --vz-card-header-padding: 0.95rem 1.375rem;
   --vz-card-header-bg: transparent;
   --vz-card-footer-bg: #f8fafc;
   --vz-card-title-color: #0f172a;
-  --vz-card-title-size: 1.15rem;
+  --vz-card-title-size: 1.0625rem;
   --vz-card-title-weight: 700;
   --vz-card-subtitle-color: #64748b;
-  --vz-card-subtitle-size: 0.875rem;
+  --vz-card-subtitle-size: 0.8125rem;
   --vz-card-accent-width: 4px;
   --vz-card-accent-color: #2563eb;
 
@@ -239,17 +243,26 @@
 ::ng-deep [vzCardHeader],
 ::ng-deep .vz-card__header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: var(--vz-card-padding);
+  padding: var(--vz-card-header-padding, 0.95rem 1.375rem);
   background-color: var(--vz-card-header-bg);
   border-bottom: 1px solid var(--vz-card-border-color);
+}
+
+// Cabecera declarativa (cuando se usan los inputs title/subtitle sin slot vzCardHeader)
+// Inspirado en Simple Card de AdminT: fluye directo hacia el texto del cuerpo sin línea divisoria
+.vz-card__header--declarative {
+  align-items: flex-start;
+  padding: var(--vz-card-padding);
+  padding-bottom: 0.45rem;
+  border-bottom: none;
 
   & + .vz-card__body,
   & + ::ng-deep [vzCardContent],
   & + ::ng-deep .vz-card__content {
-    padding-top: var(--vz-card-padding);
+    padding-top: 0;
   }
 }
 
@@ -258,7 +271,14 @@
   ::ng-deep [vzCardHeader],
   ::ng-deep .vz-card__header {
     border-bottom: none;
+    padding: var(--vz-card-padding);
     padding-bottom: 0.5rem;
+
+    & + .vz-card__body,
+    & + ::ng-deep [vzCardContent],
+    & + ::ng-deep .vz-card__content {
+      padding-top: 0.25rem;
+    }
   }
 }
 
@@ -275,14 +295,14 @@
   font-size: var(--vz-card-title-size);
   line-height: 1.35;
   color: var(--vz-card-title-color);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
 }
 
 .vz-card__subtitle,
 ::ng-deep [vzCardSubtitle],
 ::ng-deep .vz-card__subtitle {
   display: block;
-  margin: 0.25rem 0 0;
+  margin: 0.2rem 0 0;
   font-size: var(--vz-card-subtitle-size);
   color: var(--vz-card-subtitle-color);
   line-height: 1.45;
@@ -304,11 +324,34 @@
 ::ng-deep .vz-card__content {
   flex: 1 1 auto;
   padding: var(--vz-card-padding);
-  line-height: 1.55;
-  font-size: 0.9rem;
+  line-height: 1.6;
+  font-size: 0.875rem;
+  color: var(--vz-card-color, #475569);
 
   &:empty {
     display: none;
+  }
+
+  > [vzCardBadge] {
+    margin-bottom: 0.55rem;
+  }
+
+  > [vzCardTitle] {
+    margin-bottom: 0.45rem;
+  }
+
+  > [vzCardTitle]:has(+ [vzCardSubtitle]) {
+    margin-bottom: 0;
+  }
+
+  > [vzCardSubtitle] {
+    margin-bottom: 0.65rem;
+  }
+
+  > p {
+    margin: 0 0 1rem 0;
+    color: var(--vz-card-color, #475569);
+    line-height: 1.6;
   }
 
   > p:first-child {
@@ -569,6 +612,8 @@
   padding: 0.875rem 1.375rem;
   border-top: 1px solid var(--vz-card-border-color);
   background-color: var(--vz-card-footer-bg);
+  font-size: 0.8125rem;
+  color: var(--vz-card-subtitle-color, #64748b);
 }
 
 :host(.vz-card--seamless-footer) {
@@ -577,6 +622,138 @@
   ::ng-deep .vz-card__footer {
     border-top: none;
     background-color: transparent;
+  }
+}
+
+// ── Directivas para Publicaciones Sociales & Marketplace ──
+
+// Avatar de tienda / autor
+::ng-deep [vzCardAvatar],
+::ng-deep .vz-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--vz-card-border-color, #e2e8f0);
+  flex-shrink: 0;
+}
+
+// Contenedor multimedia edge-to-edge con soporte para overlay
+::ng-deep [vzCardMedia],
+::ng-deep .vz-card__media-container {
+  position: relative;
+  width: 100%;
+  border-radius: 0;
+  overflow: hidden;
+  max-height: 460px;
+
+  > img {
+    width: 100%;
+    height: 100%;
+    max-height: 460px;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+// Barra de aviso logístico / punto de encuentro
+::ng-deep [vzCardLogistics],
+::ng-deep .vz-card__logistics {
+  margin-top: 0;
+  padding: 14px 24px;
+  background-color: #f8fafc;
+  border-top: 1px solid var(--vz-card-border-color, #e2e8f0);
+  border-bottom: 1px solid var(--vz-card-border-color, #e2e8f0);
+  font-size: 0.875rem;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  svg {
+    flex-shrink: 0;
+    display: block;
+    color: #2563eb;
+  }
+}
+
+// Botón de acción social en forma de píldora
+::ng-deep [vzCardSocialAction],
+::ng-deep .vz-card__social-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  border: 1px solid transparent;
+  color: #334155;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  svg {
+    flex-shrink: 0;
+    display: block;
+  }
+
+  &:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+    transform: translateY(-1px);
+  }
+
+  &.is-liked {
+    color: #ef4444;
+    background-color: #fef2f2;
+    border-color: #fecaca;
+  }
+
+  &.is-active {
+    color: #2563eb;
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+  }
+}
+
+// Botón CTA principal en forma de píldora con sombra
+::ng-deep [vzCardCta],
+::ng-deep .vz-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  transition: all 0.2s ease;
+
+  svg {
+    flex-shrink: 0;
+    display: block;
+  }
+
+  &:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
@@ -601,7 +778,7 @@
   z-index: 3;
 }
 
-// ── Drawer lateral (para comentarios, filtros o sidebars) ──
+// ── Drawer lateral (Automático por defecto o Personalizado con [vzCardDrawer]) ──
 :host(.vz-card--drawer-open),
 .vz-card--drawer-open {
   @media (min-width: 860px) {
@@ -611,6 +788,7 @@
   }
 }
 
+.vz-card__drawer,
 ::ng-deep [vzCardDrawer],
 ::ng-deep .vz-card__drawer {
   display: flex !important;
@@ -618,14 +796,227 @@
   background-color: var(--vz-card-drawer-bg, #f8fafc);
   border-right: 1px solid var(--vz-card-border-color, #e2e8f0);
   height: 100% !important;
-  min-height: 0 !important;
+  min-height: 100% !important;
+  width: 380px;
+  max-width: 100%;
   align-self: stretch !important;
   overflow: hidden;
 
   @media (max-width: 859px) {
     order: 2;
+    width: 100%;
     border-right: none;
     border-top: 1px solid var(--vz-card-border-color, #e2e8f0);
+  }
+}
+
+// ── Estilos Internos del Panel de Comentarios Integrado ──
+.vz-card__drawer-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--vz-card-border-color, #e2e8f0);
+}
+
+.vz-card__drawer-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.vz-card__drawer-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.vz-card__drawer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #059669;
+}
+
+.vz-card__drawer-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: #0f172a;
+    background-color: #f1f5f9;
+  }
+}
+
+.vz-card__comments-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vz-card__comments-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #64748b;
+  gap: 0.5rem;
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+}
+
+.vz-card__comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  background-color: #ffffff;
+  border: 1px solid var(--vz-card-border-color, #e2e8f0);
+  border-radius: 12px;
+}
+
+.vz-card__comment-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background-color: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.vz-card__comment-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.vz-card__comment-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.vz-card__comment-author {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.vz-card__comment-buyer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 9999px;
+  background-color: #ecfdf5;
+  color: #059669;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.vz-card__comment-time {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-left: auto;
+}
+
+.vz-card__comment-text {
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+  color: #334155;
+  line-height: 1.45;
+}
+
+.vz-card__comment-form {
+  flex: 0 0 auto;
+  margin-top: auto !important;
+  padding: 10px 14px;
+  background-color: #ffffff;
+  border-top: 1px solid var(--vz-card-border-color, #e2e8f0);
+}
+
+.vz-card__comment-input-box {
+  display: flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  border: 1px solid var(--vz-card-border-color, #e2e8f0);
+  border-radius: 50px;
+  padding: 4px 6px 4px 14px;
+  gap: 6px;
+
+  input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    color: #0f172a;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+}
+
+.vz-card__comment-send {
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #1d4ed8;
+  }
+
+  &:disabled {
+    background-color: #cbd5e1;
+    cursor: not-allowed;
   }
 }
 
@@ -680,5 +1071,384 @@
   }
   100% {
     background-position: 0 50%;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MODO OSCURO NATIVO INTEGRADO (theme="dark", [dark]="true" o [data-theme="dark"])
+// ══════════════════════════════════════════════════════════════════════════════
+@mixin vz-card-dark-mode {
+  --vz-primary: #3b82f6;
+  --vz-primary-hover: #2563eb;
+  --vz-primary-active: #1d4ed8;
+  --vz-surface-alt: #1e293b;
+  --vz-text-primary: #f1f5f9;
+  --vz-border: #334155;
+
+  --vz-card-bg: #0f172a;
+  --vz-card-bg-flat: #1e293b;
+  --vz-card-color: #cbd5e1;
+  --vz-card-border-color: #1e293b;
+  --vz-card-header-bg: rgba(30, 41, 59, 0.45);
+  --vz-card-footer-bg: #0b1120;
+  --vz-card-title-color: #f8fafc;
+  --vz-card-subtitle-color: #94a3b8;
+  --vz-card-drawer-bg: #0b1120;
+  --vz-card-shadow: 0 10px 28px -6px rgba(15, 23, 42, 0.35), 0 2px 6px 0 rgba(15, 23, 42, 0.2);
+  --vz-card-shadow-hover: 0 20px 38px -8px rgba(15, 23, 42, 0.45), 0 6px 16px -2px rgba(59, 130, 246, 0.22);
+
+  background-color: var(--vz-card-bg);
+  color: var(--vz-card-color);
+  border-color: var(--vz-card-border-color);
+
+  &.is-hoverable:hover {
+    border-color: #334155;
+  }
+
+  .vz-card__main {
+    background-color: var(--vz-card-bg);
+    color: var(--vz-card-color);
+  }
+
+  .vz-card__header,
+  ::ng-deep [vzCardHeader],
+  ::ng-deep .vz-card__header {
+    background-color: var(--vz-card-header-bg);
+    border-bottom-color: var(--vz-card-border-color);
+  }
+
+  .vz-card__title,
+  ::ng-deep [vzCardTitle],
+  ::ng-deep .vz-card__title {
+    color: var(--vz-card-title-color);
+  }
+
+  .vz-card__subtitle,
+  ::ng-deep [vzCardSubtitle],
+  ::ng-deep .vz-card__subtitle {
+    color: var(--vz-card-subtitle-color);
+  }
+
+  .vz-card__body,
+  ::ng-deep [vzCardContent],
+  ::ng-deep .vz-card__content {
+    color: var(--vz-card-color);
+
+    > p {
+      color: var(--vz-card-color);
+    }
+  }
+
+  .vz-card__footer,
+  ::ng-deep [vzCardFooter],
+  ::ng-deep .vz-card__footer {
+    background-color: var(--vz-card-footer-bg);
+    border-top-color: var(--vz-card-border-color);
+    color: var(--vz-card-subtitle-color);
+  }
+
+  &:host(.vz-card--seamless-footer),
+  &.vz-card--seamless-footer {
+    .vz-card__footer,
+    ::ng-deep [vzCardFooter],
+    ::ng-deep .vz-card__footer {
+      background-color: transparent;
+      border-top-color: transparent;
+    }
+  }
+
+  // Badges semánticos en modo oscuro (Estilo soft-dark de AdminT)
+  ::ng-deep [vzCardBadge],
+  ::ng-deep .vz-card__badge {
+    &.vz-card__badge--primary {
+      background-color: rgba(59, 130, 246, 0.16);
+      color: #93c5fd;
+    }
+
+    &.vz-card__badge--success {
+      background-color: rgba(16, 185, 129, 0.16);
+      color: #6ee7b7;
+    }
+
+    &.vz-card__badge--warning {
+      background-color: rgba(245, 158, 11, 0.16);
+      color: #fcd34d;
+    }
+
+    &.vz-card__badge--danger {
+      background-color: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+    }
+
+    &.vz-card__badge--info {
+      background-color: rgba(139, 92, 246, 0.18);
+      color: #c4b5fd;
+    }
+
+    &.vz-card__badge--neutral {
+      background-color: rgba(148, 163, 184, 0.14);
+      color: #cbd5e1;
+    }
+  }
+
+  // Rating / Score
+  ::ng-deep [vzCardRating],
+  ::ng-deep .vz-card__rating {
+    color: #fbbf24;
+
+    svg {
+      color: #fbbf24;
+      fill: #fbbf24;
+    }
+  }
+
+  // Meta / Trust Row
+  ::ng-deep [vzCardMeta],
+  ::ng-deep .vz-card__meta {
+    color: #94a3b8;
+  }
+
+  ::ng-deep [vzCardMetaItem],
+  ::ng-deep .vz-card__meta-item {
+    color: #94a3b8;
+
+    &:not(:last-child)::after {
+      color: #475569;
+    }
+
+    &.vz-card__meta-item--success {
+      color: #34d399;
+    }
+
+    &.vz-card__meta-item--primary {
+      color: #60a5fa;
+    }
+
+    &.vz-card__meta-item--warning {
+      color: #fbbf24;
+    }
+
+    &.vz-card__meta-item--danger {
+      color: #f87171;
+    }
+  }
+
+  // Feature Tags / Chips
+  ::ng-deep [vzCardTag],
+  ::ng-deep .vz-card__tag {
+    &.vz-card__tag--success {
+      background-color: rgba(16, 185, 129, 0.14);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    &.vz-card__tag--primary {
+      background-color: rgba(59, 130, 246, 0.14);
+      border-color: rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+    }
+
+    &.vz-card__tag--warning {
+      background-color: rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #fcd34d;
+    }
+
+    &.vz-card__tag--danger {
+      background-color: rgba(239, 68, 68, 0.14);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    &.vz-card__tag--info {
+      background-color: rgba(139, 92, 246, 0.16);
+      border-color: rgba(139, 92, 246, 0.32);
+      color: #c4b5fd;
+    }
+
+    &.vz-card__tag--neutral {
+      background-color: rgba(148, 163, 184, 0.12);
+      border-color: rgba(148, 163, 184, 0.25);
+      color: #cbd5e1;
+    }
+  }
+
+  // Info Row & Links
+  ::ng-deep [vzCardInfoRow],
+  ::ng-deep .vz-card__info-row {
+    color: #94a3b8;
+  }
+
+  ::ng-deep [vzCardDivider],
+  ::ng-deep .vz-card__divider {
+    border-top-color: #334155;
+  }
+
+  // Botones outline y ghost dentro de una Card en modo oscuro
+  ::ng-deep .vz-btn--outline {
+    background-color: rgba(30, 41, 59, 0.7);
+    color: #e2e8f0;
+    border-color: #475569;
+
+    &:hover:not(:disabled) {
+      background-color: #1e293b;
+      color: #ffffff;
+      border-color: #60a5fa;
+    }
+  }
+
+  ::ng-deep .vz-btn--ghost {
+    color: #cbd5e1;
+
+    &:hover:not(:disabled) {
+      background-color: #1e293b;
+      color: #ffffff;
+    }
+  }
+
+  ::ng-deep [vzCardLink],
+  ::ng-deep .vz-card__link {
+    color: #60a5fa;
+
+    &:hover {
+      color: #93c5fd;
+    }
+  }
+
+  // Directivas Sociales & Marketplace
+  ::ng-deep [vzCardLogistics],
+  ::ng-deep .vz-card__logistics {
+    background-color: #131c31;
+    color: #cbd5e1;
+    border-top-color: #1e293b;
+    border-bottom-color: #1e293b;
+
+    svg {
+      color: #60a5fa;
+    }
+  }
+
+  ::ng-deep [vzCardSocialAction],
+  ::ng-deep .vz-card__social-action {
+    background-color: #1e293b;
+    color: #cbd5e1;
+    border-color: #334155;
+
+    &:hover {
+      background-color: #334155;
+      color: #f8fafc;
+    }
+
+    &.is-liked {
+      color: #f87171;
+      background-color: rgba(239, 68, 68, 0.16);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+
+    &.is-active {
+      color: #60a5fa;
+      background-color: rgba(59, 130, 246, 0.18);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+  }
+
+  // Panel Lateral de Comentarios Integrado (Drawer)
+  .vz-card__drawer-header {
+    background-color: #0f172a;
+    border-bottom-color: #1e293b;
+  }
+
+  .vz-card__drawer-title {
+    color: #f8fafc;
+  }
+
+  .vz-card__drawer-badge {
+    color: #34d399;
+  }
+
+  .vz-card__drawer-close {
+    color: #64748b;
+
+    &:hover {
+      color: #f8fafc;
+      background-color: #1e293b;
+    }
+  }
+
+  .vz-card__comments-empty {
+    color: #94a3b8;
+  }
+
+  .vz-card__comment-item {
+    background-color: #1e293b;
+    border-color: #334155;
+  }
+
+  .vz-card__comment-avatar {
+    background-color: rgba(59, 130, 246, 0.18);
+    color: #60a5fa;
+  }
+
+  .vz-card__comment-author {
+    color: #f8fafc;
+  }
+
+  .vz-card__comment-buyer-badge {
+    background-color: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+  }
+
+  .vz-card__comment-time {
+    color: #64748b;
+  }
+
+  .vz-card__comment-text {
+    color: #cbd5e1;
+  }
+
+  .vz-card__comment-form {
+    background-color: #0f172a;
+    border-top-color: #1e293b;
+  }
+
+  .vz-card__comment-input-box {
+    background-color: #1e293b;
+    border-color: #334155;
+
+    input {
+      color: #f8fafc;
+
+      &::placeholder {
+        color: #64748b;
+      }
+    }
+  }
+
+  .vz-card__comment-send:disabled {
+    background-color: #334155;
+    color: #64748b;
+  }
+
+  // Skeleton Loader en modo oscuro
+  .vz-card__skeleton {
+    &-media,
+    &-line {
+      background: linear-gradient(90deg, #1e293b 25%, #334155 37%, #1e293b 63%);
+      background-size: 400% 100%;
+    }
+  }
+}
+
+:host(.vz-card--dark),
+.vz-card--dark,
+:host-context([data-theme='dark']),
+:host-context(.dark) {
+  @include vz-card-dark-mode;
+}
+
+@media (prefers-color-scheme: dark) {
+  :host(.vz-card--theme-auto),
+  .vz-card--theme-auto {
+    @include vz-card-dark-mode;
   }
 }
