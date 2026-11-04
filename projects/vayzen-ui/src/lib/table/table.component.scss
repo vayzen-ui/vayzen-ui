@@ -864,7 +864,7 @@
   border-right: 1px solid var(--_border);
 }
 
-/* ───── Celdas Ricas: Usuario / Perfil (Estilo AdminT) ───── */
+/* ───── Celdas Ricas: Usuario / Perfil  ───── */
 .vz-table__user {
   display: inline-flex;
   align-items: center;
@@ -955,7 +955,7 @@
   text-overflow: ellipsis;
 }
 
-/* ───── Celda de Código / ID Monospace (Estilo AdminT Order ID) ───── */
+/* ───── Celda de Código / ID Monospace ───── */
 .vz-table__code {
   display: inline-block;
   padding: 0.175rem 0.5rem;
@@ -1024,7 +1024,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ───── Acciones por Fila (Estilo AdminT Icon & Action Buttons) ───── */
+/* ───── Acciones por Fila ───── */
 .vz-table__actions-cell {
   display: inline-flex;
   align-items: center;
@@ -1108,7 +1108,7 @@
     border-color: #bae6fd;
   }
 
-  /* Estilo Dot (como .table-status en AdminT) */
+  /* Estilo Dot*/
   &--style-dot {
     padding: 0.1rem 0.2rem;
     background: transparent;

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { VzButtonComponent } from 'vayzen-ui';
+import { VzButtonComponent, VzButtonTheme } from 'vayzen-ui';
 import { CodeBlockComponent } from '../../../../shared/components/code-block/code-block.component';
 
 @Component({
@@ -12,76 +12,134 @@ import { CodeBlockComponent } from '../../../../shared/components/code-block/cod
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonDocComponent {
-  // --- Snippets Estáticos para la Documentación ---
-  protected readonly basicImportTs = `import { Component } from '@angular/core';
-import { VzButtonComponent } from 'vayzen-ui';
+  // ── Tema de Previsualización (Claro / Oscuro) ──
+  protected readonly previewTheme = signal<VzButtonTheme>('light');
 
-@Component({
-  selector: 'app-mi-vista',
-  standalone: true,
-  imports: [VzButtonComponent],
-  templateUrl: './mi-vista.component.html',
-})
-export class MiVistaComponent {}`;
+  togglePreviewTheme(): void {
+    this.previewTheme.update((t) => (t === 'dark' ? 'light' : 'dark'));
+  }
 
-  protected readonly basicHtmlSnippet = `<vz-button variant="primary">Submit</vz-button>`;
+  // ── Estado Interactivo de Carga Asíncrona ──
+  protected readonly isSimulatingLoad = signal(false);
 
-  protected readonly variantsSnippet = `<vz-button variant="primary">Primary</vz-button>
-<vz-button variant="secondary">Secondary</vz-button>
-<vz-button variant="outline">Outline</vz-button>
-<vz-button variant="ghost">Ghost</vz-button>`;
+  simularCarga(): void {
+    this.isSimulatingLoad.set(true);
+    setTimeout(() => {
+      this.isSimulatingLoad.set(false);
+    }, 1500);
+  }
 
-  protected readonly sizesSnippet = `<vz-button size="sm">Small</vz-button>
-<vz-button size="md">Medium</vz-button>
-<vz-button size="lg">Large</vz-button>`;
+  // ── Contador de Clics de Prueba ──
+  protected readonly clickCounter = signal(0);
 
-  protected readonly globalOverrideSnippet = `/* ========================================================
-   En tu archivo styles.scss global de tu aplicación:
-   Sobrescribe los Tokens de Vayzen UI en :root
-======================================================== */
-:root {
-  /* 1. Cambia la paleta de marca oficial a esmeralda */
-  --vz-primary: #10b981;
-  --vz-primary-hover: #059669;
-  --vz-primary-active: #047857;
+  registrarClick(): void {
+    this.clickCounter.update((c) => c + 1);
+  }
 
-  /* 2. Todos los botones de la app ahora serán completamente redondeados */
-  --vz-btn-radius: 9999px;
-}`;
+  // ── Snippets de Código ──
+  protected readonly variantsSnippet = `<!-- 5 Familias Visuales Integradas -->
+<vz-button variant="solid" color="primary">Solid</vz-button>
+<vz-button variant="soft" color="primary">Soft Pastel</vz-button>
+<vz-button variant="outline" color="primary">Outline</vz-button>
+<vz-button variant="ghost" color="primary">Ghost</vz-button>
+<vz-button variant="link" color="primary">Enlace</vz-button>`;
 
-  protected readonly classOverrideSnippet = `/* ========================================================
-   En el archivo .scss o .css de tu propio componente:
-   Personalización por Clase CSS sin usar ::ng-deep
-======================================================== */
+  protected readonly colorsSnippet = `<!-- Paleta Semántica Completa -->
+<vz-button color="primary">Primary</vz-button>
+<vz-button color="success">Success</vz-button>
+<vz-button color="warning">Warning</vz-button>
+<vz-button color="danger">Danger</vz-button>
+<vz-button color="info">Info</vz-button>
+<vz-button color="dark">Dark</vz-button>
+<vz-button color="secondary">Secondary</vz-button>`;
+
+  protected readonly softPaletteSnippet = `<!-- Variante Soft Pastel (Inspirada en dashboards empresariales) -->
+<vz-button variant="soft" color="primary">Primary Soft</vz-button>
+<vz-button variant="soft" color="success">Aprobado</vz-button>
+<vz-button variant="soft" color="warning">Pendiente</vz-button>
+<vz-button variant="soft" color="danger">Rechazado</vz-button>
+<vz-button variant="soft" color="info">Análisis</vz-button>
+<vz-button variant="soft" color="dark">Neutro</vz-button>`;
+
+  protected readonly statesSnippet = `<!-- Spinner de Carga Nativo y Disabled -->
+<vz-button [loading]="isLoading" (clicked)="onGuardar()">
+  Guardar Cambios
+</vz-button>
+
+<vz-button [loading]="true" iconOnly="true" />
+
+<vz-button [disabled]="true" color="primary">
+  Acción Deshabilitada
+</vz-button>`;
+
+  protected readonly sizesShapesSnippet = `<!-- Tamaños, Píldoras (Pill) e Iconos Cuadrados/Circulares -->
+<vz-button size="sm">Pequeño</vz-button>
+<vz-button size="md">Estándar</vz-button>
+<vz-button size="lg">Grande</vz-button>
+
+<!-- Píldora redondeada (border-radius: 9999px) -->
+<vz-button [pill]="true" color="primary">Redondeado Pill</vz-button>
+
+<!-- Botón cuadrado / circular para iconos de barra de herramientas -->
+<vz-button icon="settings" [iconOnly]="true" [pill]="true" variant="soft" />
+<vz-button icon="trash" [iconOnly]="true" variant="soft" color="danger" />`;
+
+  protected readonly iconsBadgesSnippet = `<!-- Iconos Integrados y Badges Contador -->
+<vz-button icon="plus" color="primary">Nuevo Registro</vz-button>
+<vz-button icon="download" variant="outline" color="primary">Exportar CSV</vz-button>
+<vz-button icon="arrow-right" iconPosition="right" color="success">Continuar</vz-button>
+
+<!-- Botón con Badge Contador -->
+<vz-button icon="mail" variant="soft" color="primary" [badge]="12" badgeVariant="primary">
+  Bandeja de Entrada
+</vz-button>`;
+
+  protected readonly tokensSnippet = `/* Sobrescritura de Tokens CSS sin usar ::ng-deep */
 .btn-marketing-hero {
   --vz-btn-bg: #8b5cf6;
   --vz-btn-hover-bg: #7c3aed;
-  --vz-btn-active-bg: #6d28d9;
-  --vz-btn-color: #ffffff;
   --vz-btn-radius: 9999px;
-  --vz-btn-padding-x: 2rem;
-  --vz-btn-font-size: 1.1rem;
-}
-
-.btn-emerald-pill {
-  --vz-btn-bg: #10b981;
-  --vz-btn-hover-bg: #059669;
-  --vz-btn-active-bg: #047857;
-  --vz-btn-color: #ffffff;
-  --vz-btn-radius: 9999px;
+  --vz-btn-px: 2rem;
+  --vz-btn-height: 3rem;
+  --vz-btn-font-size: 1.05rem;
 }`;
 
-  protected readonly classOverrideHtmlSnippet = `<!-- Uso en tu template HTML aplicando tu clase CSS personalizada -->
-<vz-button class="btn-marketing-hero" size="lg">
-  Comenzar prueba gratis &rarr;
-</vz-button>
+  // ── Tablas de Referencia de API ──
+  protected readonly inputApi = [
+    ['theme', "'light' | 'dark' | 'auto' | undefined", 'undefined', 'Fuerza el Modo Claro, Modo Oscuro nativo o automático según el sistema.'],
+    ['dark', 'boolean', 'false', 'Atajo booleano para activar el Modo Oscuro nativo (<vz-button dark>).'],
+    ['variant', "'solid' | 'soft' | 'outline' | 'ghost' | 'link'", "'solid'", 'Estilo visual de la superficie y contornos del botón.'],
+    ['color', "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'dark' | 'light'", "'primary'", 'Tono semántico de color del botón.'],
+    ['size', "'sm' | 'md' | 'lg'", "'md'", 'Tamaño dimensional del botón (altura, padding y tipografía).'],
+    ['type', "'button' | 'submit' | 'reset'", "'button'", 'Atributo HTML type nativo del elemento botón.'],
+    ['disabled', 'boolean', 'false', 'Deshabilita visualmente la interacción e impide emitir eventos clicked.'],
+    ['loading', 'boolean', 'false', 'Muestra spinner SVG animado y bloquea temporalmente los clics sin deformar el ancho.'],
+    ['pill', 'boolean', 'false', 'Aplica radio de borde completamente redondeado (border-radius: 9999px).'],
+    ['icon', 'string', 'undefined', 'Clave del icono SVG integrado (plus, check, download, trash, settings, search, refresh, etc.).'],
+    ['iconPosition', "'left' | 'right'", "'left'", 'Ubicación del icono con respecto al texto proyectado.'],
+    ['iconOnly', 'boolean', 'false', 'Adapta la forma a proporción cuadrada o circular para barras de acción.'],
+    ['fullWidth', 'boolean', 'false', 'Expande el botón al 100% del ancho del contenedor padre.'],
+    ['badge', 'string | number', 'undefined', 'Texto o número del badge contador flotante dentro del botón.'],
+    ['badgeVariant', 'VzButtonColor', 'undefined', 'Color semántico del badge contador.'],
+    ['ariaLabel', 'string', 'undefined', 'Etiqueta ARIA para accesibilidad y lectores de pantalla.'],
+  ];
 
-<vz-button class="btn-emerald-pill">
-  Pill Esmeralda
-</vz-button>`;
+  protected readonly outputApi = [
+    ['clicked', 'MouseEvent', 'Emite el evento nativo del cursor cuando el botón no está deshabilitado ni cargando.'],
+  ];
 
-  protected readonly inlineOverrideSnippet = `<!-- Sobrescritura puntual con variables CSS en línea -->
-<vz-button style="--vz-btn-bg: #ec4899; --vz-btn-hover-bg: #db2777; --vz-btn-radius: 4px;">
-  Acento Rosa (4px Radius)
-</vz-button>`;
+  protected readonly cssVarApi = [
+    ['--vz-btn-bg', '#2563eb', 'Color de fondo principal del botón.'],
+    ['--vz-btn-color', '#ffffff', 'Color tipográfico y del icono principal.'],
+    ['--vz-btn-border', 'transparent', 'Borde perimetral del botón.'],
+    ['--vz-btn-hover-bg', 'color-mix(...)', 'Color de fondo al posar el cursor sobre el botón.'],
+    ['--vz-btn-active-bg', 'color-mix(...)', 'Color de fondo al presionar el botón.'],
+    ['--vz-btn-focus-ring', 'rgba(37, 99, 235, 0.35)', 'Anillo de foco accesible por teclado.'],
+    ['--vz-btn-radius', '0.5rem', 'Radio de curvatura de esquinas del botón.'],
+    ['--vz-btn-height', '2.5rem', 'Altura dimensional del botón.'],
+    ['--vz-btn-px', '1rem', 'Espaciado horizontal interno (padding).'],
+    ['--vz-btn-font-size', '0.875rem', 'Tamaño de la fuente tipográfica.'],
+    ['--vz-btn-font-weight', '600', 'Grosor de la tipografía.'],
+    ['--vz-btn-gap', '0.5rem', 'Espacio entre el icono, el texto y el badge.'],
+  ];
 }

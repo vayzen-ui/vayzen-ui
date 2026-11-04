@@ -36,7 +36,7 @@ export class TableDocComponent {
     this.previewTheme.update((t) => (t === 'light' ? 'dark' : 'light'));
   }
 
-  // ── 1. Tablas Básicas (Estilo AdminT tables-basic) ──
+  // ── 1. Tablas Básicas (Estilotables-basic) ──
   protected readonly basicOrders = BASIC_ORDERS;
 
   protected readonly simpleColumns: VzColumn<BasicOrder>[] = [

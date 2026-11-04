@@ -150,6 +150,7 @@
   border: 1px solid #e2e8f0;
   background: #ffffff;
   box-shadow: 0 12px 28px -24px rgba(15, 23, 42, 0.22);
+  scroll-margin-top: 1.75rem;
 }
 
 .section-heading {

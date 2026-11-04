@@ -2,115 +2,660 @@
 
 :host {
   display: inline-flex;
-  border-radius: var(--vz-btn-radius, var(--vz-radius-md, #{$vz-radius-md}));
+  vertical-align: middle;
+
+  &.vz-button-host--full {
+    display: flex;
+    width: 100%;
+  }
 }
 
 .vz-btn {
-  // Variables de componente híbridas:
-  // Permiten sobrescritura desde :root (--vz-btn-*), desde un contenedor padre,
-  // o heredan automáticamente de los Design Tokens globales (--vz-*).
-  --_vz-btn-bg: var(--vz-btn-bg, var(--vz-primary, #{$vz-primary}));
-  --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-primary-hover, #{$vz-primary-hover}));
-  --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-primary-active, #{$vz-primary-active}));
-  --_vz-btn-color: var(--vz-btn-color, var(--vz-primary-contrast, #{$vz-primary-contrast}));
-  --_vz-btn-border-color: var(--vz-btn-border-color, transparent);
-  --_vz-btn-hover-border-color: var(--vz-btn-hover-border-color, var(--_vz-btn-border-color));
-  --_vz-btn-radius: var(--vz-btn-radius, var(--vz-radius-md, #{$vz-radius-md}));
-  --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.5rem);
-  --_vz-btn-padding-x: var(--vz-btn-padding-x, 1rem);
-  --_vz-btn-font-size: var(--vz-btn-font-size, var(--vz-font-size-sm, #{$vz-font-size-sm}));
-  --_vz-btn-font-weight: var(--vz-btn-font-weight, 600);
-  --_vz-btn-gap: var(--vz-btn-gap, 0.45rem);
-  --_vz-btn-shadow: var(--vz-btn-shadow, none);
+  // ── Design Tokens Híbridos (Sobrescribibles vía CSS Custom Properties) ──
+  --_bg: var(--vz-btn-bg, #2563eb);
+  --_color: var(--vz-btn-color, #ffffff);
+  --_border: var(--vz-btn-border, transparent);
+  --_hover-bg: var(--vz-btn-hover-bg, color-mix(in srgb, var(--_bg) 88%, #000000));
+  --_hover-color: var(--vz-btn-hover-color, var(--_color));
+  --_hover-border: var(--vz-btn-hover-border, var(--_border));
+  --_active-bg: var(--vz-btn-active-bg, color-mix(in srgb, var(--_bg) 78%, #000000));
+  --_focus-ring: var(--vz-btn-focus-ring, rgba(37, 99, 235, 0.35));
+  --_radius: var(--vz-btn-radius, 0.5rem);
+  --_shadow: var(--vz-btn-shadow, 0 1px 2px rgba(15, 23, 42, 0.05));
+  --_h: var(--vz-btn-height, 2.5rem);
+  --_px: var(--vz-btn-px, 1rem);
+  --_font-size: var(--vz-btn-font-size, 0.875rem);
+  --_font-weight: var(--vz-btn-font-weight, 600);
+  --_gap: var(--vz-btn-gap, 0.5rem);
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--_vz-btn-gap);
+  gap: var(--_gap);
+  height: var(--_h);
+  padding: 0 var(--_px);
+  background: var(--_bg);
+  color: var(--_color);
+  border: 1px solid var(--_border);
+  border-radius: var(--_radius);
   font-family: inherit;
-  font-weight: var(--_vz-btn-font-weight);
-  font-size: var(--_vz-btn-font-size);
-  line-height: 1.25;
-  padding: var(--_vz-btn-padding-y) var(--_vz-btn-padding-x);
-  background-color: var(--_vz-btn-bg);
-  color: var(--_vz-btn-color);
-  border: 1px solid var(--_vz-btn-border-color);
-  border-radius: var(--_vz-btn-radius);
-  box-shadow: var(--_vz-btn-shadow);
-  cursor: pointer;
-  outline: none;
+  font-size: var(--_font-size);
+  font-weight: var(--_font-weight);
+  line-height: 1;
   text-decoration: none;
   white-space: nowrap;
   user-select: none;
-  transition: all var(--vz-transition-fast, #{$vz-transition-fast});
+  cursor: pointer;
+  box-shadow: var(--_shadow);
+  box-sizing: border-box;
+  position: relative;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease,
+    transform 100ms ease;
 
-  &:hover:not(:disabled) {
-    background-color: var(--_vz-btn-hover-bg);
-    border-color: var(--_vz-btn-hover-border-color);
+  &:hover:not(:disabled):not(.is-disabled):not(.is-loading) {
+    background: var(--_hover-bg);
+    color: var(--_hover-color);
+    border-color: var(--_hover-border);
   }
 
-  &:active:not(:disabled) {
-    background-color: var(--_vz-btn-active-bg);
+  &:active:not(:disabled):not(.is-disabled):not(.is-loading) {
+    background: var(--_active-bg);
+    transform: translateY(1px);
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px rgba($vz-border-focus, 0.4);
+    outline: none;
+    box-shadow: 0 0 0 3.5px var(--_focus-ring);
   }
 
-  &:disabled {
-    opacity: 0.6;
+  &:disabled,
+  &.is-disabled {
+    opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
+    box-shadow: none;
   }
 
-  // --- Tamaños (BEM Modifiers) ---
+  &.is-loading {
+    cursor: wait;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  &--full {
+    width: 100%;
+  }
+
+  &--pill {
+    --_radius: 9999px;
+  }
+
+  &--icon-only {
+    width: var(--_h);
+    height: var(--_h);
+    min-width: var(--_h);
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+    align-items: center;
+
+    .vz-btn__icon,
+    .vz-btn__content,
+    .vz-btn__spinner {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+
+      svg {
+        display: block;
+        margin: auto;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+
+    &.vz-btn--sm {
+      .vz-btn__icon svg,
+      .vz-btn__content svg,
+      .vz-btn__spinner svg {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+
+    &.vz-btn--lg {
+      .vz-btn__icon svg,
+      .vz-btn__content svg,
+      .vz-btn__spinner svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════ */
+  /* TAMAÑOS (SM, MD, LG)                                                  */
+  /* ═══════════════════════════════════════════════════════════════════════ */
   &--sm {
-    --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.375rem);
-    --_vz-btn-padding-x: var(--vz-btn-padding-x, 0.875rem);
-    --_vz-btn-font-size: var(--vz-btn-font-size, 0.8125rem);
-    --_vz-btn-radius: var(--vz-btn-radius, 0.5rem);
+    --_h: var(--vz-btn-height, 2rem);
+    --_px: var(--vz-btn-px, 0.75rem);
+    --_font-size: var(--vz-btn-font-size, 0.8125rem);
+    --_radius: var(--vz-btn-radius, 0.375rem);
+    --_gap: var(--vz-btn-gap, 0.375rem);
   }
 
   &--md {
-    --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.5rem);
-    --_vz-btn-padding-x: var(--vz-btn-padding-x, 1rem);
-    --_vz-btn-font-size: var(--vz-btn-font-size, var(--vz-font-size-sm, #{$vz-font-size-sm}));
+    --_h: var(--vz-btn-height, 2.5rem);
+    --_px: var(--vz-btn-px, 1rem);
+    --_font-size: var(--vz-btn-font-size, 0.875rem);
+    --_radius: var(--vz-btn-radius, 0.5rem);
+    --_gap: var(--vz-btn-gap, 0.5rem);
   }
 
   &--lg {
-    --_vz-btn-padding-y: var(--vz-btn-padding-y, 0.75rem);
-    --_vz-btn-padding-x: var(--vz-btn-padding-x, 1.5rem);
-    --_vz-btn-font-size: var(--vz-btn-font-size, var(--vz-font-size-md, #{$vz-font-size-md}));
+    --_h: var(--vz-btn-height, 3rem);
+    --_px: var(--vz-btn-px, 1.5rem);
+    --_font-size: var(--vz-btn-font-size, 1rem);
+    --_radius: var(--vz-btn-radius, 0.625rem);
+    --_gap: var(--vz-btn-gap, 0.625rem);
   }
 
-  // --- Variantes (BEM Modifiers) ---
-  &--primary {
-    --_vz-btn-bg: var(--vz-btn-bg, var(--vz-primary, #{$vz-primary}));
-    --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-primary-hover, #{$vz-primary-hover}));
-    --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-primary-active, #{$vz-primary-active}));
-    --_vz-btn-color: var(--vz-btn-color, var(--vz-primary-contrast, #{$vz-primary-contrast}));
+  /* ═══════════════════════════════════════════════════════════════════════ */
+  /* PALETAS SEMÁNTICAS POR VARIANTE (SOLID, SOFT, OUTLINE, GHOST, LINK)   */
+  /* ═══════════════════════════════════════════════════════════════════════ */
+
+  /* ── 1. SOLID ── */
+  &--solid {
+    &.vz-btn--color-primary {
+      --_bg: #2563eb;
+      --_color: #ffffff;
+      --_border: transparent;
+      --_focus-ring: rgba(37, 99, 235, 0.35);
+    }
+    &.vz-btn--color-secondary {
+      --_bg: #475569;
+      --_color: #ffffff;
+      --_border: transparent;
+      --_focus-ring: rgba(71, 85, 105, 0.35);
+    }
+    &.vz-btn--color-success {
+      --_bg: #10b981;
+      --_color: #ffffff;
+      --_border: transparent;
+      --_focus-ring: rgba(16, 185, 129, 0.35);
+    }
+    &.vz-btn--color-warning {
+      --_bg: #f59e0b;
+      --_color: #ffffff;
+      --_border: transparent;
+      --_focus-ring: rgba(245, 158, 11, 0.35);
+    }
+    &.vz-btn--color-danger {
+      --_bg: #ef4444;
+      --_color: #ffffff;
+      --_border: transparent;
+      --_focus-ring: rgba(239, 68, 68, 0.35);
+    }
+    &.vz-btn--color-info {
+      --_bg: #06b6d4;
+      --_color: #ffffff;
+      --_border: transparent;
+      --_focus-ring: rgba(6, 182, 212, 0.35);
+    }
+    &.vz-btn--color-dark {
+      --_bg: #0f172a;
+      --_color: #ffffff;
+      --_border: transparent;
+      --_focus-ring: rgba(15, 23, 42, 0.35);
+    }
+    &.vz-btn--color-light {
+      --_bg: #f1f5f9;
+      --_color: #0f172a;
+      --_border: #e2e8f0;
+      --_hover-bg: #e2e8f0;
+      --_focus-ring: rgba(203, 213, 225, 0.5);
+    }
   }
 
-  &--secondary {
-    --_vz-btn-bg: var(--vz-btn-bg, var(--vz-secondary, #{$vz-secondary}));
-    --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-secondary-hover, #{$vz-secondary-hover}));
-    --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-secondary-hover, #{$vz-secondary-hover}));
-    --_vz-btn-color: var(--vz-btn-color, var(--vz-secondary-contrast, #{$vz-secondary-contrast}));
+  /* ── 2. SOFT / PASTEL (Inspirado en AdminT) ── */
+  &--soft {
+    box-shadow: none;
+
+    &.vz-btn--color-primary {
+      --_bg: rgba(37, 99, 235, 0.12);
+      --_color: #2563eb;
+      --_border: transparent;
+      --_hover-bg: rgba(37, 99, 235, 0.2);
+      --_active-bg: rgba(37, 99, 235, 0.28);
+      --_focus-ring: rgba(37, 99, 235, 0.28);
+    }
+    &.vz-btn--color-secondary {
+      --_bg: rgba(71, 85, 105, 0.12);
+      --_color: #334155;
+      --_border: transparent;
+      --_hover-bg: rgba(71, 85, 105, 0.2);
+      --_active-bg: rgba(71, 85, 105, 0.28);
+      --_focus-ring: rgba(71, 85, 105, 0.28);
+    }
+    &.vz-btn--color-success {
+      --_bg: rgba(16, 185, 129, 0.12);
+      --_color: #059669;
+      --_border: transparent;
+      --_hover-bg: rgba(16, 185, 129, 0.2);
+      --_active-bg: rgba(16, 185, 129, 0.28);
+      --_focus-ring: rgba(16, 185, 129, 0.28);
+    }
+    &.vz-btn--color-warning {
+      --_bg: rgba(245, 158, 11, 0.14);
+      --_color: #d97706;
+      --_border: transparent;
+      --_hover-bg: rgba(245, 158, 11, 0.22);
+      --_active-bg: rgba(245, 158, 11, 0.3);
+      --_focus-ring: rgba(245, 158, 11, 0.28);
+    }
+    &.vz-btn--color-danger {
+      --_bg: rgba(239, 68, 68, 0.12);
+      --_color: #dc2626;
+      --_border: transparent;
+      --_hover-bg: rgba(239, 68, 68, 0.2);
+      --_active-bg: rgba(239, 68, 68, 0.28);
+      --_focus-ring: rgba(239, 68, 68, 0.28);
+    }
+    &.vz-btn--color-info {
+      --_bg: rgba(6, 182, 212, 0.12);
+      --_color: #0891b2;
+      --_border: transparent;
+      --_hover-bg: rgba(6, 182, 212, 0.2);
+      --_active-bg: rgba(6, 182, 212, 0.28);
+      --_focus-ring: rgba(6, 182, 212, 0.28);
+    }
+    &.vz-btn--color-dark {
+      --_bg: rgba(15, 23, 42, 0.1);
+      --_color: #0f172a;
+      --_border: transparent;
+      --_hover-bg: rgba(15, 23, 42, 0.18);
+      --_active-bg: rgba(15, 23, 42, 0.25);
+      --_focus-ring: rgba(15, 23, 42, 0.25);
+    }
+    &.vz-btn--color-light {
+      --_bg: #ffffff;
+      --_color: #334155;
+      --_border: #e2e8f0;
+      --_hover-bg: #f8fafc;
+      --_focus-ring: rgba(203, 213, 225, 0.4);
+    }
   }
 
+  /* ── 3. OUTLINE ── */
   &--outline {
-    --_vz-btn-bg: var(--vz-btn-bg, transparent);
-    --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-surface-alt, #{$vz-surface-alt}));
-    --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-surface-alt, #{$vz-surface-alt}));
-    --_vz-btn-color: var(--vz-btn-color, var(--vz-text-primary, #{$vz-text-primary}));
-    --_vz-btn-border-color: var(--vz-btn-border-color, var(--vz-border, #{$vz-border}));
-    --_vz-btn-hover-border-color: var(--vz-btn-hover-border-color, var(--vz-border-focus, #{$vz-border-focus}));
+    --_bg: transparent;
+    box-shadow: none;
+
+    &.vz-btn--color-primary {
+      --_color: #2563eb;
+      --_border: #2563eb;
+      --_hover-bg: #2563eb;
+      --_hover-color: #ffffff;
+      --_hover-border: #2563eb;
+      --_focus-ring: rgba(37, 99, 235, 0.35);
+    }
+    &.vz-btn--color-secondary {
+      --_color: #475569;
+      --_border: #cbd5e1;
+      --_hover-bg: #475569;
+      --_hover-color: #ffffff;
+      --_hover-border: #475569;
+      --_focus-ring: rgba(71, 85, 105, 0.35);
+    }
+    &.vz-btn--color-success {
+      --_color: #10b981;
+      --_border: #10b981;
+      --_hover-bg: #10b981;
+      --_hover-color: #ffffff;
+      --_hover-border: #10b981;
+      --_focus-ring: rgba(16, 185, 129, 0.35);
+    }
+    &.vz-btn--color-warning {
+      --_color: #d97706;
+      --_border: #f59e0b;
+      --_hover-bg: #f59e0b;
+      --_hover-color: #ffffff;
+      --_hover-border: #f59e0b;
+      --_focus-ring: rgba(245, 158, 11, 0.35);
+    }
+    &.vz-btn--color-danger {
+      --_color: #ef4444;
+      --_border: #ef4444;
+      --_hover-bg: #ef4444;
+      --_hover-color: #ffffff;
+      --_hover-border: #ef4444;
+      --_focus-ring: rgba(239, 68, 68, 0.35);
+    }
+    &.vz-btn--color-info {
+      --_color: #0891b2;
+      --_border: #06b6d4;
+      --_hover-bg: #06b6d4;
+      --_hover-color: #ffffff;
+      --_hover-border: #06b6d4;
+      --_focus-ring: rgba(6, 182, 212, 0.35);
+    }
+    &.vz-btn--color-dark {
+      --_color: #0f172a;
+      --_border: #0f172a;
+      --_hover-bg: #0f172a;
+      --_hover-color: #ffffff;
+      --_hover-border: #0f172a;
+      --_focus-ring: rgba(15, 23, 42, 0.35);
+    }
+    &.vz-btn--color-light {
+      --_color: #475569;
+      --_border: #e2e8f0;
+      --_hover-bg: #f8fafc;
+      --_hover-color: #0f172a;
+      --_hover-border: #cbd5e1;
+      --_focus-ring: rgba(203, 213, 225, 0.4);
+    }
   }
 
+  /* ── 4. GHOST ── */
   &--ghost {
-    --_vz-btn-bg: var(--vz-btn-bg, transparent);
-    --_vz-btn-hover-bg: var(--vz-btn-hover-bg, var(--vz-surface-alt, #{$vz-surface-alt}));
-    --_vz-btn-active-bg: var(--vz-btn-active-bg, var(--vz-surface-alt, #{$vz-surface-alt}));
-    --_vz-btn-color: var(--vz-btn-color, var(--vz-text-primary, #{$vz-text-primary}));
+    --_bg: transparent;
+    --_border: transparent;
+    box-shadow: none;
+
+    &.vz-btn--color-primary {
+      --_color: #2563eb;
+      --_hover-bg: rgba(37, 99, 235, 0.1);
+      --_focus-ring: rgba(37, 99, 235, 0.25);
+    }
+    &.vz-btn--color-secondary {
+      --_color: #475569;
+      --_hover-bg: rgba(71, 85, 105, 0.1);
+      --_focus-ring: rgba(71, 85, 105, 0.25);
+    }
+    &.vz-btn--color-success {
+      --_color: #10b981;
+      --_hover-bg: rgba(16, 185, 129, 0.1);
+      --_focus-ring: rgba(16, 185, 129, 0.25);
+    }
+    &.vz-btn--color-warning {
+      --_color: #d97706;
+      --_hover-bg: rgba(245, 158, 11, 0.12);
+      --_focus-ring: rgba(245, 158, 11, 0.25);
+    }
+    &.vz-btn--color-danger {
+      --_color: #ef4444;
+      --_hover-bg: rgba(239, 68, 68, 0.1);
+      --_focus-ring: rgba(239, 68, 68, 0.25);
+    }
+    &.vz-btn--color-info {
+      --_color: #0891b2;
+      --_hover-bg: rgba(6, 182, 212, 0.1);
+      --_focus-ring: rgba(6, 182, 212, 0.25);
+    }
+    &.vz-btn--color-dark {
+      --_color: #0f172a;
+      --_hover-bg: rgba(15, 23, 42, 0.08);
+      --_focus-ring: rgba(15, 23, 42, 0.2);
+    }
+    &.vz-btn--color-light {
+      --_color: #64748b;
+      --_hover-bg: #f1f5f9;
+      --_hover-color: #0f172a;
+      --_focus-ring: rgba(203, 213, 225, 0.4);
+    }
+  }
+
+  /* ── 5. LINK ── */
+  &--link {
+    --_bg: transparent;
+    --_border: transparent;
+    box-shadow: none;
+    padding: 0 0.25rem;
+    height: auto;
+    border-radius: 0;
+
+    &.vz-btn--color-primary {
+      --_color: #2563eb;
+    }
+    &.vz-btn--color-secondary {
+      --_color: #475569;
+    }
+    &.vz-btn--color-success {
+      --_color: #10b981;
+    }
+    &.vz-btn--color-warning {
+      --_color: #d97706;
+    }
+    &.vz-btn--color-danger {
+      --_color: #ef4444;
+    }
+    &.vz-btn--color-info {
+      --_color: #0891b2;
+    }
+    &.vz-btn--color-dark {
+      --_color: #0f172a;
+    }
+    &.vz-btn--color-light {
+      --_color: #94a3b8;
+    }
+
+    &:hover:not(:disabled):not(.is-disabled) {
+      text-decoration: underline;
+      background: transparent;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/* SUB-ELEMENTOS: SPINNER, ICONOS Y BADGES                              */
+/* ═══════════════════════════════════════════════════════════════════════ */
+.vz-btn__spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    animation: vz-btn-spin 0.7s linear infinite;
+  }
+}
+
+@keyframes vz-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vz-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+
+  svg {
+    display: block;
+    width: 1.15em;
+    height: 1.15em;
+  }
+}
+
+.vz-btn__content {
+  display: inline-flex;
+  align-items: center;
+  line-height: inherit;
+
+  &--hidden {
+    visibility: hidden;
+    position: absolute;
+  }
+}
+
+.vz-btn__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  font-size: 0.72em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin-left: 0.2rem;
+  flex-shrink: 0;
+
+  &--primary {
+    background: #2563eb;
+    color: #ffffff;
+  }
+  &--secondary {
+    background: #475569;
+    color: #ffffff;
+  }
+  &--success {
+    background: #10b981;
+    color: #ffffff;
+  }
+  &--warning {
+    background: #f59e0b;
+    color: #ffffff;
+  }
+  &--danger {
+    background: #ef4444;
+    color: #ffffff;
+  }
+  &--info {
+    background: #06b6d4;
+    color: #ffffff;
+  }
+  &--dark {
+    background: #0f172a;
+    color: #ffffff;
+  }
+  &--light {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/* MODO OSCURO NATIVO INTEGRADO DE FÁBRICA                               */
+/* ═══════════════════════════════════════════════════════════════════════ */
+:host([data-theme='dark']),
+:host(.is-dark),
+:host-context([data-theme='dark']),
+:host-context(.dark) {
+  .vz-btn {
+    --_focus-ring: rgba(96, 165, 250, 0.4);
+
+    // Ajustes de colores para dark mode
+    &--solid {
+      &.vz-btn--color-dark {
+        --_bg: #1e293b;
+        --_color: #f8fafc;
+        --_border: #334155;
+        --_hover-bg: #334155;
+      }
+      &.vz-btn--color-light {
+        --_bg: #0f172a;
+        --_color: #f1f5f9;
+        --_border: #334155;
+        --_hover-bg: #1e293b;
+      }
+    }
+
+    &--soft {
+      &.vz-btn--color-primary {
+        --_bg: rgba(59, 130, 246, 0.2);
+        --_color: #60a5fa;
+        --_hover-bg: rgba(59, 130, 246, 0.3);
+      }
+      &.vz-btn--color-secondary {
+        --_bg: rgba(148, 163, 184, 0.16);
+        --_color: #cbd5e1;
+        --_hover-bg: rgba(148, 163, 184, 0.24);
+      }
+      &.vz-btn--color-success {
+        --_bg: rgba(16, 185, 129, 0.2);
+        --_color: #34d399;
+        --_hover-bg: rgba(16, 185, 129, 0.3);
+      }
+      &.vz-btn--color-warning {
+        --_bg: rgba(245, 158, 11, 0.2);
+        --_color: #fbbf24;
+        --_hover-bg: rgba(245, 158, 11, 0.3);
+      }
+      &.vz-btn--color-danger {
+        --_bg: rgba(239, 68, 68, 0.2);
+        --_color: #f87171;
+        --_hover-bg: rgba(239, 68, 68, 0.3);
+      }
+      &.vz-btn--color-info {
+        --_bg: rgba(6, 182, 212, 0.2);
+        --_color: #22d3ee;
+        --_hover-bg: rgba(6, 182, 212, 0.3);
+      }
+      &.vz-btn--color-dark {
+        --_bg: rgba(255, 255, 255, 0.1);
+        --_color: #f8fafc;
+        --_hover-bg: rgba(255, 255, 255, 0.18);
+      }
+      &.vz-btn--color-light {
+        --_bg: #1e293b;
+        --_color: #cbd5e1;
+        --_border: #334155;
+        --_hover-bg: #334155;
+      }
+    }
+
+    &--outline {
+      &.vz-btn--color-secondary {
+        --_color: #cbd5e1;
+        --_border: #475569;
+        --_hover-bg: #334155;
+      }
+      &.vz-btn--color-dark {
+        --_color: #f8fafc;
+        --_border: #475569;
+        --_hover-bg: #1e293b;
+      }
+      &.vz-btn--color-light {
+        --_color: #cbd5e1;
+        --_border: #334155;
+        --_hover-bg: #1e293b;
+        --_hover-color: #ffffff;
+      }
+    }
+
+    &--ghost {
+      &.vz-btn--color-secondary {
+        --_color: #cbd5e1;
+        --_hover-bg: rgba(255, 255, 255, 0.08);
+      }
+      &.vz-btn--color-dark {
+        --_color: #f8fafc;
+        --_hover-bg: rgba(255, 255, 255, 0.08);
+      }
+      &.vz-btn--color-light {
+        --_color: #94a3b8;
+        --_hover-bg: rgba(255, 255, 255, 0.06);
+        --_hover-color: #f8fafc;
+      }
+    }
+
+    .vz-btn__badge--light {
+      background: #1e293b;
+      color: #f8fafc;
+    }
   }
 }

@@ -1,14 +1,19 @@
 <div class="doc-layout">
   <article class="doc-main-content">
-    <!-- 1. Encabezado del Componente -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- CABECERA HERO DEL COMPONENTE                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <header class="doc-header">
       <div class="doc-header-top">
         <span class="category-tag">Componentes / Acciones</span>
-        <span class="version-tag">Standalone · Signals</span>
+        <span class="version-tag">Signals · Standalone · Dark Mode Nativo</span>
       </div>
       <h1 class="doc-title">Button</h1>
       <p class="doc-description">
-        Componente de botón interactivo nativo, accesible y ligero. Diseñado bajo una arquitectura de Design Tokens que permite una personalización total mediante Variables CSS sin romper la encapsulación de Angular.
+        Componente de botón reactivo para interfaces modernas: soporta 5 familias visuales (<code>solid</code>,
+        <code>soft</code>, <code>outline</code>, <code>ghost</code>, <code>link</code>), 8 tonalidades semánticas,
+        spinners animados SVG sin desfase dimensional, variantes redondeadas <code>pill</code>, proporción cuadrada
+        <code>iconOnly</code>, badges contadores integrados y Modo Oscuro nativo de fábrica.
       </p>
       <div class="doc-meta-chips">
         <span class="doc-meta-chip">
@@ -16,279 +21,327 @@
           Selector: <code>&lt;vz-button&gt;</code>
         </span>
         <span class="doc-meta-chip">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          ChangeDetection: <code>OnPush</code>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          5 Variantes + 8 Colores
         </span>
         <span class="doc-meta-chip">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          9 Design Tokens CSS
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          Modo Oscuro Nativo
         </span>
+        <button
+          type="button"
+          class="doc-theme-toggle-btn"
+          [class.is-dark]="previewTheme() === 'dark'"
+          (click)="togglePreviewTheme()"
+        >
+          @if (previewTheme() === 'dark') {
+            <span>🌙 Viendo Botones en Modo Oscuro · Cambiar a Claro ☀️</span>
+          } @else {
+            <span>☀️ Viendo Botones en Modo Claro · Probar Modo Oscuro 🌙</span>
+          }
+        </button>
       </div>
     </header>
 
-    <!-- 2. Uso Básico e Implementación -->
-    <section id="uso-basico" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Uso Básico</h2>
-      <p class="section-subtitle">
-        Importa <code>VzButtonComponent</code> en los imports de tu componente Standalone y úsalo en tu plantilla.
-      </p>
-    </div>
-
-    <div class="demo-card demo-card--split">
-      <div class="demo-card-preview">
-        <vz-button variant="primary">Submit</vz-button>
-      </div>
-      <div class="demo-card-code">
-        <app-code-block [code]="basicImportTs" language="typescript" title="mi-vista.component.ts" />
-        <app-code-block [code]="basicHtmlSnippet" language="html" title="mi-vista.component.html" />
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. Variantes de Diseño -->
-  <section id="variantes" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Variantes</h2>
-      <p class="section-subtitle">
-        Cuatro variantes visuales integradas para diferentes jerarquías de acción: <code>primary</code>, <code>secondary</code>, <code>outline</code> y <code>ghost</code>.
-      </p>
-    </div>
-
-    <div class="demo-card demo-card--split">
-      <div class="demo-card-preview gap-lg">
-        <vz-button variant="primary">Primary</vz-button>
-        <vz-button variant="secondary">Secondary</vz-button>
-        <vz-button variant="outline">Outline</vz-button>
-        <vz-button variant="ghost">Ghost</vz-button>
-      </div>
-      <div class="demo-card-code">
-        <app-code-block [code]="variantsSnippet" language="html" title="Ejemplo de Variantes" />
-      </div>
-    </div>
-  </section>
-
-  <!-- 5. Tamaños -->
-  <section id="tamanos" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Tamaños</h2>
-      <p class="section-subtitle">
-        Soporte para tamaños <code>sm</code> (pequeño), <code>md</code> (mediano/predeterminado) y <code>lg</code> (grande).
-      </p>
-    </div>
-
-    <div class="demo-card demo-card--split">
-      <div class="demo-card-preview gap-lg">
-        <vz-button size="sm">Small</vz-button>
-        <vz-button size="md">Medium</vz-button>
-        <vz-button size="lg">Large</vz-button>
-      </div>
-      <div class="demo-card-code">
-        <app-code-block [code]="sizesSnippet" language="html" title="Ejemplo de Tamaños" />
-      </div>
-    </div>
-  </section>
-
-  <!-- 6. GUÍA DE SOBRESCRITURA DE DISEÑO (THEMING & CUSTOMIZATION) -->
-  <section id="personalizacion-tokens" class="doc-section highlight-section">
-    <div class="section-heading">
-      <div class="badge-pill">Arquitectura Híbrida</div>
-      <h2 class="section-title">¿Cómo sobrescribir el diseño para adaptarlo a tu marca?</h2>
-      <p class="section-subtitle">
-        A diferencia de librerías tradicionales que requieren <code>::ng-deep</code> o <code>!important</code>, <strong>Vayzen UI</strong> está construida con <strong>CSS Custom Properties</strong> que atraviesan limpiamente la encapsulación de Angular. Puedes adaptar el diseño de 3 formas distintas:
-      </p>
-    </div>
-
-    <!-- Método 1: Global -->
-    <div class="customization-card">
-      <div class="customization-badge">Método 1: Nivel Global (:root)</div>
-      <h3 class="customization-title">Cambiar toda la paleta o bordes de la aplicación</h3>
-      <p class="customization-desc">
-        En el archivo <code>styles.scss</code> de tu proyecto consumidor, define las variables en <code>:root</code>. Toda la librería adoptará automáticamente tu nueva identidad visual.
-      </p>
-      <app-code-block [code]="globalOverrideSnippet" language="scss" title="src/styles.scss" />
-    </div>
-
-    <!-- Método 2: Por Clase CSS -->
-    <div class="customization-card">
-      <div class="customization-badge">Método 2: Por Clase CSS Específica</div>
-      <h3 class="customization-title">Diseñar un botón especial para una sección (ej. Landing Hero)</h3>
-      <p class="customization-desc">
-        Crea una clase en tu componente o SCSS definiendo únicamente las variables que quieres cambiar. No necesitas selectores complicados:
-      </p>
-
-      <div class="demo-card-preview gap-lg custom-preview-box">
-        <vz-button class="btn-marketing-hero" size="lg">
-          Comenzar prueba gratis &rarr;
-        </vz-button>
-        <vz-button class="btn-emerald-pill">
-          Pill Esmeralda
-        </vz-button>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 1. VARIANTES VISUALES (SOLID, SOFT, OUTLINE, GHOST, LINK)              -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="variantes" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">1. Familias de Variantes Visuales</h2>
+        <p class="section-subtitle">
+          Cinco estilos de superficie para definir la jerarquía de las acciones: <code>solid</code> para llamadas principales,
+          <code>soft</code> para acciones secundarias sutiles, <code>outline</code> para contornos nítidos, <code>ghost</code>
+          para barras de herramientas y <code>link</code> para navegación directa.
+        </p>
       </div>
 
-      <app-code-block [code]="classOverrideSnippet" language="scss" title="hero.component.scss" />
-      <app-code-block [code]="classOverrideHtmlSnippet" language="html" title="hero.component.html" />
-    </div>
-
-    <!-- Método 3: En Línea -->
-    <div class="customization-card">
-      <div class="customization-badge">Método 3: Sobrescritura en Línea</div>
-      <h3 class="customization-title">Personalización puntual y rápida</h3>
-      <p class="customization-desc">
-        Pasa variables CSS directamente en el atributo <code>style</code> del elemento:
-      </p>
-      <div class="demo-card demo-card--split">
-        <div class="demo-card-preview">
-          <vz-button style="--vz-btn-bg: #ec4899; --vz-btn-hover-bg: #db2777; --vz-btn-radius: 4px;">
-            Acento Rosa (4px Radius)
-          </vz-button>
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <div class="demo-button-cluster">
+            <vz-button [theme]="previewTheme()" variant="solid" color="primary">Solid</vz-button>
+            <vz-button [theme]="previewTheme()" variant="soft" color="primary">Soft Pastel</vz-button>
+            <vz-button [theme]="previewTheme()" variant="outline" color="primary">Outline</vz-button>
+            <vz-button [theme]="previewTheme()" variant="ghost" color="primary">Ghost</vz-button>
+            <vz-button [theme]="previewTheme()" variant="link" color="primary">Enlace</vz-button>
+          </div>
         </div>
-        <div class="demo-card-code">
-          <app-code-block [code]="inlineOverrideSnippet" language="html" title="template.html" />
-        </div>
+
+        <app-code-block [code]="variantsSnippet" language="html" title="button-variantes.component.html" />
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 7. Tabla de Variables CSS (Tokens Reference) -->
-  <section id="variables-css" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Referencia de Variables CSS</h2>
-      <p class="section-subtitle">
-        Lista completa de variables CSS Custom Properties disponibles para personalizar <code>&lt;vz-button&gt;</code>:
-      </p>
-    </div>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 2. PALETA SEMÁNTICA Y SOFT PASTEL                                      -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="paleta-colores" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">2. Paleta Semántica y Modo Soft Pastel</h2>
+        <p class="section-subtitle">
+          Ocho tonos semánticos corporativos con alto contraste verificado. La variante <code>soft</code> genera fondos
+          translúcidos al 12% con texto saturado, ideal para tarjetas informativas y dashboards ejecutivos.
+        </p>
+      </div>
 
-    <div class="table-container">
-      <table class="doc-table">
-        <thead>
-          <tr>
-            <th>Variable CSS</th>
-            <th>Descripción</th>
-            <th>Valor por Defecto</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>--vz-btn-bg</code></td>
-            <td>Color de fondo principal del botón</td>
-            <td><code>var(--vz-primary, #0f172a)</code></td>
-          </tr>
-          <tr>
-            <td><code>--vz-btn-hover-bg</code></td>
-            <td>Color de fondo al pasar el cursor (hover)</td>
-            <td><code>var(--vz-primary-hover, #1e293b)</code></td>
-          </tr>
-          <tr>
-            <td><code>--vz-btn-active-bg</code></td>
-            <td>Color de fondo al presionar (active)</td>
-            <td><code>var(--vz-primary-active, #334155)</code></td>
-          </tr>
-          <tr>
-            <td><code>--vz-btn-color</code></td>
-            <td>Color del texto e iconos</td>
-            <td><code>var(--vz-primary-contrast, #ffffff)</code></td>
-          </tr>
-          <tr>
-            <td><code>--vz-btn-border-color</code></td>
-            <td>Color del borde del botón</td>
-            <td><code>transparent</code> (o <code>--vz-border</code> en outline)</td>
-          </tr>
-          <tr>
-            <td><code>--vz-btn-radius</code></td>
-            <td>Radio del borde (border-radius)</td>
-            <td><code>var(--vz-radius-md, 0.375rem)</code></td>
-          </tr>
-          <tr>
-            <td><code>--vz-btn-padding-y</code></td>
-            <td>Espaciado interno vertical</td>
-            <td><code>0.5rem</code> (en tamaño md)</td>
-          </tr>
-          <tr>
-            <td><code>--vz-btn-padding-x</code></td>
-            <td>Espaciado interno horizontal</td>
-            <td><code>1rem</code> (en tamaño md)</td>
-          </tr>
-          <tr>
-            <td><code>--vz-btn-font-size</code></td>
-            <td>Tamaño de la tipografía</td>
-            <td><code>0.875rem</code> (en tamaño md)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+      <div class="demo-split-grid demo-split-grid--reverse">
+        <div class="preview-card-container">
+          <div class="demo-button-column">
+            <div class="demo-button-cluster">
+              <vz-button [theme]="previewTheme()" color="primary">Primary</vz-button>
+              <vz-button [theme]="previewTheme()" color="success">Success</vz-button>
+              <vz-button [theme]="previewTheme()" color="warning">Warning</vz-button>
+              <vz-button [theme]="previewTheme()" color="danger">Danger</vz-button>
+              <vz-button [theme]="previewTheme()" color="info">Info</vz-button>
+              <vz-button [theme]="previewTheme()" color="dark">Dark</vz-button>
+            </div>
+            <div class="demo-button-cluster">
+              <vz-button [theme]="previewTheme()" variant="soft" color="primary">Primary Soft</vz-button>
+              <vz-button [theme]="previewTheme()" variant="soft" color="success">Aprobado</vz-button>
+              <vz-button [theme]="previewTheme()" variant="soft" color="warning">Pendiente</vz-button>
+              <vz-button [theme]="previewTheme()" variant="soft" color="danger">Rechazado</vz-button>
+              <vz-button [theme]="previewTheme()" variant="soft" color="info">Análisis</vz-button>
+              <vz-button [theme]="previewTheme()" variant="soft" color="dark">Neutro</vz-button>
+            </div>
+          </div>
+        </div>
 
-  <!-- 8. API Reference -->
-  <section id="api-referencia" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">API Reference</h2>
-      <p class="section-subtitle">Propiedades y eventos del componente <code>VzButtonComponent</code>.</p>
-    </div>
+        <app-code-block [code]="softPaletteSnippet" language="html" title="paleta-semantica.component.html" />
+      </div>
+    </section>
 
-    <h3 class="subsection-title">Inputs</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Default</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>variant</code></td>
-            <td><code>'primary' | 'secondary' | 'outline' | 'ghost'</code></td>
-            <td><code>'primary'</code></td>
-            <td>Estilo visual del botón</td>
-          </tr>
-          <tr>
-            <td><code>size</code></td>
-            <td><code>'sm' | 'md' | 'lg'</code></td>
-            <td><code>'md'</code></td>
-            <td>Dimensiones del botón</td>
-          </tr>
-          <tr>
-            <td><code>type</code></td>
-            <td><code>'button' | 'submit' | 'reset'</code></td>
-            <td><code>'button'</code></td>
-            <td>Atributo nativo HTML <code>type</code></td>
-          </tr>
-          <tr>
-            <td><code>disabled</code></td>
-            <td><code>boolean</code></td>
-            <td><code>false</code></td>
-            <td>Si el botón está deshabilitado para interacción</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 3. ESTADOS Y LOADING ASÍNCRONO                                         -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="estados-loading" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">3. Estados, Spinner de Carga y Eventos</h2>
+        <p class="section-subtitle">
+          El estado <code>[loading]="true"</code> inyecta un spinner SVG animado, deshabilita la interacción por teclado y
+          cursor, y <strong>conserva con precisión milimétrica las dimensiones del botón</strong> para evitar saltos molestos de layout.
+        </p>
+      </div>
 
-    <h3 class="subsection-title" style="margin-top: 2rem;">Outputs</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo de Evento</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>clicked</code></td>
-            <td><code>EventEmitter&lt;MouseEvent&gt;</code></td>
-            <td>Se emite al hacer clic (ignorado si está <code>disabled</code>)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <div class="demo-button-column">
+            <div class="demo-button-cluster">
+              <vz-button
+                [theme]="previewTheme()"
+                color="primary"
+                [loading]="isSimulatingLoad()"
+                (clicked)="simularCarga()"
+              >
+                {{ isSimulatingLoad() ? 'Guardando...' : 'Simular Guardado (1.5s)' }}
+              </vz-button>
+
+              <vz-button
+                [theme]="previewTheme()"
+                variant="soft"
+                color="success"
+                icon="check"
+                (clicked)="registrarClick()"
+              >
+                Clics: {{ clickCounter() }}
+              </vz-button>
+            </div>
+
+            <div class="demo-button-cluster">
+              <vz-button [theme]="previewTheme()" [loading]="true" iconOnly="true" />
+              <vz-button [theme]="previewTheme()" [disabled]="true" color="primary">Deshabilitado Solid</vz-button>
+              <vz-button [theme]="previewTheme()" [disabled]="true" variant="outline" color="primary">Disabled Outline</vz-button>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="statesSnippet" language="html" title="button-estados.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 4. TAMAÑOS Y FORMAS (SM, MD, LG, PILL, ICON-ONLY)                       -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tamanos-formas" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">4. Tamaños Dimensionales y Modificadores de Forma</h2>
+        <p class="section-subtitle">
+          Tres escalas estándar (<code>sm</code>: 32px, <code>md</code>: 40px, <code>lg</code>: 48px), píldoras completamente
+          redondeadas con <code>pill</code> (<code>border-radius: 9999px</code>) y proporción 1:1 con <code>iconOnly</code> para barras de herramientas.
+        </p>
+      </div>
+
+      <div class="demo-split-grid demo-split-grid--reverse">
+        <div class="preview-card-container">
+          <div class="demo-button-column">
+            <div class="demo-button-cluster" style="align-items: center;">
+              <vz-button [theme]="previewTheme()" size="sm" color="primary">Pequeño (sm)</vz-button>
+              <vz-button [theme]="previewTheme()" size="md" color="primary">Estándar (md)</vz-button>
+              <vz-button [theme]="previewTheme()" size="lg" color="primary">Grande (lg)</vz-button>
+            </div>
+            <div class="demo-button-cluster" style="align-items: center;">
+              <vz-button [theme]="previewTheme()" [pill]="true" color="primary">Pill Redondeado</vz-button>
+              <vz-button [theme]="previewTheme()" [pill]="true" variant="soft" color="success">Pill Soft</vz-button>
+              <vz-button [theme]="previewTheme()" icon="settings" [iconOnly]="true" [pill]="true" variant="soft" />
+              <vz-button [theme]="previewTheme()" icon="trash" [iconOnly]="true" variant="soft" color="danger" />
+              <vz-button [theme]="previewTheme()" icon="search" [iconOnly]="true" variant="outline" />
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="sizesShapesSnippet" language="html" title="tamanos-formas.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 5. ICONOS INTEGRADOS Y BADGES CONTADOR                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="iconos-badges" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">5. Iconos Integrados y Badges Contador</h2>
+        <p class="section-subtitle">
+          Soporte directo para iconos SVG sin dependencias externas (<code>plus</code>, <code>check</code>,
+          <code>download</code>, <code>trash</code>, <code>settings</code>, <code>search</code>, etc.) a la izquierda o derecha,
+          así como insignias o píldoras contadoras integradas (<code>badge="12"</code>).
+        </p>
+      </div>
+
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <div class="demo-button-column">
+            <div class="demo-button-cluster">
+              <vz-button [theme]="previewTheme()" icon="plus" color="primary">Nuevo Registro</vz-button>
+              <vz-button [theme]="previewTheme()" icon="download" variant="outline" color="primary">Exportar CSV</vz-button>
+              <vz-button [theme]="previewTheme()" icon="arrow-right" iconPosition="right" color="success">Continuar</vz-button>
+            </div>
+
+            <div class="demo-button-cluster">
+              <vz-button [theme]="previewTheme()" icon="mail" variant="soft" color="primary" [badge]="12" badgeVariant="primary">
+                Bandeja de Entrada
+              </vz-button>
+              <vz-button [theme]="previewTheme()" variant="solid" color="danger" [badge]="'3 Críticos'" badgeVariant="light">
+                Alertas Activas
+              </vz-button>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="iconsBadgesSnippet" language="html" title="iconos-badges.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 6. SOBRESCRITURA MEDIANTE DESIGN TOKENS                                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="personalizacion-tokens" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">6. Personalización con Design Tokens (Variables CSS)</h2>
+        <p class="section-subtitle">
+          Exposición de variables <code>--vz-btn-*</code> para que cualquier desarrollador pueda cambiar radios,
+          alturas, sombras o colores desde un archivo global, una clase CSS o atributo <code>style</code> sin usar <code>::ng-deep</code>.
+        </p>
+      </div>
+
+      <div class="demo-split-grid demo-split-grid--reverse">
+        <div class="preview-card-container">
+          <div class="demo-button-cluster">
+            <vz-button
+              [theme]="previewTheme()"
+              size="lg"
+              style="--vz-btn-bg: #8b5cf6; --vz-btn-hover-bg: #7c3aed; --vz-btn-radius: 9999px; --vz-btn-px: 2rem;"
+            >
+              Marketing Hero Gradient &rarr;
+            </vz-button>
+            <vz-button
+              [theme]="previewTheme()"
+              style="--vz-btn-bg: #ec4899; --vz-btn-hover-bg: #db2777; --vz-btn-radius: 4px;"
+            >
+              Pink Accent (4px)
+            </vz-button>
+          </div>
+        </div>
+
+        <app-code-block [code]="tokensSnippet" language="css" title="personalizacion-tokens.css" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 7. REFERENCIA DE API                                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="api-referencia" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">7. Referencia de API</h2>
+      </div>
+
+      <h3 class="subsection-title">Inputs de &lt;vz-button&gt;</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Input</th>
+              <th>Tipo</th>
+              <th>Default</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of inputApi; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td><code>{{ row[2] }}</code></td>
+                <td>{{ row[3] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title">Outputs</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Output</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of outputApi; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td>{{ row[2] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title">Design Tokens CSS (--vz-btn-*)</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Variable CSS</th>
+              <th>Valor por Defecto</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of cssVarApi; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td>{{ row[2] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
   </article>
 
-  <!-- Lateral Derecho: Studio Callout + TOC (Estilo PrimeNG / Bootstrap) -->
+  <!-- Lateral Derecho: Studio Callout + TOC -->
   <aside class="doc-toc-sidebar">
     <div class="studio-widget-card">
       <div class="widget-badge-row">
@@ -297,7 +350,7 @@
       </div>
       <h4 class="widget-title">Diseñador en Vivo</h4>
       <p class="widget-desc">
-        Abre el laboratorio interactivo para probar variantes, tamaños, estados deshabilitados y exportar código limpio.
+        Abre el laboratorio interactivo para probar variantes, colores, estados de carga y generar código Angular en tiempo real.
       </p>
       <a routerLink="/studio" [queryParams]="{ component: 'button' }" class="widget-action-btn">
         <span>Abrir en Studio</span>
@@ -311,12 +364,13 @@
     <div class="toc-container">
       <h5 class="toc-title">En esta página</h5>
       <nav class="toc-nav">
-        <a href="#uso-basico" class="toc-link">Uso Básico</a>
-        <a href="#variantes" class="toc-link">Variantes Visuales</a>
-        <a href="#tamanos" class="toc-link">Tamaños Escalables</a>
-        <a href="#personalizacion-tokens" class="toc-link">Personalización de Tokens</a>
-        <a href="#variables-css" class="toc-link">Variables CSS</a>
-        <a href="#api-referencia" class="toc-link">Referencia de API</a>
+        <a href="#variantes" class="toc-link">1. Familias de Variantes</a>
+        <a href="#paleta-colores" class="toc-link">2. Paleta Semántica &amp; Soft</a>
+        <a href="#estados-loading" class="toc-link">3. Estados y Loading</a>
+        <a href="#tamanos-formas" class="toc-link">4. Tamaños y Pill</a>
+        <a href="#iconos-badges" class="toc-link">5. Iconos y Badges</a>
+        <a href="#personalizacion-tokens" class="toc-link">6. Tokens de Diseño</a>
+        <a href="#api-referencia" class="toc-link">7. Referencia de API</a>
       </nav>
     </div>
   </aside>

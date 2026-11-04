@@ -252,7 +252,6 @@
 }
 
 // Cabecera declarativa (cuando se usan los inputs title/subtitle sin slot vzCardHeader)
-// Inspirado en Simple Card de AdminT: fluye directo hacia el texto del cuerpo sin línea divisoria
 .vz-card__header--declarative {
   align-items: flex-start;
   padding: var(--vz-card-padding);
@@ -1157,7 +1156,7 @@
     }
   }
 
-  // Badges semánticos en modo oscuro (Estilo soft-dark de AdminT)
+  // Badges semánticos en modo oscuro 
   ::ng-deep [vzCardBadge],
   ::ng-deep .vz-card__badge {
     &.vz-card__badge--primary {
