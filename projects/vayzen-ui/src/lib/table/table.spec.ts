@@ -239,5 +239,50 @@ describe('VzTableComponent · modo servidor', () => {
     expect(queries.length).toBe(0); // filtrado local, sin llamada al backend
     expect(bodyRows(f).length).toBeLessThan(10);
   });
+
+  it('soporta Modo Oscuro nativo (theme="dark", [dark]="true" y theme="auto")', () => {
+    const f = setup();
+    expect(el(f).getAttribute('data-vz-theme')).toBeNull();
+
+    f.componentRef.setInput('theme', 'dark');
+    f.detectChanges();
+    expect(el(f).getAttribute('data-vz-theme')).toBe('dark');
+    expect(el(f).classList.contains('vz-table-host--dark')).toBe(true);
+
+    f.componentRef.setInput('theme', 'auto');
+    f.detectChanges();
+    expect(el(f).getAttribute('data-vz-theme')).toBe('auto');
+
+    f.componentRef.setInput('dark', true);
+    f.detectChanges();
+    expect(el(f).getAttribute('data-vz-theme')).toBe('dark');
+    expect(el(f).classList.contains('vz-table-host--dark')).toBe(true);
+  });
+
+  it('renderiza celdas ricas automáticas (user con iniciales, code, progress y badge dot) y oculta toolbar en tablas básicas', () => {
+    const f = TestBed.createComponent(VzTableComponent<any>);
+    f.componentRef.setInput('columns', [
+      { key: 'folio', header: 'ID', type: 'code' },
+      { key: 'name', header: 'Usuario', type: 'user', subtitleKey: 'email' },
+      { key: 'kpi', header: 'KPI', type: 'progress' },
+      { key: 'status', header: 'Estatus', type: 'badge', badgeStyle: 'dot' },
+    ]);
+    f.componentRef.setInput('data', [
+      { id: 1, folio: '#EMP-01', name: 'Ángela Pérez', email: 'angela@vayzen.dev', kpi: 92, status: 'Activo' },
+    ]);
+    f.componentRef.setInput('variant', 'outlined');
+    f.componentRef.setInput('searchable', false);
+    f.componentRef.setInput('pagination', false);
+    f.componentRef.setInput('showCount', false);
+    f.detectChanges();
+
+    expect(el(f).querySelector('.vz-table--outlined')).not.toBeNull();
+    expect(el(f).querySelector('.vz-table__toolbar')).toBeNull();
+    expect(el(f).querySelector('.vz-table__code')?.textContent).toBe('#EMP-01');
+    expect(el(f).querySelector('.vz-table__avatar')?.textContent?.trim()).toBe('ÁP');
+    expect(el(f).querySelector('.vz-table__user-sub')?.textContent).toBe('angela@vayzen.dev');
+    expect(el(f).querySelector('.vz-table__progress-label')?.textContent).toBe('92%');
+    expect(el(f).querySelector('.vz-badge--style-dot')).not.toBeNull();
+  });
 });
 

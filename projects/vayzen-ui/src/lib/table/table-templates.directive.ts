@@ -38,3 +38,22 @@ export class VzFilterControlDirective {
   readonly template = inject<TemplateRef<VzFilterControlContext>>(TemplateRef);
 }
 
+/** Slot semántico para proyectar un bloque de título o encabezado personalizado en la barra superior. */
+@Directive({ selector: '[vzTableTitle]', standalone: true })
+export class VzTableTitleDirective {}
+
+/** Slot semántico para proyectar controles de filtrado adicionales en la barra superior. */
+@Directive({ selector: '[vzTableFilters]', standalone: true })
+export class VzTableFiltersDirective {}
+
+/** Slot semántico para proyectar botones de acción en el extremo derecho de la barra superior. */
+@Directive({ selector: '[vzTableActions]', standalone: true })
+export class VzTableActionsDirective {}
+
+/** Slot semántico para proyectar un estado vacío personalizado cuando no hay registros. */
+@Directive({ selector: '[vzTableEmpty]', standalone: true })
+export class VzTableEmptyDirective {}
+
+/** Slot semántico para proyectar información adicional en el pie de la tabla. */
+@Directive({ selector: '[vzTableFooter]', standalone: true })
+export class VzTableFooterDirective {}

@@ -1,74 +1,129 @@
 <section [class]="rootClasses()">
-  <!-- Barra superior: título, búsqueda, filtros y acciones -->
-  <div class="vz-table__toolbar">
-    @if (heading() || cfg().showCount || selectedCount() > 0) {
-      <div class="vz-table__heading">
-        @if (heading()) {
-          <h3 class="vz-table__title">{{ heading() }}</h3>
-        }
-        @if (cfg().showCount) {
-          <span class="vz-table__chip" aria-live="polite">{{ totalRows() }} {{ lbl().records }}</span>
-        }
-        @if (selectedCount() > 0) {
-          <span class="vz-table__chip vz-table__chip--accent">{{ selectedCount() }} {{ lbl().selected }}</span>
-        }
-      </div>
-    }
+  <!-- Barra superior: título, subtítulo, chips, búsqueda, filtros y acciones -->
+  @if (hasToolbar()) {
+    <div class="vz-table__toolbar">
+      @if (heading() || subtitle() || cfg().showCount || selectedCount() > 0 || titleSlot()) {
+        <div class="vz-table__heading">
+          @if (heading() || subtitle()) {
+            <div class="vz-table__title-group">
+              @if (heading()) {
+                <h3 class="vz-table__title">{{ heading() }}</h3>
+              }
+              @if (subtitle()) {
+                <p class="vz-table__subtitle">{{ subtitle() }}</p>
+              }
+            </div>
+          }
 
-    <ng-content select="[vzTableTitle]" />
+          <div class="vz-table__chips">
+            @if (cfg().showCount) {
+              <span class="vz-table__chip" aria-live="polite">
+                <span class="vz-table__chip-dot"></span>
+                {{ totalRows() }} {{ lbl().records }}
+              </span>
+            }
+            @if (selectedCount() > 0) {
+              <span class="vz-table__chip vz-table__chip--accent">
+                {{ selectedCount() }} {{ lbl().selected }}
+                <button
+                  type="button"
+                  class="vz-table__chip-clear"
+                  [attr.aria-label]="lbl().clearSelection"
+                  [attr.title]="lbl().clearSelection"
+                  (click)="clearSelection()"
+                >
+                  ✕
+                </button>
+              </span>
+            }
+          </div>
 
-    @if (cfg().search.enabled) {
-      <div class="vz-table__search">
-        <svg class="vz-table__search-icon" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
-          <circle cx="7" cy="7" r="4.5" />
-          <path d="m10.5 10.5 3 3" />
-        </svg>
-        <input
-          type="search"
-          class="vz-table__search-input"
-          autocomplete="off"
-          [value]="searchTerm()"
-          [placeholder]="searchPlaceholder() ?? cfg().search.placeholder ?? lbl().searchPlaceholder"
-          [attr.aria-label]="searchPlaceholder() ?? cfg().search.placeholder ?? lbl().searchPlaceholder"
-          (input)="onSearchInput($any($event.target).value)"
-        />
-        @if (searchTerm()) {
-          <button type="button" class="vz-table__search-clear" [attr.aria-label]="lbl().clearSearch" (click)="clearSearch()">
-            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8" /></svg>
-          </button>
-        }
-      </div>
-    }
+          <ng-content select="[vzTableTitle]" />
+        </div>
+      }
 
-    @if (filterViews().length) {
-      <div class="vz-table__filters">
-        @for (item of filterViews(); track item.filter.key) {
-          <div class="vz-table__filter" [style.width]="item.filter.width">
-            @if (filterTemplates().get(item.filter.key); as tpl) {
-              <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="item.context" />
-            } @else {
-              <select class="vz-table__select" [attr.aria-label]="item.filter.label" (change)="onNativeFilter(item.filter, $any($event.target).value)">
-                <option value="" [selected]="!item.hasValue">{{ item.filter.placeholder ?? item.filter.label }}</option>
-                @for (opt of item.filter.options; track opt.value) {
-                  <option [value]="opt.value" [selected]="item.selectedKey === '' + opt.value">{{ opt.label }}</option>
-                }
-              </select>
+      <div class="vz-table__toolbar-controls">
+        @if (cfg().search.enabled) {
+          <div class="vz-table__search">
+            <svg class="vz-table__search-icon" viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+              <circle cx="7" cy="7" r="4.5" />
+              <path d="m10.5 10.5 3.2 3.2" />
+            </svg>
+            <input
+              type="search"
+              class="vz-table__search-input"
+              autocomplete="off"
+              [value]="searchTerm()"
+              [placeholder]="searchPlaceholder() ?? cfg().search.placeholder ?? lbl().searchPlaceholder"
+              [attr.aria-label]="searchPlaceholder() ?? cfg().search.placeholder ?? lbl().searchPlaceholder"
+              (input)="onSearchInput($any($event.target).value)"
+            />
+            @if (searchTerm()) {
+              <button type="button" class="vz-table__search-clear" [attr.aria-label]="lbl().clearSearch" (click)="clearSearch()">
+                <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8" /></svg>
+              </button>
             }
           </div>
         }
+
+        @if (filterViews().length) {
+          <div class="vz-table__filters">
+            @for (item of filterViews(); track item.filter.key) {
+              <div class="vz-table__filter" [style.width]="item.filter.width">
+                @if (filterTemplates().get(item.filter.key); as tpl) {
+                  <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="item.context" />
+                } @else {
+                  <select
+                    class="vz-table__select"
+                    [class.has-value]="item.hasValue"
+                    [attr.aria-label]="item.filter.label"
+                    (change)="onNativeFilter(item.filter, $any($event.target).value)"
+                  >
+                    <option value="" [selected]="!item.hasValue">{{ item.filter.placeholder ?? item.filter.label }}</option>
+                    @for (opt of item.filter.options; track opt.value) {
+                      <option [value]="opt.value" [selected]="item.selectedKey === '' + opt.value">{{ opt.label }}</option>
+                    }
+                  </select>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <ng-content select="[vzTableFilters]" />
+
+        @if (cfg().exportable || actionsSlot()) {
+          <div class="vz-table__actions">
+            @if (cfg().exportable) {
+              <button type="button" class="vz-table__export-btn" (click)="onExportCsv()">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span>{{ lbl().exportCsv }}</span>
+              </button>
+            }
+            <ng-content select="[vzTableActions]" />
+          </div>
+        }
       </div>
-    }
-
-    <ng-content select="[vzTableFilters]" />
-
-    <div class="vz-table__actions">
-      <ng-content select="[vzTableActions]" />
     </div>
-  </div>
+  }
 
-  <!-- Tabla -->
-  <div class="vz-table__scroll" [style.max-height]="cfg().maxHeight" tabindex="0" role="region" [attr.aria-label]="heading() || null">
-    <table class="vz-table__table" [attr.aria-busy]="loading()">
+  <!-- Área de Tabla con Scroll -->
+  <div
+    #scrollContainer
+    class="vz-table__scroll"
+    [class.has-scroll-left]="hasScrollLeft()"
+    [class.has-scroll-right]="hasScrollRight()"
+    [style.max-height]="cfg().maxHeight"
+    tabindex="0"
+    role="region"
+    [attr.aria-label]="heading() || 'Tabla de datos'"
+    (scroll)="updateScrollState()"
+  >
+    <table class="vz-table__table" [attr.aria-busy]="isLoading()">
       <thead>
         <tr>
           @if (cfg().selectable) {
@@ -78,7 +133,7 @@
                 class="vz-table__checkbox"
                 [checked]="allVisibleSelected()"
                 [indeterminate]="someVisibleSelected()"
-                [disabled]="loading() || visibleRows().length === 0"
+                [disabled]="isLoading() || visibleRows().length === 0"
                 [attr.aria-label]="lbl().selectAll"
                 (change)="toggleAllVisible()"
               />
@@ -115,12 +170,28 @@
       <tbody>
         @if (isLoading()) {
           @for (r of skeletonRows(); track $index) {
-            <tr class="vz-table__row" aria-hidden="true">
+            <tr class="vz-table__row vz-table__row--skeleton" aria-hidden="true">
               @if (cfg().selectable) {
-                <td class="vz-table__td vz-table__select-cell"><span class="vz-skeleton vz-skeleton--box"></span></td>
+                <td class="vz-table__td vz-table__select-cell">
+                  <span class="vz-skeleton vz-skeleton--box"></span>
+                </td>
               }
               @for (col of visibleColumns(); track col.key) {
-                <td [class]="cellClasses(col)"><span class="vz-skeleton"></span></td>
+                <td [class]="cellClasses(col)">
+                  @if (col.type === 'user') {
+                    <div class="vz-table__skeleton-user">
+                      <span class="vz-skeleton vz-skeleton--circle"></span>
+                      <div class="vz-table__skeleton-lines">
+                        <span class="vz-skeleton vz-skeleton--title"></span>
+                        <span class="vz-skeleton vz-skeleton--sub"></span>
+                      </div>
+                    </div>
+                  } @else if (col.type === 'badge') {
+                    <span class="vz-skeleton vz-skeleton--pill"></span>
+                  } @else {
+                    <span class="vz-skeleton"></span>
+                  }
+                </td>
               }
             </tr>
           }
@@ -128,15 +199,23 @@
           <tr class="vz-table__state-row">
             <td [attr.colspan]="colspan()">
               <div class="vz-table__state vz-table__state--error" role="alert">
-                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7.5v5.5M12 16.5h.01" />
-                </svg>
+                <div class="vz-table__state-icon vz-table__state-icon--error">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 8v4.5M12 16h.01" />
+                  </svg>
+                </div>
                 <strong>{{ lbl().errorTitle }}</strong>
                 @if (effectiveError()) {
                   <p>{{ effectiveError() }}</p>
                 }
-                <button type="button" class="vz-table__retry" (click)="onRetry()">{{ lbl().retry }}</button>
+                <button type="button" class="vz-table__retry" (click)="onRetry()">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="23 4 23 10 17 10" />
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                  </svg>
+                  <span>{{ lbl().retry }}</span>
+                </button>
               </div>
             </td>
           </tr>
@@ -145,10 +224,12 @@
             <td [attr.colspan]="colspan()">
               <div class="vz-table__state">
                 <ng-content select="[vzTableEmpty]">
-                  <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M3 13h5l1.5 3h5L16 13h5" />
-                    <path d="M5.5 5h13L21 13v6H3v-6z" />
-                  </svg>
+                  <div class="vz-table__state-icon">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M3 13h5l1.5 3h5L16 13h5" />
+                      <path d="M5.5 5h13L21 13v6H3v-6z" />
+                    </svg>
+                  </div>
                   <strong>{{ lbl().emptyTitle }}</strong>
                   @if (lbl().emptyDescription) {
                     <p>{{ lbl().emptyDescription }}</p>
@@ -159,16 +240,58 @@
           </tr>
         } @else {
           @for (row of visibleRows(); track trackKey(row, $index); let i = $index) {
-            <tr class="vz-table__row" [class.is-selected]="isSelected(row)" [class.is-clickable]="cfg().clickableRows" (click)="onRowClick(row, $event)">
+            <tr
+              class="vz-table__row"
+              [class.is-selected]="isSelected(row)"
+              [class.is-clickable]="cfg().clickableRows"
+              (click)="onRowClick(row, $event)"
+            >
               @if (cfg().selectable) {
                 <td class="vz-table__td vz-table__select-cell">
-                  <input type="checkbox" class="vz-table__checkbox" [checked]="isSelected(row)" [attr.aria-label]="lbl().selectRow" (change)="toggleRow(row)" />
+                  <input
+                    type="checkbox"
+                    class="vz-table__checkbox"
+                    [checked]="isSelected(row)"
+                    [attr.aria-label]="lbl().selectRow"
+                    (change)="toggleRow(row)"
+                  />
                 </td>
               }
+
               @for (col of visibleColumns(); track col.key) {
                 <td [class]="cellClasses(col, row)">
                   @if (cellTemplates().get(col.key); as tpl) {
-                    <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row, value: valueOf(row, col), column: col, index: i }" />
+                    <ng-container
+                      [ngTemplateOutlet]="tpl"
+                      [ngTemplateOutletContext]="{ $implicit: row, value: valueOf(row, col), column: col, index: i }"
+                    />
+                  } @else if (col.type === 'user') {
+                    <div class="vz-table__user">
+                      @if (userAvatarUrl(row, col); as avatarUrl) {
+                        <img class="vz-table__avatar-img" [src]="avatarUrl" [alt]="cellText(row, col)" loading="lazy" />
+                      } @else {
+                        <span class="vz-table__avatar" [class]="userAvatarTone(row, col)" aria-hidden="true">
+                          {{ userInitials(row, col) }}
+                        </span>
+                      }
+                      <div class="vz-table__user-info">
+                        <span class="vz-table__user-name">{{ cellText(row, col) }}</span>
+                        @if (cellSubtitle(row, col); as sub) {
+                          <span class="vz-table__user-sub">{{ sub }}</span>
+                        }
+                      </div>
+                    </div>
+                  } @else if (col.type === 'code') {
+                    <code class="vz-table__code">{{ cellText(row, col) }}</code>
+                  } @else if (col.type === 'progress') {
+                    <div class="vz-table__progress" role="progressbar" [attr.aria-valuenow]="progressPercent(row, col)" aria-valuemin="0" aria-valuemax="100">
+                      <div class="vz-table__progress-track">
+                        <div [class]="progressFillClass(row, col)" [style.width.%]="progressPercent(row, col)"></div>
+                      </div>
+                      <span class="vz-table__progress-label">{{ progressPercent(row, col) }}%</span>
+                    </div>
+                  } @else if (col.type === 'badge') {
+                    <span [class]="badgeClass(row, col)">{{ cellText(row, col) }}</span>
                   } @else if (col.type === 'actions') {
                     <div class="vz-table__actions-cell">
                       @for (action of visibleActions(col, row); track action.name) {
@@ -178,19 +301,58 @@
                           [class]="actionClass(action)"
                           [disabled]="isActionDisabled(action, row)"
                           [attr.title]="action.label"
+                          [attr.aria-label]="action.label"
                           (clicked)="runAction(action, row)"
                         >
-                          @if (action.iconClass) {
+                          @if (action.icon === 'view') {
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          } @else if (action.icon === 'edit') {
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <path d="M12 20h9" />
+                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            </svg>
+                          } @else if (action.icon === 'delete') {
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <polyline points="3 6 5 6 21 6" />
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                          } @else if (action.icon === 'download') {
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <polyline points="7 10 12 15 17 10" />
+                              <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                          } @else if (action.icon === 'copy') {
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                          } @else if (action.icon === 'more') {
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <circle cx="12" cy="12" r="1" />
+                              <circle cx="12" cy="5" r="1" />
+                              <circle cx="12" cy="19" r="1" />
+                            </svg>
+                          } @else if (action.iconClass) {
                             <i [class]="action.iconClass" aria-hidden="true"></i>
-                            <span class="vz-sr-only">{{ action.label }}</span>
+                          }
+
+                          @if ((!action.icon && !action.iconClass) || action.showLabel) {
+                            <span>{{ action.label }}</span>
                           } @else {
-                            {{ action.label }}
+                            <span class="vz-sr-only">{{ action.label }}</span>
                           }
                         </vz-button>
                       }
                     </div>
-                  } @else if (col.type === 'badge') {
-                    <span [class]="badgeClass(row, col)">{{ cellText(row, col) }}</span>
+                  } @else if (cellSubtitle(row, col); as sub) {
+                    <div class="vz-table__two-line">
+                      <span class="vz-table__primary-text">{{ cellText(row, col) }}</span>
+                      <span class="vz-table__secondary-text">{{ sub }}</span>
+                    </div>
                   } @else {
                     {{ cellText(row, col) }}
                   }
@@ -203,20 +365,25 @@
     </table>
   </div>
 
-  <!-- Pie: paginación -->
-  @if (cfg().pagination.enabled && (totalRows() > 0 || cfg().pagination.mode === 'server')) {
+  <!-- Pie: paginación y/o slot personalizado -->
+  @if ((cfg().pagination.enabled && (totalRows() > 0 || cfg().pagination.mode === 'server')) || footerSlot()) {
     <div class="vz-table__footer">
-      <vz-pagination
-        [page]="activePage()"
-        [pageSize]="activePageSize()"
-        [total]="totalRows()"
-        [pageSizes]="cfg().pagination.pageSizes"
-        [showInfo]="cfg().pagination.showInfo"
-        [showSizeSelector]="cfg().pagination.showSizeSelector"
-        [labels]="lbl().pagination"
-        (pageChange)="goToPage($event)"
-        (pageSizeChange)="changePageSize($event)"
-      />
+      <ng-content select="[vzTableFooter]" />
+      @if (cfg().pagination.enabled && (totalRows() > 0 || cfg().pagination.mode === 'server')) {
+        <vz-pagination
+          [theme]="resolvedTheme() ?? undefined"
+          [dark]="isDark()"
+          [page]="activePage()"
+          [pageSize]="activePageSize()"
+          [total]="totalRows()"
+          [pageSizes]="cfg().pagination.pageSizes"
+          [showInfo]="cfg().pagination.showInfo"
+          [showSizeSelector]="cfg().pagination.showSizeSelector"
+          [labels]="lbl().pagination"
+          (pageChange)="goToPage($event)"
+          (pageSizeChange)="changePageSize($event)"
+        />
+      }
     </div>
   }
 </section>

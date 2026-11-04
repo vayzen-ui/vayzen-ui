@@ -120,7 +120,7 @@
             <span>Código Angular</span>
           </button>
 
-          @if (activeComponent() === 'card') {
+          @if (activeComponent() === 'card' || activeComponent() === 'table') {
             <button
               type="button"
               class="stage-tab-btn"
@@ -371,13 +371,22 @@
           @if (activeComponent() === 'table') {
             <div class="table-render-wrapper">
               <vz-table
-                [columns]="tableColumns"
+                [theme]="tableTheme()"
+                [variant]="tableVariant()"
+                [heading]="tableComplexity() === 'complete' ? 'Directorio de Talento & Ingeniería' : ''"
+                [subtitle]="tableComplexity() === 'complete' ? 'Gestión integral de colaboradores, cumplimiento KPI y nómina' : ''"
+                [columns]="tableComplexity() === 'complete' ? tableColumns : tableBasicColumns"
                 [data]="tableData"
+                rowKey="id"
                 [density]="tableDensity()"
                 [striped]="tableStriped()"
                 [hoverable]="tableHoverable()"
                 [bordered]="tableBordered()"
-                [selectable]="tableSelectable()"
+                [selectable]="tableComplexity() === 'complete' ? tableSelectable() : false"
+                [exportable]="tableComplexity() === 'complete' ? tableExportable() : false"
+                [searchable]="tableComplexity() === 'complete'"
+                [pagination]="tableComplexity() === 'complete'"
+                [showCount]="tableComplexity() === 'complete'"
                 [loading]="tableLoading()"
                 (rowAction)="onTableRowAction($event)"
               />
@@ -402,7 +411,12 @@
 
       @if (stageTab() === 'tokens') {
         <div class="code-viewport">
-          <app-code-block [code]="cardTokensCode()" language="css" title="Tokens CSS en tiempo real" />
+          @if (activeComponent() === 'card') {
+            <app-code-block [code]="cardTokensCode()" language="css" title="Tokens CSS en tiempo real" />
+          }
+          @if (activeComponent() === 'table') {
+            <app-code-block [code]="tableTokensCode()" language="css" title="Tokens CSS de VzTable en tiempo real" />
+          }
         </div>
       }
     </div>
@@ -438,6 +452,11 @@
       </div>
       @if (activeComponent() === 'card') {
         <button type="button" class="reset-btn" (click)="resetCardDefaults()" title="Restablecer valores por defecto">
+          Reset
+        </button>
+      }
+      @if (activeComponent() === 'table') {
+        <button type="button" class="reset-btn" (click)="resetTableDefaults()" title="Restablecer valores por defecto">
           Reset
         </button>
       }
@@ -732,8 +751,56 @@
       <!-- ── INSPECTOR PARA TABLE ── -->
       @if (activeComponent() === 'table') {
         <div class="panel-section">
-          <span class="panel-section-title">Densidad</span>
+          <div class="section-label-row">
+            <span class="panel-section-title">Plantilla &amp; Complejidad</span>
+          </div>
+
           <div class="control-box">
+            <label class="control-caption">Nivel de Tabla</label>
+            <div class="segmented-track">
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="tableComplexity() === 'complete'"
+                (click)="tableComplexity.set('complete')"
+              >
+                Completa (Pro)
+              </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="tableComplexity() === 'basic'"
+                (click)="tableComplexity.set('basic')"
+              >
+                Básica (Minimal)
+              </button>
+            </div>
+          </div>
+
+          <div class="control-box">
+            <label class="control-caption">Tema Nativo (Theme)</label>
+            <div class="segmented-track">
+              <button type="button" class="seg-btn" [class.active]="tableTheme() === 'light'" (click)="tableTheme.set('light')">☀️ Claro</button>
+              <button type="button" class="seg-btn" [class.active]="tableTheme() === 'dark'" (click)="tableTheme.set('dark')">🌙 Oscuro</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <span class="panel-section-title">Apariencia &amp; Densidad</span>
+
+          <div class="control-box">
+            <label class="control-caption">Variante de Contenedor</label>
+            <div class="segmented-track">
+              <button type="button" class="seg-btn" [class.active]="tableVariant() === 'elevated'" (click)="tableVariant.set('elevated')">Elevated</button>
+              <button type="button" class="seg-btn" [class.active]="tableVariant() === 'outlined'" (click)="tableVariant.set('outlined')">Outlined</button>
+              <button type="button" class="seg-btn" [class.active]="tableVariant() === 'flat'" (click)="tableVariant.set('flat')">Flat</button>
+              <button type="button" class="seg-btn" [class.active]="tableVariant() === 'borderless'" (click)="tableVariant.set('borderless')">Borderless</button>
+            </div>
+          </div>
+
+          <div class="control-box">
+            <label class="control-caption">Densidad de Celdas</label>
             <div class="segmented-track">
               <button type="button" class="seg-btn" [class.active]="tableDensity() === 'compact'" (click)="tableDensity.set('compact')">Compact</button>
               <button type="button" class="seg-btn" [class.active]="tableDensity() === 'comfortable'" (click)="tableDensity.set('comfortable')">Normal</button>
@@ -743,10 +810,13 @@
         </div>
 
         <div class="panel-section">
-          <span class="panel-section-title">Visualización</span>
+          <span class="panel-section-title">Comportamiento &amp; Estados</span>
 
           <div class="switch-row">
-            <div class="switch-info"><span class="switch-title">Filas Cebradas (Striped)</span></div>
+            <div class="switch-info">
+              <span class="switch-title">Filas Cebradas (Striped)</span>
+              <span class="switch-sub">Alternancia sutil de color</span>
+            </div>
             <label class="ios-switch">
               <input type="checkbox" [checked]="tableStriped()" (change)="tableStriped.set(!tableStriped())" />
               <span class="ios-track"></span>
@@ -754,7 +824,10 @@
           </div>
 
           <div class="switch-row">
-            <div class="switch-info"><span class="switch-title">Hover en Filas</span></div>
+            <div class="switch-info">
+              <span class="switch-title">Hover en Filas</span>
+              <span class="switch-sub">Resaltado al pasar el cursor</span>
+            </div>
             <label class="ios-switch">
               <input type="checkbox" [checked]="tableHoverable()" (change)="tableHoverable.set(!tableHoverable())" />
               <span class="ios-track"></span>
@@ -762,23 +835,45 @@
           </div>
 
           <div class="switch-row">
-            <div class="switch-info"><span class="switch-title">Bordes Cuadrícula (Bordered)</span></div>
+            <div class="switch-info">
+              <span class="switch-title">Bordes Cuadrícula (Bordered)</span>
+              <span class="switch-sub">Divisores verticales de celdas</span>
+            </div>
             <label class="ios-switch">
               <input type="checkbox" [checked]="tableBordered()" (change)="tableBordered.set(!tableBordered())" />
               <span class="ios-track"></span>
             </label>
           </div>
 
-          <div class="switch-row">
-            <div class="switch-info"><span class="switch-title">Casillas de Selección</span></div>
-            <label class="ios-switch">
-              <input type="checkbox" [checked]="tableSelectable()" (change)="tableSelectable.set(!tableSelectable())" />
-              <span class="ios-track"></span>
-            </label>
-          </div>
+          @if (tableComplexity() === 'complete') {
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Casillas de Selección</span>
+                <span class="switch-sub">Selección individual y masiva</span>
+              </div>
+              <label class="ios-switch">
+                <input type="checkbox" [checked]="tableSelectable()" (change)="tableSelectable.set(!tableSelectable())" />
+                <span class="ios-track"></span>
+              </label>
+            </div>
+
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Botón Exportar CSV</span>
+                <span class="switch-sub">Descarga instantánea en barra</span>
+              </div>
+              <label class="ios-switch">
+                <input type="checkbox" [checked]="tableExportable()" (change)="tableExportable.set(!tableExportable())" />
+                <span class="ios-track"></span>
+              </label>
+            </div>
+          }
 
           <div class="switch-row">
-            <div class="switch-info"><span class="switch-title">Estado de Carga</span></div>
+            <div class="switch-info">
+              <span class="switch-title">Skeleton Shimmer</span>
+              <span class="switch-sub">Animación de carga por tipo</span>
+            </div>
             <label class="ios-switch">
               <input type="checkbox" [checked]="tableLoading()" (change)="tableLoading.set(!tableLoading())" />
               <span class="ios-track"></span>

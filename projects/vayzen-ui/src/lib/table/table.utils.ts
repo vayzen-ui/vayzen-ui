@@ -67,6 +67,27 @@ function dateFormat(locale: string, options?: Intl.DateTimeFormatOptions): Intl.
   return fmt;
 }
 
+/** Genera las iniciales (máximo 2 letras) a partir de un nombre completo. */
+export function getInitials(value: unknown): string {
+  if (isNil(value)) return '?';
+  const parts = String(value).trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+}
+
+const AVATAR_TONES = ['primary', 'success', 'info', 'warning', 'violet'] as const;
+
+/** Asigna un tono semántico determinista a partir del texto del nombre. */
+export function getAvatarTone(value: unknown): string {
+  const str = String(value ?? '');
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+  }
+  return AVATAR_TONES[hash % AVATAR_TONES.length];
+}
+
 /** Texto por defecto de una celda según el tipo de columna. */
 export function formatValue(value: unknown, column: VzColumn): string {
   if (isNil(value)) return '—';
@@ -77,6 +98,11 @@ export function formatValue(value: unknown, column: VzColumn): string {
       const n = typeof value === 'number' ? value : Number(value);
       if (!Number.isFinite(n)) return String(value);
       return numberFormat(locale, column.type === 'currency' ? (column.currency ?? 'MXN') : undefined).format(n);
+    }
+    case 'progress': {
+      const n = typeof value === 'number' ? value : Number(value);
+      if (!Number.isFinite(n)) return String(value);
+      return `${Math.round(Math.min(100, Math.max(0, n)))}%`;
     }
     case 'date': {
       const d = parseDateValue(value);
@@ -146,6 +172,7 @@ export function resolveConfig(
     (o.pageSize !== null && o.pageSize !== undefined ? o.pageSize : c.pagination?.defaultPageSize) ?? pageSizes[0];
 
   const resolved: VzResolvedTableConfig = {
+    variant: (o.variant !== null && o.variant !== undefined ? o.variant : c.variant) ?? 'elevated',
     search: {
       enabled: (o.searchable !== null && o.searchable !== undefined ? o.searchable : c.search?.enabled) ?? true,
       mode: c.search?.mode ?? mode,
@@ -177,6 +204,8 @@ export function resolveConfig(
     stickyHeader: (o.stickyHeader !== null && o.stickyHeader !== undefined ? o.stickyHeader : c.stickyHeader) ?? true,
     maxHeight: (o.maxHeight !== null && o.maxHeight !== undefined ? o.maxHeight : c.maxHeight) ?? null,
     showCount: (o.showCount !== null && o.showCount !== undefined ? o.showCount : c.showCount) ?? true,
+    exportable: (o.exportable !== null && o.exportable !== undefined ? o.exportable : c.exportable) ?? false,
+    exportFilename: (o.exportFilename !== null && o.exportFilename !== undefined ? o.exportFilename : c.exportFilename) ?? 'datos-vayzen',
     emitInitialQuery: (o.emitInitialQuery !== null && o.emitInitialQuery !== undefined ? o.emitInitialQuery : c.emitInitialQuery) ?? true,
     anyServer: false,
   };
@@ -188,4 +217,3 @@ export function resolveConfig(
   ].includes('server');
   return resolved;
 }
-

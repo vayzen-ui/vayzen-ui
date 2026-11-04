@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { buildPageList } from '../table.utils';
+import type { VzTableTheme } from '../table.types';
 
 export interface VzPaginationLabels {
   showing: string;
@@ -31,6 +32,10 @@ export const VZ_PAGINATION_DEFAULT_LABELS: VzPaginationLabels = {
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-vz-theme]': 'resolvedTheme()',
+    '[class.vz-pagination-host--dark]': 'isDark()',
+  },
 })
 export class VzPaginationComponent {
   readonly page = input<number>(1);
@@ -40,9 +45,16 @@ export class VzPaginationComponent {
   readonly showInfo = input<boolean>(true);
   readonly showSizeSelector = input<boolean>(true);
   readonly labels = input<Partial<VzPaginationLabels>>({});
+  readonly theme = input<VzTableTheme | undefined>(undefined);
+  readonly dark = input<boolean, unknown>(false, { transform: booleanAttribute });
 
   readonly pageChange = output<number>();
   readonly pageSizeChange = output<number>();
+
+  protected readonly resolvedTheme = computed<VzTableTheme | null>(() =>
+    this.dark() ? 'dark' : (this.theme() ?? null),
+  );
+  protected readonly isDark = computed(() => this.resolvedTheme() === 'dark');
 
   protected readonly lbl = computed(() => ({ ...VZ_PAGINATION_DEFAULT_LABELS, ...this.labels() }));
   protected readonly totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize())));
@@ -66,4 +78,3 @@ export class VzPaginationComponent {
     this.pageSizeChange.emit(Number((event.target as HTMLSelectElement).value));
   }
 }
-

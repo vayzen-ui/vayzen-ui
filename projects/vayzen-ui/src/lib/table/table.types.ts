@@ -2,9 +2,22 @@ import type { VzPaginationLabels } from './pagination/pagination.component';
 
 /** Dónde se resuelve una capacidad de la tabla: en el navegador o en el backend. */
 export type VzDataMode = 'client' | 'server';
-export type VzColumnType = 'text' | 'number' | 'currency' | 'date' | 'badge' | 'actions';
+export type VzTableTheme = 'light' | 'dark' | 'auto';
+export type VzTableVariant = 'elevated' | 'outlined' | 'flat' | 'borderless';
+export type VzColumnType =
+  | 'text'
+  | 'user'
+  | 'code'
+  | 'number'
+  | 'currency'
+  | 'date'
+  | 'badge'
+  | 'progress'
+  | 'actions';
 export type VzColumnAlign = 'start' | 'center' | 'end';
 export type VzBadgeVariant = 'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
+export type VzBadgeStyle = 'pill' | 'dot' | 'outline';
+export type VzActionIcon = 'view' | 'edit' | 'delete' | 'download' | 'copy' | 'more';
 export type VzSortDirection = 'asc' | 'desc';
 export type VzTableDensity = 'compact' | 'comfortable' | 'spacious';
 
@@ -18,9 +31,13 @@ export interface VzRowAction<T = any> {
   /** Identificador que llega en el evento `rowAction`. */
   name: string;
   label: string;
-  /** Clase de un icon-font propio (ej. "bi bi-pencil"). Si se omite se muestra `label`. */
+  /** Icono SVG nativo integrado ('view' | 'edit' | 'delete' | 'download' | 'copy' | 'more'). */
+  icon?: VzActionIcon;
+  /** Clase de un icon-font propio (ej. "bi bi-pencil"). Si se omite se muestra `icon` o `label`. */
   iconClass?: string;
-  variant?: 'default' | 'danger';
+  /** Si se incluye `icon`, define si además se muestra el texto `label` al lado. */
+  showLabel?: boolean;
+  variant?: 'default' | 'primary' | 'danger';
   visible?: (row: T) => boolean;
   disabled?: (row: T) => boolean;
 }
@@ -49,7 +66,13 @@ export interface VzColumn<T = any> {
   valueGetter?: (row: T) => unknown;
   /** Texto mostrado (también se usa en búsqueda). */
   formatter?: (value: unknown, row: T) => string;
+  /** Para `type: 'user'` o celdas de doble línea: propiedad secundaria (ej. "email" o "puesto"). */
+  subtitleKey?: string;
+  /** Para `type: 'user'`: propiedad con la URL del avatar. Si no existe, genera iniciales automáticas. */
+  avatarKey?: string;
   badgeVariant?: VzBadgeVariantResolver<T>;
+  /** Estilo visual del badge: `'pill'` (por defecto), `'dot'` (indicador limpio) o `'outline'`. */
+  badgeStyle?: VzBadgeStyle;
   /** Código ISO para `type: 'currency'`. Por defecto "MXN". */
   currency?: string;
   /** Locale para números, moneda y fechas. Por defecto "es-MX". */
@@ -134,6 +157,7 @@ export interface VzRowActionEvent<T = any> {
 export interface VzTableConfig {
   /** Modo por defecto de todas las capacidades: 'client' o 'server'. */
   mode?: VzDataMode;
+  variant?: VzTableVariant;
   search?: { enabled?: boolean; mode?: VzDataMode; debounce?: number; minChars?: number; placeholder?: string };
   sort?: { enabled?: boolean; mode?: VzDataMode; multi?: boolean };
   pagination?: {
@@ -157,12 +181,16 @@ export interface VzTableConfig {
   /** Altura máxima del área con scroll (ej. "480px"). */
   maxHeight?: string;
   showCount?: boolean;
+  /** Muestra un botón de exportación CSV instantánea en la barra de herramientas. */
+  exportable?: boolean;
+  exportFilename?: string;
   /** En modo server, emite `queryChange` al iniciar para cargar la primera página. Por defecto `true`. */
   emitInitialQuery?: boolean;
 }
 
 export interface VzTableOverrides {
   mode?: VzDataMode | null;
+  variant?: VzTableVariant | null;
   searchable?: boolean | null;
   searchDebounce?: number | null;
   searchMinChars?: number | null;
@@ -184,10 +212,13 @@ export interface VzTableOverrides {
   stickyHeader?: boolean | null;
   maxHeight?: string | null;
   showCount?: boolean | null;
+  exportable?: boolean | null;
+  exportFilename?: string | null;
   emitInitialQuery?: boolean | null;
 }
 
 export interface VzResolvedTableConfig {
+  variant: VzTableVariant;
   search: { enabled: boolean; mode: VzDataMode; debounce: number; minChars: number; placeholder?: string };
   sort: { enabled: boolean; mode: VzDataMode; multi: boolean };
   pagination: {
@@ -209,6 +240,8 @@ export interface VzResolvedTableConfig {
   stickyHeader: boolean;
   maxHeight: string | null;
   showCount: boolean;
+  exportable: boolean;
+  exportFilename: string;
   emitInitialQuery: boolean;
   anyServer: boolean;
 }
@@ -218,6 +251,8 @@ export interface VzTableLabels {
   clearSearch: string;
   records: string;
   selected: string;
+  clearSelection: string;
+  exportCsv: string;
   emptyTitle: string;
   emptyDescription: string;
   loading: string;
@@ -230,18 +265,19 @@ export interface VzTableLabels {
 }
 
 export const VZ_TABLE_DEFAULT_LABELS: VzTableLabels = {
-  searchPlaceholder: 'Buscar...',
+  searchPlaceholder: 'Buscar en la tabla...',
   clearSearch: 'Limpiar búsqueda',
   records: 'registros',
   selected: 'seleccionados',
+  clearSelection: 'Limpiar',
+  exportCsv: 'Exportar CSV',
   emptyTitle: 'No se encontraron datos',
-  emptyDescription: 'Prueba ajustando la búsqueda o los filtros.',
+  emptyDescription: 'Prueba ajustando los términos de búsqueda o los filtros activos.',
   loading: 'Cargando datos...',
   errorTitle: 'No se pudieron cargar los datos',
-  retry: 'Reintentar',
+  retry: 'Reintentar carga',
   selectAll: 'Seleccionar todas las filas visibles',
   selectRow: 'Seleccionar fila',
   sortHint: 'Clic para ordenar · Shift+clic para orden múltiple',
   pagination: {},
 };
-

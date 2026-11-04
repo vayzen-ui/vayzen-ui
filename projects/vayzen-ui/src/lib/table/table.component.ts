@@ -1,28 +1,39 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   OnInit,
   computed,
+  contentChild,
   contentChildren,
   effect,
   inject,
   input,
-  model,
   output,
   signal,
   untracked,
+  viewChild,
 } from '@angular/core';
 import { VzButtonComponent } from '../button/button.component';
 import { VzPaginationComponent } from './pagination/pagination.component';
-import { VzCellDirective, VzFilterControlDirective } from './table-templates.directive';
+import {
+  VzCellDirective,
+  VzFilterControlDirective,
+  VzTableActionsDirective,
+  VzTableEmptyDirective,
+  VzTableFiltersDirective,
+  VzTableFooterDirective,
+  VzTableTitleDirective,
+} from './table-templates.directive';
 import {
   VZ_TABLE_DEFAULT_LABELS,
   VzBadgeVariant,
   VzColumn,
   VzDataMode,
-  VzPaginated,
   VzRowAction,
   VzRowActionEvent,
   VzServerPage,
@@ -35,13 +46,17 @@ import {
   VzTableLoader,
   VzTableLoaderResult,
   VzTableQuery,
+  VzTableTheme,
+  VzTableVariant,
 } from './table.types';
 import {
   compareValues,
   extractRows,
   extractTotal,
   formatValue,
+  getAvatarTone,
   getByPath,
+  getInitials,
   hasFilterValue,
   isNil,
   isPaginated,
@@ -52,6 +67,12 @@ import {
 
 type ChangeSource = 'search' | 'sort' | 'page' | 'pageSize' | 'filter';
 
+function nullableBooleanAttribute(value: unknown): boolean | null {
+  if (value === null || value === undefined) return null;
+  if (value === '') return true;
+  return booleanAttribute(value);
+}
+
 @Component({
   selector: 'vz-table',
   standalone: true,
@@ -59,10 +80,23 @@ type ChangeSource = 'search' | 'sort' | 'page' | 'pageSize' | 'filter';
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-vz-theme]': 'resolvedTheme()',
+    '[class.vz-table-host--dark]': 'isDark()',
+  },
 })
 export class VzTableComponent<T = any> implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // ───────────────────────── Tema Nativo (Light / Dark / Auto) ─────────────────────────
+  readonly theme = input<VzTableTheme | undefined>(undefined);
+  readonly dark = input<boolean, unknown>(false, { transform: booleanAttribute });
+
+  protected readonly resolvedTheme = computed<VzTableTheme | null>(() =>
+    this.dark() ? 'dark' : (this.theme() ?? null),
+  );
+  protected readonly isDark = computed(() => this.resolvedTheme() === 'dark');
 
   // ───────────────────────── Inputs directos (DX Amigable) ─────────────────────────
   readonly columns = input<VzColumn<T>[]>([]);
@@ -91,38 +125,43 @@ export class VzTableComponent<T = any> implements OnInit {
   /** Mensaje de error. `null`/`undefined` = sin error (un string vacío también muestra el estado de error). */
   readonly error = input<string | null | undefined>(null);
   readonly heading = input<string>('');
+  readonly subtitle = input<string>('');
 
   // ── Paginación directa (soporta two-way [(page)] y [(pageSize)]) ──
   readonly page = input<number>(1);
   readonly pageSize = input<number | null>(null);
   readonly pageSizes = input<number[] | null>(null);
   readonly pageSizeOptions = input<number[] | null>(null);
-  readonly pagination = input<boolean | null>(null);
-  readonly showPageSizeSelector = input<boolean | null>(null);
-  readonly showPageInfo = input<boolean | null>(null);
+  readonly pagination = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly showPageSizeSelector = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly showPageInfo = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
 
   // ── Búsqueda y orden directos ──
-  readonly searchable = input<boolean | null>(null);
+  readonly searchable = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
   readonly searchDebounce = input<number | null>(null);
   readonly searchMinChars = input<number | null>(null);
   readonly searchPlaceholder = input<string | null>(null);
-  readonly sortable = input<boolean | null>(null);
-  readonly multiSort = input<boolean | null>(null);
+  readonly sortable = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly multiSort = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
 
   // ── Apariencia directa ──
+  readonly variant = input<VzTableVariant | null>(null);
   readonly density = input<VzTableDensity | null>(null);
-  readonly striped = input<boolean | null>(null);
-  readonly hoverable = input<boolean | null>(null);
-  readonly bordered = input<boolean | null>(null);
-  readonly stickyHeader = input<boolean | null>(null);
+  readonly striped = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly hoverable = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly bordered = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly stickyHeader = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
   readonly maxHeight = input<string | null>(null);
-  readonly showCount = input<boolean | null>(null);
+  readonly showCount = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly showToolbar = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly exportable = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
+  readonly exportFilename = input<string | null>(null);
 
   // ── Selección directa (soporta two-way [(selection)]) ──
-  readonly selectable = input<boolean | null>(null);
+  readonly selectable = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
   readonly selection = input<T[]>([]);
   readonly rowKey = input<string | ((row: T) => unknown) | null>(null);
-  readonly clickableRows = input<boolean | null>(null);
+  readonly clickableRows = input<boolean | null, unknown>(null, { transform: nullableBooleanAttribute });
 
   // ── Configuración avanzada / por objeto (opcional) ──
   readonly config = input<VzTableConfig>({});
@@ -145,12 +184,24 @@ export class VzTableComponent<T = any> implements OnInit {
   readonly rowAction = output<VzRowActionEvent<T>>();
   readonly rowClick = output<T>();
   readonly retry = output<void>();
+  readonly exportCsv = output<T[]>();
 
-  // ───────────────────────── Slots (templates) ─────────────────────────
+  // ───────────────────────── Slots (templates & directivas) ─────────────────────────
   private readonly cellDirectives = contentChildren(VzCellDirective);
   private readonly filterDirectives = contentChildren(VzFilterControlDirective);
+  protected readonly titleSlot = contentChild(VzTableTitleDirective);
+  protected readonly filtersSlot = contentChild(VzTableFiltersDirective);
+  protected readonly actionsSlot = contentChild(VzTableActionsDirective);
+  protected readonly emptySlot = contentChild(VzTableEmptyDirective);
+  protected readonly footerSlot = contentChild(VzTableFooterDirective);
+
   protected readonly cellTemplates = computed(() => new Map(this.cellDirectives().map((d) => [d.key(), d.template])));
   protected readonly filterTemplates = computed(() => new Map(this.filterDirectives().map((d) => [d.key(), d.template])));
+
+  // ───────────────────────── Scroll & Estado Sticky Dinámico ─────────────────────────
+  readonly scrollContainer = viewChild<ElementRef<HTMLElement>>('scrollContainer');
+  protected readonly hasScrollLeft = signal(false);
+  protected readonly hasScrollRight = signal(false);
 
   // ───────────────────────── Estado interno ─────────────────────────
   protected readonly searchTerm = signal('');
@@ -177,6 +228,7 @@ export class VzTableComponent<T = any> implements OnInit {
     const effectiveMode = this.mode() ?? (autoServer ? 'server' : null);
     return resolveConfig(this.config(), {
       mode: effectiveMode,
+      variant: this.variant(),
       searchable: this.searchable(),
       searchDebounce: this.searchDebounce(),
       searchMinChars: this.searchMinChars(),
@@ -198,6 +250,8 @@ export class VzTableComponent<T = any> implements OnInit {
       stickyHeader: this.stickyHeader(),
       maxHeight: this.maxHeight(),
       showCount: this.showCount(),
+      exportable: this.exportable(),
+      exportFilename: this.exportFilename(),
       emitInitialQuery: this.emitInitialQuery(),
     });
   });
@@ -249,7 +303,7 @@ export class VzTableComponent<T = any> implements OnInit {
     return rows.slice(start, start + this.activePageSize());
   });
 
-  protected readonly skeletonRows = computed(() => Array.from({ length: Math.min(this.activePageSize(), 8) }));
+  protected readonly skeletonRows = computed(() => Array.from({ length: Math.min(this.activePageSize(), 6) }));
 
   /** Estado de la consulta; es lo que recibe el backend. */
   readonly query = computed<VzTableQuery>(() => {
@@ -286,10 +340,33 @@ export class VzTableComponent<T = any> implements OnInit {
     });
   });
 
+  protected readonly activeFilterCount = computed(() =>
+    this.filterViews().filter((f) => f.hasValue).length + (this.appliedSearch() ? 1 : 0),
+  );
+
+  protected readonly hasToolbar = computed(() => {
+    const explicit = this.showToolbar();
+    if (explicit !== null) return explicit;
+    const cfg = this.cfg();
+    return Boolean(
+      this.heading() ||
+        this.subtitle() ||
+        this.titleSlot() ||
+        cfg.search.enabled ||
+        this.filterViews().length > 0 ||
+        this.filtersSlot() ||
+        this.actionsSlot() ||
+        cfg.exportable ||
+        this.selectedCount() > 0 ||
+        cfg.showCount,
+    );
+  });
+
   protected readonly rootClasses = computed(() => {
     const cfg = this.cfg();
     return [
       'vz-table',
+      `vz-table--${cfg.variant}`,
       `vz-table--${cfg.density}`,
       cfg.striped ? 'vz-table--striped' : '',
       cfg.hoverable ? 'vz-table--hoverable' : '',
@@ -359,6 +436,25 @@ export class VzTableComponent<T = any> implements OnInit {
       untracked(() => {
         this.fetchFromLoader(fn, q);
       });
+    });
+
+    // Observar cambios en datos o columnas para recalcular el desborde horizontal
+    effect(() => {
+      this.visibleRows();
+      this.visibleColumns();
+      untracked(() => {
+        queueMicrotask(() => this.updateScrollState());
+      });
+    });
+
+    afterNextRender(() => {
+      this.updateScrollState();
+      const el = this.scrollContainer()?.nativeElement;
+      if (el && typeof ResizeObserver !== 'undefined') {
+        const ro = new ResizeObserver(() => this.updateScrollState());
+        ro.observe(el);
+        this.destroyRef.onDestroy(() => ro.disconnect());
+      }
     });
 
     this.destroyRef.onDestroy(() => {
@@ -570,6 +666,32 @@ export class VzTableComponent<T = any> implements OnInit {
     this.selectionChange.emit([...next.values()]);
   }
 
+  // ───────────────────────── Exportación CSV ─────────────────────────
+  protected onExportCsv(): void {
+    const rows = this.selectedCount() > 0 ? [...this.selected().values()] : this.processedRows();
+    this.exportCsv.emit(rows);
+    if (typeof document === 'undefined' || rows.length === 0) return;
+
+    const exportCols = this.visibleColumns().filter((c) => c.type !== 'actions');
+    const escapeCsv = (val: unknown): string => {
+      const str = String(val ?? '').replace(/"/g, '""');
+      return /[",\n\r]/.test(str) ? `"${str}"` : str;
+    };
+
+    const headerLine = exportCols.map((c) => escapeCsv(c.header)).join(',');
+    const bodyLines = rows.map((row) =>
+      exportCols.map((c) => escapeCsv(this.cellText(row, c))).join(','),
+    );
+    const csvContent = '\uFEFF' + [headerLine, ...bodyLines].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${this.cfg().exportFilename || 'datos-vayzen'}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   // ───────────────────────── Filas, acciones y estados ─────────────────────────
   protected onRowClick(row: T, event: MouseEvent): void {
     if (!this.cfg().clickableRows) return;
@@ -582,7 +704,11 @@ export class VzTableComponent<T = any> implements OnInit {
   }
 
   protected actionClass(action: VzRowAction<T>): string {
-    return action.variant === 'danger' ? 'vz-table__action vz-table__action--danger' : 'vz-table__action';
+    const classes = ['vz-table__action'];
+    if (action.variant === 'danger') classes.push('vz-table__action--danger');
+    if (action.variant === 'primary') classes.push('vz-table__action--primary');
+    if ((action.icon || action.iconClass) && !action.showLabel) classes.push('vz-table__action--icon-only');
+    return classes.join(' ');
   }
 
   protected isActionDisabled(action: VzRowAction<T>, row: T): boolean {
@@ -601,7 +727,7 @@ export class VzTableComponent<T = any> implements OnInit {
     this.retry.emit();
   }
 
-  // ───────────────────────── Celdas ─────────────────────────
+  // ───────────────────────── Celdas y Tipos Ricos (AdminT Pro) ─────────────────────────
   protected valueOf(row: T, col: VzColumn<T>): unknown {
     return col.valueGetter ? col.valueGetter(row) : getByPath(row, col.key);
   }
@@ -609,6 +735,53 @@ export class VzTableComponent<T = any> implements OnInit {
   protected cellText(row: T, col: VzColumn<T>): string {
     const value = this.valueOf(row, col);
     return col.formatter ? col.formatter(value, row) : formatValue(value, col);
+  }
+
+  protected cellSubtitle(row: T, col: VzColumn<T>): string | null {
+    if (!col.subtitleKey) return null;
+    const sub = getByPath(row, col.subtitleKey);
+    return isNil(sub) ? null : String(sub);
+  }
+
+  protected userAvatarUrl(row: T, col: VzColumn<T>): string | null {
+    if (!col.avatarKey) return null;
+    const url = getByPath(row, col.avatarKey);
+    return isNil(url) ? null : String(url);
+  }
+
+  protected userInitials(row: T, col: VzColumn<T>): string {
+    return getInitials(this.valueOf(row, col));
+  }
+
+  protected userAvatarTone(row: T, col: VzColumn<T>): string {
+    return `vz-table__avatar--${getAvatarTone(this.valueOf(row, col))}`;
+  }
+
+  protected progressPercent(row: T, col: VzColumn<T>): number {
+    const raw = Number(this.valueOf(row, col));
+    if (!Number.isFinite(raw)) return 0;
+    return Math.round(Math.min(100, Math.max(0, raw)));
+  }
+
+  protected progressFillClass(row: T, col: VzColumn<T>): string {
+    const variant = this.resolveBadgeVariant(row, col, this.progressAutoVariant(this.progressPercent(row, col)));
+    return `vz-table__progress-fill vz-table__progress-fill--${variant}`;
+  }
+
+  private progressAutoVariant(pct: number): VzBadgeVariant {
+    if (pct >= 80) return 'success';
+    if (pct >= 50) return 'primary';
+    if (pct >= 25) return 'warning';
+    return 'danger';
+  }
+
+  protected updateScrollState(): void {
+    const el = this.scrollContainer()?.nativeElement;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    const hasOverflow = maxScroll > 1;
+    this.hasScrollLeft.set(hasOverflow && el.scrollLeft > 2);
+    this.hasScrollRight.set(hasOverflow && el.scrollLeft < maxScroll - 2);
   }
 
   protected headerClasses(col: VzColumn<T>): string {
@@ -621,11 +794,17 @@ export class VzTableComponent<T = any> implements OnInit {
   }
 
   private alignClass(col: VzColumn<T>, base: string, extra?: string): string {
-    const align = col.align ?? (col.type === 'number' || col.type === 'currency' ? 'end' : col.type === 'actions' ? 'end' : 'start');
+    const align =
+      col.align ??
+      (col.type === 'number' || col.type === 'currency'
+        ? 'end'
+        : col.type === 'actions'
+          ? 'end'
+          : 'start');
     return [
       base,
       `is-align-${align}`,
-      col.type === 'number' || col.type === 'currency' ? 'is-numeric' : '',
+      col.type === 'number' || col.type === 'currency' || col.type === 'progress' ? 'is-numeric' : '',
       col.sticky ? `is-sticky-${col.sticky}` : '',
       extra ?? '',
     ]
@@ -633,14 +812,33 @@ export class VzTableComponent<T = any> implements OnInit {
       .join(' ');
   }
 
-  protected badgeClass(row: T, col: VzColumn<T>): string {
+  private resolveBadgeVariant(row: T, col: VzColumn<T>, fallback: VzBadgeVariant = 'neutral'): VzBadgeVariant {
     const value = this.valueOf(row, col);
     const resolver = col.badgeVariant;
-    let variant: VzBadgeVariant = 'neutral';
-    if (typeof resolver === 'function') variant = resolver(value, row);
-    else if (typeof resolver === 'string') variant = resolver;
-    else if (resolver) variant = resolver[String(value)] ?? 'neutral';
-    return `vz-badge vz-badge--${variant}`;
+    if (typeof resolver === 'function') return resolver(value, row);
+    if (typeof resolver === 'string') return resolver;
+    if (resolver) return resolver[String(value)] ?? fallback;
+    // Mapeo automático inteligente en español/inglés si el usuario no pasa badgeVariant
+    const normalized = normalizeText(value);
+    if (['activo', 'active', 'aprobado', 'entregado', 'delivered', 'completado', 'pagado'].includes(normalized)) {
+      return 'success';
+    }
+    if (['pendiente', 'pending', 'en proceso', 'processing', 'revision', 'por vencer'].includes(normalized)) {
+      return 'warning';
+    }
+    if (['inactivo', 'inactive', 'cancelado', 'cancelled', 'rechazado', 'baja', 'error', 'vencido'].includes(normalized)) {
+      return 'danger';
+    }
+    if (['enviado', 'shipped', 'nuevo', 'info', 'remoto'].includes(normalized)) {
+      return 'info';
+    }
+    return fallback;
+  }
+
+  protected badgeClass(row: T, col: VzColumn<T>): string {
+    const variant = this.resolveBadgeVariant(row, col, 'neutral');
+    const style = col.badgeStyle ?? 'pill';
+    return `vz-badge vz-badge--${variant} vz-badge--style-${style}`;
   }
 
   // ───────────────────────── Procesamiento en cliente ─────────────────────────
@@ -658,7 +856,12 @@ export class VzTableComponent<T = any> implements OnInit {
     if (!tokens.length) return rows;
     const cols = this.visibleColumns().filter((c) => c.type !== 'actions' && c.searchable !== false);
     return rows.filter((row) => {
-      const haystack = cols.map((c) => `${normalizeText(this.cellText(row, c))} ${normalizeText(this.valueOf(row, c))}`).join(' | ');
+      const haystack = cols
+        .map((c) => {
+          const sub = this.cellSubtitle(row, c) ?? '';
+          return `${normalizeText(this.cellText(row, c))} ${normalizeText(this.valueOf(row, c))} ${normalizeText(sub)}`;
+        })
+        .join(' | ');
       return tokens.every((t) => haystack.includes(t));
     });
   }
@@ -691,10 +894,6 @@ export class VzTableComponent<T = any> implements OnInit {
   }
 
   // ───────────────────────── Coordinación cliente/servidor ─────────────────────────
-  /**
-   * Cierra un cambio de estado: reinicia la página si aplica y decide si hay que
-   * avisar al backend (`queryChange`) según el modo de la capacidad modificada.
-   */
   private commit(source: ChangeSource, resetPage: boolean): void {
     const cfg = this.cfg();
     const capabilityMode = {

@@ -21,6 +21,7 @@ import {
   VzColumn,
   VzTableComponent,
   VzTableDensity,
+  VzTableVariant,
 } from 'vayzen-ui';
 import { CodeBlockComponent } from '../../shared/components/code-block/code-block.component';
 
@@ -40,9 +41,14 @@ export interface StudioComponentDefinition {
 
 interface EmployeeItem {
   id: number;
+  folio: string;
   nombre: string;
+  correo: string;
+  avatar?: string;
   puesto: string;
   departamento: string;
+  kpi: number;
+  salario: number;
   estatus: 'Activo' | 'Inactivo' | 'Pendiente';
 }
 
@@ -388,55 +394,190 @@ export class StudioComponent implements OnInit {
   // ══════════════════════════════════════════
   // TABLE STUDIO STATE
   // ══════════════════════════════════════════
+  protected readonly tableComplexity = signal<'complete' | 'basic'>('complete');
+  protected readonly tableTheme = signal<'light' | 'dark'>('light');
+  protected readonly tableVariant = signal<VzTableVariant>('elevated');
   protected readonly tableDensity = signal<VzTableDensity>('comfortable');
   protected readonly tableStriped = signal(false);
   protected readonly tableHoverable = signal(true);
   protected readonly tableBordered = signal(false);
-  protected readonly tableSelectable = signal(false);
+  protected readonly tableSelectable = signal(true);
+  protected readonly tableExportable = signal(true);
   protected readonly tableLoading = signal(false);
   protected readonly tableLastEvent = signal('');
 
   protected readonly tableColumns: VzColumn<EmployeeItem>[] = [
-    { key: 'nombre', header: 'Nombre del Empleado', sortable: true },
-    { key: 'puesto', header: 'Puesto', sortable: true },
-    { key: 'departamento', header: 'Departamento', sortable: true },
+    { key: 'folio', header: 'ID', type: 'code', width: '6.5rem' },
+    {
+      key: 'nombre',
+      header: 'Colaborador',
+      type: 'user',
+      avatarKey: 'avatar',
+      subtitleKey: 'correo',
+      minWidth: '14.5rem',
+    },
+    { key: 'departamento', header: 'Área & Puesto', subtitleKey: 'puesto', minWidth: '12.5rem' },
+    { key: 'kpi', header: 'KPI', type: 'progress', minWidth: '8.5rem' },
+    { key: 'salario', header: 'Compensación', type: 'currency' },
     { key: 'estatus', header: 'Estatus', type: 'badge' },
+    {
+      key: 'actions',
+      header: 'Acciones',
+      type: 'actions',
+      actions: [
+        { name: 'view', label: 'Ver detalle', icon: 'view' },
+        { name: 'edit', label: 'Editar', icon: 'edit' },
+        { name: 'delete', label: 'Eliminar', icon: 'delete', variant: 'danger' },
+      ],
+    },
+  ];
+
+  protected readonly tableBasicColumns: VzColumn<EmployeeItem>[] = [
+    { key: 'folio', header: 'Folio', type: 'code', width: '6.5rem' },
+    { key: 'nombre', header: 'Nombre' },
+    { key: 'departamento', header: 'Departamento' },
+    { key: 'estatus', header: 'Estatus', type: 'badge', badgeStyle: 'dot' },
   ];
 
   protected readonly tableData: EmployeeItem[] = [
-    { id: 1, nombre: 'Fatima Nava Peralta', puesto: 'Coordinadora Académica', departamento: 'Control Escolar', estatus: 'Activo' },
-    { id: 2, nombre: 'Drake Bell Martinez', puesto: 'Docente Titular', departamento: 'Ciencias y Tecnología', estatus: 'Activo' },
-    { id: 3, nombre: 'Roberto Gomez Bolañoz', puesto: 'Analista de Sistemas', departamento: 'Tecnologías de la Información', estatus: 'Pendiente' },
-    { id: 4, nombre: 'Rogelio Valboa Buena', puesto: 'Supervisor Administrativo', departamento: 'Recursos Humanos', estatus: 'Inactivo' },
+    {
+      id: 1,
+      folio: '#EMP-1041',
+      nombre: 'Fátima Nava Peralta',
+      correo: 'fatima.nava@vayzen.dev',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&q=80',
+      puesto: 'Coordinadora Académica',
+      departamento: 'Control Escolar',
+      kpi: 96,
+      salario: 38500,
+      estatus: 'Activo',
+    },
+    {
+      id: 2,
+      folio: '#EMP-1042',
+      nombre: 'Luis Hernández Vega',
+      correo: 'luis.hernandez@vayzen.dev',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80',
+      puesto: 'Principal Cloud Architect',
+      departamento: 'Ingeniería & Cloud',
+      kpi: 88,
+      salario: 64200,
+      estatus: 'Activo',
+    },
+    {
+      id: 3,
+      folio: '#EMP-1043',
+      nombre: 'Sofía Torres Alarcón',
+      correo: 'sofia.torres@vayzen.dev',
+      puesto: 'Analista de Ciberseguridad',
+      departamento: 'Seguridad TI',
+      kpi: 64,
+      salario: 42000,
+      estatus: 'Pendiente',
+    },
+    {
+      id: 4,
+      folio: '#EMP-1044',
+      nombre: 'Rogelio Valboa Buena',
+      correo: 'rogelio.valboa@vayzen.dev',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80',
+      puesto: 'Supervisor Administrativo',
+      departamento: 'Finanzas Corporativas',
+      kpi: 34,
+      salario: 31800,
+      estatus: 'Inactivo',
+    },
   ];
 
+  protected resetTableDefaults(): void {
+    this.tableComplexity.set('complete');
+    this.tableTheme.set('light');
+    this.tableVariant.set('elevated');
+    this.tableDensity.set('comfortable');
+    this.tableStriped.set(false);
+    this.tableHoverable.set(true);
+    this.tableBordered.set(false);
+    this.tableSelectable.set(true);
+    this.tableExportable.set(true);
+    this.tableLoading.set(false);
+    this.tableLastEvent.set('Valores restablecidos');
+  }
+
   protected onTableRowAction(event: any): void {
-    this.tableLastEvent.set(`rowAction → ${JSON.stringify(event)}`);
+    this.tableLastEvent.set(`rowAction → [${event.action}] ${event.row.nombre}`);
   }
 
   protected readonly tableCode = computed(() => {
+    const comp = this.tableComplexity();
+    const th = this.tableTheme();
+    const v = this.tableVariant();
     const d = this.tableDensity();
     const s = this.tableStriped();
     const h = this.tableHoverable();
     const b = this.tableBordered();
     const sel = this.tableSelectable();
+    const exp = this.tableExportable();
     const l = this.tableLoading();
 
     const attrs = [
+      th === 'dark' ? 'theme="dark"' : '',
+      v !== 'elevated' ? `variant="${v}"` : '',
+      comp === 'complete' ? 'heading="Directorio de Talento & Ingeniería"' : '',
+      comp === 'complete' ? 'subtitle="Gestión integral de colaboradores y KPI"' : '',
       '[columns]="columns"',
       '[data]="rows"',
       d !== 'comfortable' ? `density="${d}"` : '',
-      s ? '[striped]="true"' : '',
+      s ? 'striped' : '',
       !h ? '[hoverable]="false"' : '',
-      b ? '[bordered]="true"' : '',
-      sel ? '[selectable]="true"' : '',
+      b ? 'bordered' : '',
+      comp === 'complete' && sel ? 'selectable rowKey="id"' : '',
+      comp === 'complete' && exp ? 'exportable' : '',
+      comp === 'basic' ? '[searchable]="false" [pagination]="false" [showCount]="false"' : '',
       l ? '[loading]="true"' : '',
     ]
       .filter(Boolean)
-      .join(' ');
+      .join('\n  ');
 
-    return `<vz-table
-  ${attrs}
-/>`;
+    return `<vz-table\n  ${attrs}\n/>`;
+  });
+
+  protected readonly tableTokensCode = computed(() => {
+    const th = this.tableTheme();
+    const d = this.tableDensity();
+    const py = d === 'compact' ? '0.5rem' : d === 'spacious' ? '1.125rem' : '0.85rem';
+    const px = d === 'compact' ? '0.85rem' : d === 'spacious' ? '1.375rem' : '1.125rem';
+
+    if (th === 'dark') {
+      return `/* Tokens activos en Modo Oscuro de VzTable */
+.mi-tabla-personalizada {
+  --vz-table-bg: #0f172a;
+  --vz-table-title-color: #f8fafc;
+  --vz-table-color: #e2e8f0;
+  --vz-table-muted-color: #94a3b8;
+  --vz-table-border-color: #1e293b;
+  --vz-table-header-bg: #0b1120;
+  --vz-table-header-color: #94a3b8;
+  --vz-table-row-hover-bg: rgba(30, 41, 59, 0.7);
+  --vz-table-accent: #3b82f6;
+  --vz-table-cell-padding-y: ${py};
+  --vz-table-cell-padding-x: ${px};
+}`;
+    }
+
+    return `/* Sobrescribe los Design Tokens de VzTable para tu proyecto */
+.mi-tabla-personalizada {
+  --vz-table-bg: #ffffff;
+  --vz-table-title-color: #0f172a;
+  --vz-table-color: #1e293b;
+  --vz-table-muted-color: #64748b;
+  --vz-table-border-color: #e2e8f0;
+  --vz-table-radius: 0.875rem;
+  --vz-table-header-bg: #f8fafc;
+  --vz-table-header-color: #475569;
+  --vz-table-row-hover-bg: #f8fafc;
+  --vz-table-accent: #2563eb;
+  --vz-table-cell-padding-y: ${py};
+  --vz-table-cell-padding-x: ${px};
+}`;
   });
 }

@@ -3,12 +3,13 @@
     <header class="doc-header">
       <div class="doc-header-top">
         <span class="category-tag">Componentes / Datos</span>
-        <span class="version-tag">Standalone · Signals</span>
+        <span class="version-tag">Standalone · Signals · Dark Mode Nativo</span>
       </div>
       <h1 class="doc-title">Table</h1>
       <p class="doc-description">
-        Tabla de datos configurable: búsqueda, orden múltiple, filtros y paginación que pueden resolverse en el navegador
-        (todo el JSON en memoria) o delegarse al backend. Sin dependencias externas y con theming por variables CSS.
+        Tabla de datos reactiva de grado empresarial inspirada en los patrones de <code>AdminT</code>: abarca desde tablas
+        básicas minimalistas sin barra superior hasta <em>DataGrids Pro</em> con celdas de perfil/avatar, barras de progreso KPI,
+        folios monospace, exportación CSV, modo cliente/servidor y Modo Oscuro nativo integrado de fábrica.
       </p>
       <div class="doc-meta-chips">
         <span class="doc-meta-chip">
@@ -17,219 +18,314 @@
         </span>
         <span class="doc-meta-chip">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="9" x2="9" y2="21"></line></svg>
-          Cliente / Servidor / Híbrido
+          9 Tipos de Celda + Slots a Medida
         </span>
         <span class="doc-meta-chip">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          12 Design Tokens CSS
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          Modo Oscuro Nativo
         </span>
+        <button
+          type="button"
+          class="doc-theme-toggle-btn"
+          [class.is-dark]="previewTheme() === 'dark'"
+          (click)="togglePreviewTheme()"
+        >
+          @if (previewTheme() === 'dark') {
+            <span>🌙 Viendo Tablas en Modo Oscuro · Cambiar a Claro ☀️</span>
+          } @else {
+            <span>☀️ Viendo Tablas en Modo Claro · Probar Modo Oscuro 🌙</span>
+          }
+        </button>
       </div>
     </header>
 
-    <!-- Demostración en Vivo -->
-    <section id="demo-vivo" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Demostración en Vivo</h2>
-      <p class="section-subtitle">
-        Tabla reactiva autónoma en acción con ordenamiento, búsqueda, filtros y paginación en el cliente.
-      </p>
-    </div>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 1. TABLAS BÁSICAS (MINIMALISTAS ESTILO ADMINT)                          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tablas-basicas" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">1. Tablas Básicas (Esenciales y Minimalistas)</h2>
+        <p class="section-subtitle">
+          Cuando necesitas mostrar información puntual en un dashboard sin buscadores ni paginadores complejos:
+          <strong>Simple Table</strong> (sin barra superior, limpia y directa) y <strong>Compact Striped Table</strong> con
+          folios monospace e indicadores de estatus con punto (<code>badgeStyle: 'dot'</code>).
+        </p>
+      </div>
 
-    <div class="preview-card-container">
-      <vz-table
-        heading="Directorio de Empleados"
-        [columns]="columns"
-        [data]="previewEmployees"
-        [filters]="filters"
-        (rowAction)="onRowAction($event)"
-      />
-    </div>
-  </section>
+      <div class="preview-card-container basic-tables-stage">
+        <div class="basic-table-block">
+          <span class="stage-caption">A. Simple Table (Sin barra superior ni paginación · variant="outlined")</span>
+          <vz-table
+            [theme]="previewTheme()"
+            variant="outlined"
+            [columns]="simpleColumns"
+            [data]="basicOrders"
+            [searchable]="false"
+            [pagination]="false"
+            [showCount]="false"
+          />
+        </div>
 
-  <!-- Uso básico (cliente) -->
-  <section id="uso-cliente" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Uso básico · todos los datos en un JSON</h2>
-      <p class="section-subtitle">
-        Es el modo por defecto: la tabla busca (sin acentos ni mayúsculas), ordena, filtra y pagina por sí sola.
-      </p>
-    </div>
-    <app-code-block [code]="installSnippet" language="typescript" title="empleados.component.ts" />
-    <app-code-block [code]="clientHtmlSnippet" language="html" title="empleados.component.html" />
-  </section>
+        <div class="basic-table-block">
+          <span class="stage-caption">B. Compact &amp; Striped Table con Doble Línea e Indicadores Dot</span>
+          <vz-table
+            [theme]="previewTheme()"
+            heading="Órdenes Recientes de Equipamiento"
+            subtitle="Seguimiento rápido de entregas corporativas por sede"
+            density="compact"
+            striped
+            [columns]="compactBasicColumns"
+            [data]="basicOrders"
+            [searchable]="false"
+            [pagination]="false"
+          />
+        </div>
+      </div>
 
-  <!-- Servidor -->
-  <section id="modo-servidor" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Modo servidor · arquitectura limpia y autónoma</h2>
-      <p class="section-subtitle">
-        Diseñada bajo los más altos estándares de arquitectura en Angular. La lógica de transporte y llamadas HTTP pertenece a un <strong>Servicio</strong>,
-        mientras que el componente se encarga únicamente de recibir los datos y alimentar la tabla.
-      </p>
-    </div>
+      <app-code-block [code]="basicHtmlSnippet" language="html" title="ordenes-basicas.component.html" />
+      <app-code-block [code]="basicTsSnippet" language="typescript" title="ordenes-basicas.component.ts" />
+    </section>
 
-    <h3 class="subsection-title">1. El Servicio de Datos (Transporte y Parámetros)</h3>
-    <p class="section-subtitle">
-      El servicio encapsula <code>HttpClient</code> y se encarga de consultar tu endpoint paginado (con su modelo de respuesta):
-    </p>
-    <app-code-block [code]="serviceSnippet" language="typescript" title="alumnos.service.ts" />
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 2. TABLA COMPLETA / PRO (ENTERPRISE DATAGRID · OPCIÓN A AUTOMÁTICA)     -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tabla-pro" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">2. Tabla Completa / Pro · Opción A (Configuración Automática por Defecto)</h2>
+        <p class="section-subtitle">
+          Con <strong>cero plantillas HTML adicionales</strong>, <code>&lt;vz-table&gt;</code> construye celdas de perfil con
+          foto o iniciales automáticas (<code>type: 'user'</code>), doble línea con subtítulo (<code>subtitleKey</code>),
+          códigos monospace (<code>type: 'code'</code>), barras de progreso KPI (<code>type: 'progress'</code>), badges
+          semánticos, selección masiva, exportación CSV e iconos SVG nativos de acción (<code>view</code>, <code>edit</code>, <code>delete</code>).
+        </p>
+      </div>
 
-    <h3 class="subsection-title">2. Consumo en el Componente (Flujo Estándar)</h3>
-    <p class="section-subtitle">
-      El componente inyecta el servicio y en <code>cargarAlumnos</code> actualiza las filas y el total al recibir la respuesta:
-    </p>
-    <app-code-block [code]="standardComponentSnippet" language="typescript" title="alumnos.component.ts" />
-    <app-code-block [code]="standardHtmlSnippet" language="html" title="alumnos.component.html" />
+      <!-- Barra de prueba rápida de estados (Normal / Loading / Empty / Error) -->
+      <div class="pro-state-toolbar">
+        <span class="pro-state-label">Probar estado en vivo:</span>
+        <div class="pro-state-pills">
+          <button type="button" class="state-pill-btn" [class.active]="proViewState() === 'normal'" (click)="proViewState.set('normal')">
+            ✓ Datos (87 registros)
+          </button>
+          <button type="button" class="state-pill-btn" [class.active]="proViewState() === 'loading'" (click)="proViewState.set('loading')">
+            ⏳ Skeleton Shimmer
+          </button>
+          <button type="button" class="state-pill-btn" [class.active]="proViewState() === 'empty'" (click)="proViewState.set('empty')">
+            📭 Estado Vacío
+          </button>
+          <button type="button" class="state-pill-btn" [class.active]="proViewState() === 'error'" (click)="proViewState.set('error')">
+            ⚠️ Estado de Error
+          </button>
+        </div>
+      </div>
 
-    <h3 class="subsection-title">3. Alternativa · Un solo objeto de datos</h3>
-    <p class="section-subtitle">
-      Si prefieres no separar variables, puedes pasar el payload de la API (ej. <code>&#123; datos: [...], totalRegistros: 16 &#125;</code>) directamente en <code>[data]</code>.
-      La tabla detecta automáticamente las filas y el total:
-    </p>
-    <app-code-block [code]="singleObjectTsSnippet" language="typescript" title="alumnos.component.ts" />
-    <app-code-block [code]="singleObjectHtmlSnippet" language="html" title="alumnos.component.html" />
+      <div class="preview-card-container">
+        <vz-table
+          [theme]="previewTheme()"
+          heading="Directorio de Talento & Ingeniería"
+          subtitle="Gestión integral de colaboradores, cumplimiento KPI y compensación anual"
+          rowKey="id"
+          selectable
+          exportable
+          exportFilename="directorio-talento-vayzen"
+          [columns]="columns"
+          [data]="proTableData()"
+          [filters]="filters"
+          [loading]="proTableLoading()"
+          [error]="proTableError()"
+          (rowAction)="onRowAction($event)"
+          (selectionChange)="onSelection($event)"
+          (retry)="onRetry()"
+        />
+        <div class="event-bar">
+          <span><strong>Último evento emitido:</strong> <code>{{ lastEvent() }}</code></span>
+          <span>💡 <em>Tip: Usa Shift + clic en los encabezados para ordenamiento múltiple.</em></span>
+        </div>
+      </div>
 
-    <h3 class="subsection-title">4. Alternativa Élite · Función autónoma <code>[loader]</code></h3>
-    <p class="section-subtitle">
-      La tabla gestiona el ciclo completo: spinner de carga, debounce al teclear en el buscador y cancelación de respuestas obsoletas:
-    </p>
-    <app-code-block [code]="eliteLoaderTsSnippet" language="typescript" title="alumnos.component.ts" />
-    <app-code-block [code]="eliteLoaderHtmlSnippet" language="html" title="alumnos.component.html" />
+      <app-code-block [code]="optionAAutoTsSnippet" language="typescript" title="Opción A: Configuración 100% Automática (directorio-pro.component.ts)" />
+    </section>
 
-    <h3 class="subsection-title">Modo mixto</h3>
-    <p class="section-subtitle">
-      Cada capacidad puede configurarse de forma independiente si lo deseas (ej. backend pagina y busca, frontend ordena):
-    </p>
-    <app-code-block [code]="mixedSnippet" language="typescript" title="Configuración mixta" />
-    <p class="doc-note">
-      Si tu búsqueda requiere llamar a un método específico del backend, también puedes escuchar solo <code>(searchChange)</code>,
-      que emite el término ya con debounce y <code>minChars</code> aplicados.
-    </p>
-  </section>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 3. OPCIÓN B: PERSONALIZACIÓN A LA MEDIDA (SLOTS & DIRECTIVAS)           -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="filtros-celdas" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">3. Opción B · Personalización a la Medida (Slots y Directivas)</h2>
+        <p class="section-subtitle">
+          Cuando necesitas reemplazar una parte específica por tu propio diseño sin perder el motor de filtrado, búsqueda y
+          paginación: usa <code>*vzFilterControl</code> para inyectar tus propios filtros (ej. segmented chips),
+          <code>*vzCell</code> para maquetar cualquier celda a medida y <code>[vzTableActions]</code> para agregar botones en la cabecera.
+        </p>
+      </div>
 
-  <!-- Filtros y celdas personalizadas -->
-  <section id="filtros-celdas" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Filtros y celdas personalizadas</h2>
-      <p class="section-subtitle">
-        Los filtros usan un <code>&lt;select&gt;</code> nativo por defecto. Con <code>vzFilterControl</code> los reemplazas por el selector que prefieras
-        (tu combobox, chips, etc.) y con <code>vzCell</code> personalizas cualquier celda. Aquí un ejemplo con chips y un indicador de color:
-      </p>
-    </div>
-
-    <div class="demo-block">
-      <vz-table [columns]="customColumns" [data]="customData" [filters]="customFilters" [config]="smallConfig">
-        <ng-template vzFilterControl="status" let-value="value" let-options="options" let-change="change">
-          <div class="chips">
-            <button type="button" [class.active]="!value" (click)="change(null)">Todos</button>
-            @for (opt of options; track opt.value) {
-              <button type="button" [class.active]="value === opt.value" (click)="change(opt.value)">{{ opt.label }}</button>
-            }
+      <div class="preview-card-container">
+        <vz-table
+          [theme]="previewTheme()"
+          heading="Control con Slots Personalizados"
+          subtitle="Filtro por chips interactivos y celda de estatus a medida"
+          [columns]="customColumns"
+          [data]="customData"
+          [filters]="customFilters"
+          [config]="smallConfig"
+        >
+          <div vzTableActions>
+            <vz-button size="sm" variant="primary">+ Nuevo Registro</vz-button>
           </div>
-        </ng-template>
 
-        <ng-template vzCell="status" let-value="value">
-          <span class="dot" [style.background]="statusColor(value)"></span>{{ value }}
-        </ng-template>
-      </vz-table>
-    </div>
+          <ng-template vzFilterControl="status" let-value="value" let-options="options" let-change="change">
+            <div class="chips" [class.chips--dark]="previewTheme() === 'dark'">
+              <button type="button" [class.active]="!value" (click)="change(null)">Todos</button>
+              @for (opt of options; track opt.value) {
+                <button type="button" [class.active]="value === opt.value" (click)="change(opt.value)">
+                  {{ opt.label }}
+                </button>
+              }
+            </div>
+          </ng-template>
 
-    <app-code-block [code]="customFilterHtml" language="html" title="Template personalizado" />
+          <ng-template vzCell="status" let-value="value">
+            <span class="custom-status-pill">
+              <span class="dot" [style.background]="statusColor(value)"></span>
+              {{ value }}
+            </span>
+          </ng-template>
+        </vz-table>
+      </div>
 
-    <h3 class="subsection-title">Slots de contenido</h3>
-    <app-code-block [code]="slotsSnippet" language="html" title="vzTableTitle · vzTableActions · vzTableEmpty" />
-  </section>
+      <app-code-block [code]="customFilterHtml" language="html" title="Opción B: Proyección con *vzFilterControl, *vzCell y [vzTableActions]" />
+    </section>
 
-  <!-- Theming -->
-  <section id="personalizacion-theming" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">Personalización del diseño</h2>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 4. MODO SERVIDOR · ARQUITECTURA LIMPIA Y AUTÓNOMA                       -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="modo-servidor" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">4. Modo Servidor · Arquitectura Limpia y Autónoma</h2>
+        <p class="section-subtitle">
+          Diseñada para conectarse a APIs REST o GraphQL empresariales. La lógica de transporte pertenece a tu
+          <strong>Servicio Angular</strong>, mientras que <code>&lt;vz-table&gt;</code> coordina páginas, búsqueda con debounce
+          y ordenamiento.
+        </p>
+      </div>
+
+      <h3 class="subsection-title">Paso 1 · El Servicio de Datos (Transporte HTTP)</h3>
+      <app-code-block [code]="serviceSnippet" language="typescript" title="alumnos.service.ts" />
+
+      <h3 class="subsection-title">Paso 2 · Consumo Estándar con <code>(queryChange)</code></h3>
+      <app-code-block [code]="standardComponentSnippet" language="typescript" title="alumnos.component.ts" />
+      <app-code-block [code]="standardHtmlSnippet" language="html" title="alumnos.component.html" />
+
+      <h3 class="subsection-title">Alternativa Élite · Función Autónoma <code>[loader]</code></h3>
       <p class="section-subtitle">
-        Igual que el botón, la tabla se adapta a tu marca solo con variables CSS: globales en <code>:root</code> o por clase en una tabla concreta,
-        sin <code>::ng-deep</code> ni <code>!important</code>.
+        Si pasas una función <code>[loader]</code> que retorne un <code>Observable</code> o <code>Promise</code>, la tabla
+        gestiona sola el estado <code>loading</code>, el debounce y la cancelación de peticiones anteriores:
       </p>
-    </div>
+      <app-code-block [code]="eliteLoaderTsSnippet" language="typescript" title="alumnos.component.ts (con [loader])" />
+    </section>
 
-    <div class="theme-demo-grid">
-      <vz-table class="theme-violet" heading="Tema violeta (--vz-primary + variables de tabla)" [columns]="customColumns" [data]="customData" [config]="smallConfig" />
-      <vz-table class="theme-dark" heading="Tema oscuro (clase propia)" [columns]="customColumns" [data]="customData" [config]="smallConfig" />
-    </div>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 5. MODO OSCURO NATIVO Y DESIGN TOKENS CSS                               -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="personalizacion-theming" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">5. Modo Oscuro Nativo y Design Tokens CSS</h2>
+        <p class="section-subtitle">
+          Activa el <strong>Modo Oscuro de fábrica</strong> directamente en la tabla con <code>theme="dark"</code> o el atributo
+          <code>dark</code> sin escribir una sola línea de CSS, o personaliza los colores de tu marca con variables
+          <code>--vz-table-*</code>.
+        </p>
+      </div>
 
-    <app-code-block [code]="themingGlobalSnippet" language="scss" title="styles.scss" />
-    <app-code-block [code]="themingClassSnippet" language="scss" title="mi-vista.component.css" />
-    <app-code-block [code]="themingHtmlSnippet" language="html" title="mi-vista.component.html" />
-    <app-code-block [code]="labelsSnippet" language="html" title="Textos / i18n" />
-  </section>
+      <div class="preview-card-container basic-tables-stage">
+        <div class="basic-table-block">
+          <span class="stage-caption">A. Modo Oscuro Nativo de Fábrica (theme="dark")</span>
+          <vz-table
+            theme="dark"
+            heading="Monitoreo de Nodos Cloud · Región LatAm"
+            subtitle="Superficie slate #0f172a con contraste garantizado en badges, inputs y paginación"
+            [columns]="customColumns"
+            [data]="customData"
+            [config]="smallConfig"
+          />
+        </div>
 
-  <!-- Referencias -->
-  <section id="api-referencia" class="doc-section">
-    <div class="section-heading">
-      <h2 class="section-title">API Reference</h2>
-    </div>
+        <div class="basic-table-block">
+          <span class="stage-caption">B. Sobrescritura con Design Tokens CSS (.theme-violet)</span>
+          <vz-table
+            class="theme-violet"
+            heading="Tema Corporativo Violeta (--vz-table-*)"
+            subtitle="Adaptado con variables CSS sin ::ng-deep ni !important"
+            [columns]="customColumns"
+            [data]="customData"
+            [config]="smallConfig"
+          />
+        </div>
+      </div>
 
-    <h3 class="subsection-title">Inputs de &lt;vz-table&gt;</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead><tr><th>Nombre</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
-        <tbody>
-          @for (row of inputRows; track row[0]) {
-            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td><code>{{ row[2] }}</code></td><td>{{ row[3] }}</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
+      <app-code-block [code]="darkAndTokensSnippet" language="html" title="Uso de theme='dark' y clases de tokens" />
+      <app-code-block [code]="themingClassSnippet" language="scss" title="mi-vista.component.scss" />
+    </section>
 
-    <h3 class="subsection-title">Outputs</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead><tr><th>Nombre</th><th>Tipo</th><th>Descripción</th></tr></thead>
-        <tbody>
-          @for (row of outputRows; track row[0]) {
-            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 6. REFERENCIA DE API                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="api-referencia" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">6. Referencia de API</h2>
+      </div>
 
-    <h3 class="subsection-title">VzTableConfig</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead><tr><th>Propiedad</th><th>Tipo</th><th>Descripción</th></tr></thead>
-        <tbody>
-          @for (row of configRows; track row[0]) {
-            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
+      <h3 class="subsection-title">Inputs de &lt;vz-table&gt;</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead><tr><th>Input</th><th>Tipo</th><th>Default</th><th>Descripción</th></tr></thead>
+          <tbody>
+            @for (row of inputRows; track row[0]) {
+              <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td><code>{{ row[2] }}</code></td><td>{{ row[3] }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-    <h3 class="subsection-title">VzColumn</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead><tr><th>Propiedad</th><th>Tipo</th><th>Descripción</th></tr></thead>
-        <tbody>
-          @for (row of columnRows; track row[0]) {
-            <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
+      <h3 class="subsection-title">Outputs</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead><tr><th>Output</th><th>Tipo</th><th>Descripción</th></tr></thead>
+          <tbody>
+            @for (row of outputRows; track row[0]) {
+              <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-    <h3 class="subsection-title">Variables CSS</h3>
-    <div class="table-container">
-      <table class="doc-table">
-        <thead><tr><th>Variable</th><th>Descripción</th></tr></thead>
-        <tbody>
-          @for (row of cssVarRows; track row[0]) {
-            <tr><td><code>{{ row[0] }}</code></td><td>{{ row[1] }}</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
+      <h3 class="subsection-title">Propiedades de Columna (VzColumn&lt;T&gt;)</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead><tr><th>Propiedad</th><th>Tipo</th><th>Descripción</th></tr></thead>
+          <tbody>
+            @for (row of columnRows; track row[0]) {
+              <tr><td><code>{{ row[0] }}</code></td><td><code>{{ row[1] }}</code></td><td>{{ row[2] }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title">Design Tokens CSS (--vz-table-*)</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead><tr><th>Variable CSS</th><th>Descripción</th></tr></thead>
+          <tbody>
+            @for (row of cssVarRows; track row[0]) {
+              <tr><td><code>{{ row[0] }}</code></td><td>{{ row[1] }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
   </article>
 
-  <!-- Lateral Derecho: Studio Callout + TOC (Estilo PrimeNG / Bootstrap) -->
+  <!-- Lateral Derecho: Studio Callout + TOC -->
   <aside class="doc-toc-sidebar">
     <div class="studio-widget-card">
       <div class="widget-badge-row">
@@ -238,7 +334,7 @@
       </div>
       <h4 class="widget-title">Diseñador en Vivo</h4>
       <p class="widget-desc">
-        Abre el laboratorio interactivo para probar densidades, modo rayado, selección y exportar código limpio.
+        Abre el laboratorio interactivo para probar modo oscuro, variantes, densidades, exportación CSV y copiar código Angular.
       </p>
       <a routerLink="/studio" [queryParams]="{ component: 'table' }" class="widget-action-btn">
         <span>Abrir en Studio</span>
@@ -252,14 +348,13 @@
     <div class="toc-container">
       <h5 class="toc-title">En esta página</h5>
       <nav class="toc-nav">
-        <a href="#demo-vivo" class="toc-link">Demostración en Vivo</a>
-        <a href="#uso-cliente" class="toc-link">Uso Básico (Cliente)</a>
-        <a href="#modo-servidor" class="toc-link">Modo Servidor & API</a>
-        <a href="#filtros-celdas" class="toc-link">Filtros y Celdas</a>
-        <a href="#personalizacion-theming" class="toc-link">Personalización & Tokens</a>
-        <a href="#api-referencia" class="toc-link">Referencia de API</a>
+        <a href="#tablas-basicas" class="toc-link">1. Tablas Básicas (AdminT)</a>
+        <a href="#tabla-pro" class="toc-link">2. Tabla Pro (Opción A)</a>
+        <a href="#filtros-celdas" class="toc-link">3. Slots a Medida (Opción B)</a>
+        <a href="#modo-servidor" class="toc-link">4. Modo Servidor &amp; Loader</a>
+        <a href="#personalizacion-theming" class="toc-link">5. Modo Oscuro &amp; Tokens</a>
+        <a href="#api-referencia" class="toc-link">6. Referencia de API</a>
       </nav>
     </div>
   </aside>
 </div>
-
