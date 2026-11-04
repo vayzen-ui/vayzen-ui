@@ -1,0 +1,443 @@
+<div class="doc-layout">
+  <article class="doc-main-content">
+    <header class="doc-header">
+      <div class="doc-header-top">
+        <span class="category-tag">Formularios / Selectores</span>
+        <span class="version-tag">Signals · Standalone · Dark Mode Nativo</span>
+      </div>
+      <h1 class="doc-title">Combobox</h1>
+      <p class="doc-description">
+        Selector inteligente de grado empresarial inspirado en los patrones visuales de <code>AdminT</code>:
+        combina trigger con icono prefijo, panel flotante a prueba de colisiones en viewport (detección arriba/abajo),
+        buscador integrado insensible a acentos, opción "Todos" y soporte total para formularios reactivos (<code>ControlValueAccessor</code>).
+      </p>
+      <div class="doc-meta-chips">
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          Selector: <code>&lt;vz-combobox&gt;</code>
+        </span>
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          Auto-Flip Viewport
+        </span>
+        <span class="doc-meta-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          Modo Oscuro Nativo
+        </span>
+        <button
+          type="button"
+          class="doc-theme-toggle-btn"
+          [class.is-dark]="previewTheme() === 'dark'"
+          (click)="togglePreviewTheme()"
+        >
+          @if (previewTheme() === 'dark') {
+            <span>🌙 Viendo Selectores en Modo Oscuro · Cambiar a Claro ☀️</span>
+          } @else {
+            <span>☀️ Viendo Selectores en Modo Claro · Probar Modo Oscuro 🌙</span>
+          }
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 1. BÁSICO / AUTOCOMPLETE MINIMALISTA                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="combobox-basico" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">1. Versión Básica (Autocomplete Simple Zero-Boilerplate)</h2>
+        <p class="section-subtitle">
+          Configuración rápida con arreglo de opciones simple. Incluye búsqueda en vivo, navegación por teclado y
+          sincronización con <code>[(ngModel)]</code> o <code>formControlName</code> sin maquetar plantillas extra.
+        </p>
+      </div>
+
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <div class="demo-combobox-wrapper">
+            <label class="demo-label">País de Residencia</label>
+            <vz-combobox
+              [theme]="previewTheme()"
+              placeholder="Selecciona un país..."
+              [options]="paisesSimples"
+              [clearable]="true"
+              [(ngModel)]="selectedPais"
+            />
+            <div class="demo-feedback">
+              Valor seleccionado en el modelo: <code>{{ selectedPais() ?? 'null' }}</code>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="basicSnippetHtml" language="html" title="paises-combobox.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 2. ENTERPRISE PRO (ICONO PREFIJO, BADGES, SUBTÍTULOS Y LOADING)         -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="combobox-pro" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">2. Versión Enterprise Pro (Icono, Doble Línea, Badges y Portal)</h2>
+        <p class="section-subtitle">
+          Diseñado para dashboards empresariales de alta densidad. Cuenta con icono prefijo integrado, subtítulos
+          descriptivos por opción, badges semánticos con contraste verificado, opción superior "Todos los corporativos",
+          opciones inactivas deshabilitadas y spinner nativo SVG.
+        </p>
+      </div>
+
+      <div class="demo-split-grid demo-split-grid--reverse">
+        <div class="preview-card-container">
+          <div class="demo-toolbar">
+            <button type="button" class="demo-action-btn" (click)="simularCarga()">
+              ⏳ Simular Carga Asíncrona (1.2s)
+            </button>
+            <button type="button" class="demo-action-btn" (click)="selectedEmpresa.set(102)">
+              🎯 Seleccionar "Global Logistics"
+            </button>
+          </div>
+
+          <div class="demo-combobox-wrapper">
+            <label class="demo-label">Corporativo / Proveedor Autorizado</label>
+            <vz-combobox
+              [theme]="previewTheme()"
+              icon="building"
+              placeholder="Seleccionar corporativo..."
+              searchPlaceholder="Buscar por nombre, ID o ciudad..."
+              allOptionText="Todos los corporativos registrados"
+              [options]="empresasPro"
+              [clearable]="true"
+              [loading]="isLoadingEmpresas()"
+              [(ngModel)]="selectedEmpresa"
+            />
+            <div class="demo-feedback">
+              ID de Corporativo: <code>{{ selectedEmpresa() ?? 'Sin selección (Todos)' }}</code>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="proSnippetHtml" language="html" title="corporativo-pro.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 3. TEXTOS EXTENSOS Y TRUNCADO INTELIGENTE (ELLIPSIS + TOOLTIP)          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="combobox-texto-largo" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">3. Textos Extensos y Truncado Inteligente (Salto de Línea + Ellipsis)</h2>
+        <p class="section-subtitle">
+          Demostración de resiliencia ante nombres extensos, razones sociales o normativas kilométricas.
+          El menú desplegable <strong>abarca toda la información permitiendo saltos de línea naturales (hasta 2 líneas completas tanto en título como en subtítulo)</strong>,
+          evitando cortes prematuros. Solo cuando el texto sobrepasa el límite máximo se aplican los puntos suspensivos (<code>...</code>),
+          y el texto completo siempre se puede consultar mediante el tooltip nativo <code>title</code>.
+        </p>
+      </div>
+
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <div class="demo-combobox-wrapper">
+            <label class="demo-label">Normativa o Acuerdo Marco</label>
+            <vz-combobox
+              [theme]="previewTheme()"
+              icon="tag"
+              placeholder="Seleccionar normativa..."
+              searchPlaceholder="Buscar por término en el texto extenso..."
+              allOptionText="Todas las normativas registradas"
+              [options]="normativasLargas"
+              [clearable]="true"
+              [(ngModel)]="selectedNormativa"
+            />
+            <div class="demo-feedback">
+              Clave seleccionada: <code>{{ selectedNormativa() ?? 'null' }}</code>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="longTextSnippetHtml" language="html" title="normativas-texto-largo.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 4. SELECTOR DE EQUIPO / COLABORADORES (AVATAR, INICIALES Y ESTATUS)     -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="select-team" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">4. Selector de Equipo / Colaboradores (Avatar, Iniciales y Estatus Dot)</h2>
+        <p class="section-subtitle">
+          Patrón visual moderno para asignación de tareas, responsables y menciones de equipo. Soporta de fábrica círculos
+          de avatar con iniciales o fotografía, indicador luminoso de disponibilidad (<code>online</code>, <code>away</code>,
+          <code>busy</code>, <code>offline</code>), subtítulo con el rol del miembro y actualización automática del trigger al seleccionar.
+        </p>
+      </div>
+
+      <div class="demo-split-grid demo-split-grid--reverse">
+        <div class="preview-card-container">
+          <div class="demo-combobox-wrapper">
+            <label class="demo-label">Responsable del Proyecto</label>
+            <vz-select
+              [theme]="previewTheme()"
+              placeholder="Select team member..."
+              [options]="teamMembers"
+              [clearable]="true"
+              [(ngModel)]="selectedTeamMember"
+            />
+            <div class="demo-feedback">
+              Miembro seleccionado: <code>{{ selectedTeamMember() ?? 'Ninguno (Select team member...)' }}</code>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="teamMemberSnippetHtml" language="html" title="team-member-select.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 5. OPCIÓN B: PROYECCIÓN A MEDIDA CON DIRECTIVA [vzComboboxOption]       -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="combobox-slots" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">5. Opción B: Personalización con Slots (Directivas)</h2>
+        <p class="section-subtitle">
+          Si requieres un diseño 100% a medida para cada fila (avatares con fotos, etiquetas complejas o acciones),
+          puedes proyectar una plantilla usando la directiva <code>vzComboboxOption</code>.
+        </p>
+      </div>
+
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <div class="demo-combobox-wrapper">
+            <label class="demo-label">Asignar Responsable</label>
+            <vz-combobox
+              [theme]="previewTheme()"
+              icon="user"
+              placeholder="Seleccionar colaborador..."
+              [options]="usuarios"
+              [clearable]="true"
+              [(ngModel)]="selectedUsuario"
+            >
+              <ng-template vzComboboxOption let-option let-selected="selected">
+                <div class="custom-user-item">
+                  <div class="custom-avatar">{{ option.descripcion[0] }}</div>
+                  <div class="custom-details">
+                    <span class="custom-name">{{ option.descripcion }}</span>
+                    <span class="custom-role">{{ option.role }} · {{ option.subtitle }}</span>
+                  </div>
+                </div>
+              </ng-template>
+            </vz-combobox>
+            <div class="demo-feedback">
+              Responsable ID: <code>{{ selectedUsuario() ?? 'Sin asignar' }}</code>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="customSlotSnippetHtml" language="html" title="usuario-custom-slot.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 6. VZ-SELECT: SELECTOR CLÁSICO LIGERO (SIN BUSCADOR)                   -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="select-ligero" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">6. VzSelect (Selector Directo Ligero sin Buscador)</h2>
+        <p class="section-subtitle">
+          Inspirado en los formularios limpios de <code>AdminT</code>. Para listas breves (departamentos, estatus,
+          roles) donde un campo de búsqueda es innecesario.
+        </p>
+      </div>
+
+      <div class="demo-split-grid demo-split-grid--reverse">
+        <div class="preview-card-container">
+          <div class="demo-combobox-wrapper">
+            <label class="demo-label">Área o Departamento</label>
+            <vz-select
+              [theme]="previewTheme()"
+              icon="tag"
+              placeholder="Selecciona un área..."
+              [options]="selectCategorias"
+              [clearable]="true"
+              [(ngModel)]="selectedCategoria"
+            />
+            <div class="demo-feedback">
+              Categoría seleccionada: <code>{{ selectedCategoria() ?? 'null' }}</code>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="selectSnippetHtml" language="html" title="area-select.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 7. VZ-MULTI-SELECT: SELECCIÓN MÚLTIPLE CON CHIPS INTERACTIVOS           -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="multi-select" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">7. VzMultiSelect (Chips Interactivos + Contador y Seleccionar Todo)</h2>
+        <p class="section-subtitle">
+          Permite seleccionar múltiples elementos con chips removibles integrados en el trigger, insignia contadora
+          <code>+X más</code>, botón rápido de <em>"Seleccionar todos"</em> y buscador inteligente.
+        </p>
+      </div>
+
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <div class="demo-combobox-wrapper">
+            <label class="demo-label">Stack Tecnológico Requerido</label>
+            <vz-multi-select
+              [theme]="previewTheme()"
+              icon="tag"
+              placeholder="Seleccionar tecnologías..."
+              [options]="multiHabilidades"
+              [showSelectAll]="true"
+              [maxSelectedDisplay]="2"
+              [clearable]="true"
+              [(ngModel)]="selectedHabilidades"
+            />
+            <div class="demo-feedback">
+              Habilidades seleccionadas ({{ selectedHabilidades().length }}):
+              <code>{{ selectedHabilidades().join(', ') || 'Ninguna' }}</code>
+            </div>
+          </div>
+        </div>
+
+        <app-code-block [code]="multiSelectSnippetHtml" language="html" title="skills-multi-select.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 8. REFERENCIA DE API                                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="api-referencia" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">8. Referencia de API</h2>
+      </div>
+
+      <h3 class="subsection-title">Inputs de &lt;vz-combobox&gt;</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Input</th>
+              <th>Tipo</th>
+              <th>Default</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of inputApi; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td><code>{{ row[2] }}</code></td>
+                <td>{{ row[3] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title">Outputs</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Output</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of outputApi; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td>{{ row[2] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title">Propiedades de Opción (VzComboboxOption&lt;T&gt;)</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Propiedad</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of optionPropRows; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td>{{ row[2] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title">Design Tokens CSS (--vz-combobox-*)</h3>
+      <div class="table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Variable CSS</th>
+              <th>Valor por Defecto</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of cssVarApi; track row[0]) {
+              <tr>
+                <td><code>{{ row[0] }}</code></td>
+                <td><code>{{ row[1] }}</code></td>
+                <td>{{ row[2] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </article>
+
+  <!-- Lateral Derecho: Studio Callout + TOC -->
+  <aside class="doc-toc-sidebar">
+    <div class="studio-widget-card">
+      <div class="widget-badge-row">
+        <span class="widget-dot"></span>
+        <span class="widget-badge">Vayzen Studio</span>
+      </div>
+      <h4 class="widget-title">Diseñador en Vivo</h4>
+      <p class="widget-desc">
+        Abre el laboratorio interactivo para probar modo oscuro, variantes, estados de carga y generar código Angular en vivo.
+      </p>
+      <a routerLink="/studio" [queryParams]="{ component: 'combobox' }" class="widget-action-btn">
+        <span>Abrir en Studio</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+    <div class="toc-container">
+      <h5 class="toc-title">En esta página</h5>
+      <nav class="toc-nav">
+        <a href="#combobox-basico" class="toc-link">1. Combobox Básico</a>
+        <a href="#combobox-pro" class="toc-link">2. Enterprise Pro</a>
+        <a href="#combobox-texto-largo" class="toc-link">3. Textos Extensos</a>
+        <a href="#select-team" class="toc-link">4. Selector de Equipo</a>
+        <a href="#combobox-slots" class="toc-link">5. Slots a Medida</a>
+        <a href="#select-ligero" class="toc-link">6. VzSelect Clásico</a>
+        <a href="#multi-select" class="toc-link">7. VzMultiSelect</a>
+        <a href="#api-referencia" class="toc-link">8. Referencia de API</a>
+      </nav>
+    </div>
+  </aside>
+</div>

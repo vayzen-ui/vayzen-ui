@@ -1,0 +1,254 @@
+<div
+  class="vz-multi-select"
+  [class.vz-multi-select--sm]="size() === 'sm'"
+  [class.vz-multi-select--md]="size() === 'md'"
+  [class.vz-multi-select--lg]="size() === 'lg'"
+  [class.vz-multi-select--outline]="variant() === 'outline'"
+  [class.vz-multi-select--filled]="variant() === 'filled'"
+  [class.vz-multi-select--flush]="variant() === 'flush'"
+  [class.has-selection]="hasSelection()"
+  [class.is-open]="isOpen()"
+  [class.is-disabled]="isDisabled()"
+  [class.is-invalid]="isInvalid()"
+>
+  <!-- Input Trigger Principal -->
+  <div
+    #triggerEl
+    class="vz-multi-select__trigger"
+    tabindex="0"
+    role="combobox"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-haspopup]="'listbox'"
+    [attr.aria-disabled]="isDisabled()"
+    (click)="toggleDropdown()"
+    (keydown)="onTriggerKeyDown($event)"
+  >
+    @if (triggerTemplate()) {
+      <ng-container
+        [ngTemplateOutlet]="triggerTemplate()!.template"
+        [ngTemplateOutletContext]="{ $implicit: selectedOptions(), open: isOpen() }"
+      />
+    } @else {
+      <!-- Contenedor de Icono Prefijo -->
+      @if (icon()) {
+        <div class="vz-multi-select__prefix-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            @if (icon() === 'user') {
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            } @else if (icon() === 'tag' || icon() === 'categoria') {
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+              <line x1="7" y1="7" x2="7.01" y2="7" />
+            } @else {
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            }
+          </svg>
+        </div>
+      }
+
+      <!-- Contenido del Trigger (Chips o Placeholder) -->
+      <div class="vz-multi-select__content">
+        @if (!hasSelection()) {
+          <span class="vz-multi-select__placeholder">{{ placeholder() }}</span>
+        } @else {
+          <div class="vz-multi-select__chips">
+            @for (option of visibleChips(); track optionTrackBy($index, option)) {
+              <span class="vz-multi-select__chip">
+                <span class="vz-multi-select__chip-label">{{ option.descripcion ?? option.label ?? option.id }}</span>
+                @if (!isDisabled()) {
+                  <button
+                    type="button"
+                    class="vz-multi-select__chip-remove"
+                    aria-label="Quitar opción"
+                    (click)="removeChip(option.id, $event)"
+                  >
+                    <svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <line x1="3" y1="3" x2="13" y2="13" />
+                      <line x1="13" y1="3" x2="3" y2="13" />
+                    </svg>
+                  </button>
+                }
+              </span>
+            }
+
+            @if (extraCount() > 0) {
+              <span class="vz-multi-select__extra-count" [title]="'Hay ' + extraCount() + ' elementos más seleccionados'">
+                +{{ extraCount() }}
+              </span>
+            }
+          </div>
+        }
+
+        <div class="vz-multi-select__actions" (click)="$event.stopPropagation()">
+          <!-- Botón de Limpiar Selección Rápida -->
+          @if (hasSelection() && !isDisabled()) {
+            <button
+              type="button"
+              class="vz-multi-select__clear-btn"
+              aria-label="Limpiar selección"
+              (click)="clearAll($event)"
+            >
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="4" y1="4" x2="12" y2="12" />
+                <line x1="12" y1="4" x2="4" y2="12" />
+              </svg>
+            </button>
+          }
+
+          <!-- Spinner de Carga Nativo SVG -->
+          @if (loading()) {
+            <span class="vz-multi-select__spinner" role="status" aria-label="Cargando...">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
+                <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round" />
+              </svg>
+            </span>
+          } @else {
+            <!-- Chevron Down SVG Rotatorio -->
+            <svg
+              class="vz-multi-select__chevron"
+              [class.is-rotated]="isOpen()"
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Panel Dropdown Flotante -->
+  @if (isOpen()) {
+    <div
+      #dropdownPanel
+      class="vz-multi-select__dropdown"
+      [class.is-open-above]="opensAbove()"
+      role="listbox"
+      tabindex="-1"
+      aria-multiselectable="true"
+      (keydown)="onDropdownKeyDown($event)"
+    >
+      <!-- Campo de Búsqueda Integrado -->
+      @if (searchable()) {
+        <div class="vz-multi-select__search-wrapper" (click)="$event.stopPropagation()">
+          <div class="vz-multi-select__search-box">
+            <svg class="vz-multi-select__search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              #searchInput
+              type="text"
+              class="vz-multi-select__search-input"
+              [placeholder]="searchPlaceholder()"
+              [value]="searchText()"
+              (input)="onSearchInput($event)"
+              (keydown.escape)="closeDropdown()"
+            />
+            @if (searchText()) {
+              <button
+                type="button"
+                class="vz-multi-select__search-clear"
+                aria-label="Limpiar búsqueda"
+                (click)="clearSearch($event)"
+              >
+                <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="3" y1="3" x2="13" y2="13" />
+                  <line x1="13" y1="3" x2="3" y2="13" />
+                </svg>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Opción Seleccionar Todos -->
+      @if (showSelectAll() && !searchText()) {
+        <div
+          class="vz-multi-select__option vz-multi-select__option--select-all"
+          [class.is-selected]="allSelected()"
+          role="option"
+          [attr.aria-selected]="allSelected()"
+          (click)="toggleSelectAll()"
+        >
+          <div class="vz-multi-select__checkbox" [class.is-checked]="allSelected()" [class.is-indeterminate]="someSelected()">
+            @if (allSelected()) {
+              <svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 8 7 12 13 4" />
+              </svg>
+            } @else if (someSelected()) {
+              <span class="vz-multi-select__indeterminate-line"></span>
+            }
+          </div>
+          <span class="vz-multi-select__option-text">{{ selectAllText() }}</span>
+          <span class="vz-multi-select__selection-counter">
+            {{ selectedValues().length }} / {{ options().length }}
+          </span>
+        </div>
+      }
+
+      <!-- Lista de Opciones -->
+      <div class="vz-multi-select__options-list">
+        @for (option of filteredOptions(); track optionTrackBy($index, option); let i = $index) {
+          <div
+            class="vz-multi-select__option"
+            [class.is-selected]="isOptionSelected(option.id)"
+            [class.is-focused]="focusedIndex() === i"
+            [class.is-disabled]="option.activo === false || option.disabled === true"
+            role="option"
+            [attr.aria-selected]="isOptionSelected(option.id)"
+            [title]="(option.descripcion ?? option.label ?? option.id) + (option.subtitle ? ' · ' + option.subtitle : '')"
+            (click)="toggleOption(option, $event)"
+          >
+            @if (optionTemplate()) {
+              <ng-container
+                [ngTemplateOutlet]="optionTemplate()!.template"
+                [ngTemplateOutletContext]="{ $implicit: option, selected: isOptionSelected(option.id) }"
+              />
+            } @else {
+              <!-- Checkbox de opción -->
+              <div class="vz-multi-select__checkbox" [class.is-checked]="isOptionSelected(option.id)">
+                @if (isOptionSelected(option.id)) {
+                  <svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 8 7 12 13 4" />
+                  </svg>
+                }
+              </div>
+
+              <!-- Cuerpo de la opción -->
+              <div class="vz-multi-select__option-body">
+                <span class="vz-multi-select__option-title">{{ option.descripcion ?? option.label ?? option.id }}</span>
+                @if (option.subtitle) {
+                  <span class="vz-multi-select__option-subtitle">{{ option.subtitle }}</span>
+                }
+              </div>
+
+              <!-- Badge opcional -->
+              @if (option.badge) {
+                <span class="vz-multi-select__badge" [class]="'vz-multi-select__badge--' + (option.badgeVariant ?? 'primary')">
+                  {{ option.badge }}
+                </span>
+              }
+            }
+          </div>
+        }
+
+        @if (filteredOptions().length === 0) {
+          <div class="vz-multi-select__no-results" role="status">
+            <span>No se encontraron resultados</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+

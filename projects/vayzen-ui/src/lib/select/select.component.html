@@ -1,0 +1,223 @@
+<div
+  class="vz-select"
+  [class.vz-select--sm]="size() === 'sm'"
+  [class.vz-select--md]="size() === 'md'"
+  [class.vz-select--lg]="size() === 'lg'"
+  [class.vz-select--outline]="variant() === 'outline'"
+  [class.vz-select--filled]="variant() === 'filled'"
+  [class.vz-select--flush]="variant() === 'flush'"
+  [class.has-selection]="hasSelection()"
+  [class.is-open]="isOpen()"
+  [class.is-disabled]="isDisabled()"
+  [class.is-invalid]="isInvalid()"
+>
+  <!-- Input Trigger Principal -->
+  <div
+    #triggerEl
+    class="vz-select__trigger"
+    tabindex="0"
+    role="combobox"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-haspopup]="'listbox'"
+    [attr.aria-disabled]="isDisabled()"
+    (click)="toggleDropdown()"
+    (keydown)="onTriggerKeyDown($event)"
+  >
+    @if (triggerTemplate()) {
+      <ng-container
+        [ngTemplateOutlet]="triggerTemplate()!.template"
+        [ngTemplateOutletContext]="{ $implicit: selectedOption(), open: isOpen() }"
+      />
+    } @else {
+      <!-- Contenedor de Icono Prefijo -->
+      @if (icon()) {
+        <div class="vz-select__prefix-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            @if (icon() === 'user') {
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            } @else if (icon() === 'building' || icon() === 'empresa') {
+              <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+              <path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01" />
+            } @else if (icon() === 'tag' || icon() === 'categoria') {
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+              <line x1="7" y1="7" x2="7.01" y2="7" />
+            } @else {
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            }
+          </svg>
+        </div>
+      }
+
+      <!-- Contenido del Trigger -->
+      <div class="vz-select__content">
+        @if (selectedOption() && (selectedOption()?.avatar || selectedOption()?.avatarText)) {
+          <div class="vz-select__trigger-avatar">
+            @if (selectedOption()!.avatar) {
+              <img [src]="selectedOption()!.avatar" [alt]="displayText()" class="vz-select__avatar-img" />
+            } @else {
+              <span
+                class="vz-select__avatar-text"
+                [style.background-color]="selectedOption()!.avatarColor ?? null"
+              >
+                {{ selectedOption()!.avatarText }}
+              </span>
+            }
+            @if (selectedOption()!.status) {
+              <span
+                class="vz-select__status-dot"
+                [class]="'vz-select__status-dot--' + selectedOption()!.status"
+                [style.background-color]="selectedOption()!.statusColor ?? null"
+              ></span>
+            }
+          </div>
+        }
+
+        <span
+          class="vz-select__label"
+          [class.is-placeholder]="!hasSelection()"
+          [title]="displayText()"
+        >
+          {{ displayText() }}
+        </span>
+
+        <div class="vz-select__actions" (click)="$event.stopPropagation()">
+          <!-- Botón de Limpiar Selección Rápida -->
+          @if (clearable() && hasSelection() && !isDisabled()) {
+            <button
+              type="button"
+              class="vz-select__clear-btn"
+              aria-label="Limpiar selección"
+              (click)="clearSelection($event)"
+            >
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="4" y1="4" x2="12" y2="12" />
+                <line x1="12" y1="4" x2="4" y2="12" />
+              </svg>
+            </button>
+          }
+
+          <!-- Spinner de Carga Nativo SVG -->
+          @if (loading()) {
+            <span class="vz-select__spinner" role="status" aria-label="Cargando...">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
+                <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round" />
+              </svg>
+            </span>
+          } @else {
+            <!-- Chevron Down SVG Rotatorio -->
+            <svg
+              class="vz-select__chevron"
+              [class.is-rotated]="isOpen()"
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Panel Dropdown Flotante -->
+  @if (isOpen()) {
+    <div
+      #dropdownPanel
+      class="vz-select__dropdown"
+      [class.is-open-above]="opensAbove()"
+      role="listbox"
+      tabindex="-1"
+      (keydown)="onDropdownKeyDown($event)"
+    >
+      <!-- Lista de Opciones -->
+      <div class="vz-select__options-list">
+        @for (option of options(); track optionTrackBy($index, option); let i = $index) {
+          <div
+            class="vz-select__option"
+            [class.is-selected]="isOptionSelected(option.id)"
+            [class.is-focused]="focusedIndex() === i"
+            [class.is-disabled]="option.activo === false || option.disabled === true"
+            role="option"
+            [attr.aria-selected]="isOptionSelected(option.id)"
+            [title]="(option.descripcion ?? option.label ?? option.id) + (option.subtitle ? ' · ' + option.subtitle : '')"
+            (click)="selectOption(option, $event)"
+          >
+            @if (optionTemplate()) {
+              <ng-container
+                [ngTemplateOutlet]="optionTemplate()!.template"
+                [ngTemplateOutletContext]="{ $implicit: option, selected: isOptionSelected(option.id) }"
+              />
+            } @else {
+              <!-- Avatar de colaborador si existe -->
+              @if (option.avatar || option.avatarText) {
+                <div class="vz-select__option-avatar-wrapper">
+                  @if (option.avatar) {
+                    <img [src]="option.avatar" [alt]="option.descripcion ?? option.label ?? ''" class="vz-select__avatar-img" />
+                  } @else {
+                    <span
+                      class="vz-select__avatar-text"
+                      [style.background-color]="option.avatarColor ?? null"
+                    >
+                      {{ option.avatarText }}
+                    </span>
+                  }
+                  @if (option.status) {
+                    <span
+                      class="vz-select__status-dot"
+                      [class]="'vz-select__status-dot--' + option.status"
+                      [style.background-color]="option.statusColor ?? null"
+                    ></span>
+                  }
+                </div>
+              } @else if (option.icon) {
+                <span class="vz-select__option-custom-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                  </svg>
+                </span>
+              }
+
+              <!-- Cuerpo de la opción (Título y Subtítulo) -->
+              <div class="vz-select__option-body">
+                <span class="vz-select__option-title">{{ option.descripcion ?? option.label ?? option.id }}</span>
+                @if (option.subtitle) {
+                  <span class="vz-select__option-subtitle">{{ option.subtitle }}</span>
+                }
+              </div>
+
+              <!-- Badge opcional -->
+              @if (option.badge) {
+                <span class="vz-select__badge" [class]="'vz-select__badge--' + (option.badgeVariant ?? 'primary')">
+                  {{ option.badge }}
+                </span>
+              }
+
+              <!-- Checkmark SVG de Selección -->
+              @if (isOptionSelected(option.id)) {
+                <svg class="vz-select__check-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              }
+            }
+          </div>
+        }
+
+        @if (options().length === 0) {
+          <div class="vz-select__no-results" role="status">
+            <span>No hay opciones disponibles</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+

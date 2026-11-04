@@ -1,0 +1,294 @@
+<div
+  class="vz-combobox"
+  [class.vz-combobox--sm]="size() === 'sm'"
+  [class.vz-combobox--md]="size() === 'md'"
+  [class.vz-combobox--lg]="size() === 'lg'"
+  [class.vz-combobox--outline]="variant() === 'outline'"
+  [class.vz-combobox--filled]="variant() === 'filled'"
+  [class.vz-combobox--flush]="variant() === 'flush'"
+  [class.has-selection]="hasSelection()"
+  [class.is-open]="isOpen()"
+  [class.is-disabled]="isDisabled()"
+  [class.is-invalid]="isInvalid()"
+>
+  <!-- Input Trigger Principal -->
+  <div
+    #triggerEl
+    class="vz-combobox__trigger"
+    tabindex="0"
+    role="combobox"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-haspopup]="'listbox'"
+    [attr.aria-disabled]="isDisabled()"
+    (click)="toggleDropdown()"
+    (keydown)="onTriggerKeyDown($event)"
+  >
+    @if (triggerTemplate()) {
+      <ng-container
+        [ngTemplateOutlet]="triggerTemplate()!.template"
+        [ngTemplateOutletContext]="{ $implicit: selectedOption(), open: isOpen() }"
+      />
+    } @else {
+      <!-- Contenedor de Icono Prefijo -->
+      @if (icon()) {
+        <div class="vz-combobox__prefix-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            @if (icon() === 'user') {
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            } @else if (icon() === 'building' || icon() === 'empresa') {
+              <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+              <path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01" />
+            } @else if (icon() === 'tag' || icon() === 'categoria') {
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+              <line x1="7" y1="7" x2="7.01" y2="7" />
+            } @else if (icon() === 'map-pin' || icon() === 'ubicacion') {
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            } @else {
+              <!-- Icono por defecto (filtro / select) -->
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            }
+          </svg>
+        </div>
+      }
+
+      <!-- Contenido del Trigger -->
+      <div class="vz-combobox__content">
+        @if (selectedOption() && (selectedOption()?.avatar || selectedOption()?.avatarText)) {
+          <div class="vz-combobox__trigger-avatar">
+            @if (selectedOption()!.avatar) {
+              <img [src]="selectedOption()!.avatar" [alt]="displayText()" class="vz-combobox__avatar-img" />
+            } @else {
+              <span
+                class="vz-combobox__avatar-text"
+                [style.background-color]="selectedOption()!.avatarColor ?? null"
+              >
+                {{ selectedOption()!.avatarText }}
+              </span>
+            }
+            @if (selectedOption()!.status) {
+              <span
+                class="vz-combobox__status-dot"
+                [class]="'vz-combobox__status-dot--' + selectedOption()!.status"
+                [style.background-color]="selectedOption()!.statusColor ?? null"
+              ></span>
+            }
+          </div>
+        }
+
+        <span
+          class="vz-combobox__label"
+          [class.is-placeholder]="!hasSelection()"
+          [title]="displayText()"
+        >
+          {{ displayText() }}
+        </span>
+
+        <div class="vz-combobox__actions" (click)="$event.stopPropagation()">
+          <!-- Botón de Limpiar Selección Rápida -->
+          @if (clearable() && hasSelection() && !isDisabled()) {
+            <button
+              type="button"
+              class="vz-combobox__clear-btn"
+              aria-label="Limpiar selección"
+              (click)="clearSelection($event)"
+            >
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="4" y1="4" x2="12" y2="12" />
+                <line x1="12" y1="4" x2="4" y2="12" />
+              </svg>
+            </button>
+          }
+
+          <!-- Spinner de Carga Nativo SVG -->
+          @if (loading()) {
+            <span class="vz-combobox__spinner" role="status" aria-label="Cargando...">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
+                <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round" />
+              </svg>
+            </span>
+          } @else {
+            <!-- Chevron Down SVG Rotatorio -->
+            <svg
+              class="vz-combobox__chevron"
+              [class.is-rotated]="isOpen()"
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Panel Dropdown Flotante -->
+  @if (isOpen()) {
+    <div
+      #dropdownPanel
+      class="vz-combobox__dropdown"
+      [class.is-open-above]="opensAbove()"
+      role="listbox"
+      tabindex="-1"
+      (keydown)="onDropdownKeyDown($event)"
+    >
+      <!-- Campo de Búsqueda Integrado -->
+      @if (searchable()) {
+        <div class="vz-combobox__search-wrapper" (click)="$event.stopPropagation()">
+          <div class="vz-combobox__search-box">
+            <svg class="vz-combobox__search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              #searchInput
+              type="text"
+              class="vz-combobox__search-input"
+              [placeholder]="searchPlaceholder()"
+              [value]="searchText()"
+              (input)="onSearchInput($event)"
+              (keydown.escape)="closeDropdown()"
+            />
+            @if (searchText()) {
+              <button
+                type="button"
+                class="vz-combobox__search-clear"
+                aria-label="Limpiar búsqueda"
+                (click)="clearSearch($event)"
+              >
+                <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="3" y1="3" x2="13" y2="13" />
+                  <line x1="13" y1="3" x2="3" y2="13" />
+                </svg>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Lista de Opciones -->
+      <div class="vz-combobox__options-list">
+        <!-- Opción "Todos" / Limpiar Filtro -->
+        @if (showAllOption() && !searchText()) {
+          <div
+            class="vz-combobox__option vz-combobox__option--all"
+            [class.is-selected]="!hasSelection()"
+            role="option"
+            [attr.aria-selected]="!hasSelection()"
+            (click)="clearSelection($event)"
+          >
+            <svg class="vz-combobox__option-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+            <span class="vz-combobox__option-text">{{ allOptionText() }}</span>
+            @if (!hasSelection()) {
+              <svg class="vz-combobox__check-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            }
+          </div>
+        }
+
+        <!-- Opciones Filtradas -->
+        @for (option of filteredOptions(); track optionTrackBy($index, option); let i = $index) {
+          <div
+            class="vz-combobox__option"
+            [class.is-selected]="isOptionSelected(option.id)"
+            [class.is-focused]="focusedIndex() === i"
+            [class.is-disabled]="option.activo === false || option.disabled === true"
+            role="option"
+            [attr.aria-selected]="isOptionSelected(option.id)"
+            [title]="(option.descripcion ?? option.label ?? option.id) + (option.subtitle ? ' · ' + option.subtitle : '')"
+            (click)="selectOption(option, $event)"
+          >
+            @if (optionTemplate()) {
+              <ng-container
+                [ngTemplateOutlet]="optionTemplate()!.template"
+                [ngTemplateOutletContext]="{ $implicit: option, selected: isOptionSelected(option.id) }"
+              />
+            } @else {
+              <!-- Avatar de colaborador si existe -->
+              @if (option.avatar || option.avatarText) {
+                <div class="vz-combobox__option-avatar-wrapper">
+                  @if (option.avatar) {
+                    <img [src]="option.avatar" [alt]="option.descripcion ?? option.label ?? ''" class="vz-combobox__avatar-img" />
+                  } @else {
+                    <span
+                      class="vz-combobox__avatar-text"
+                      [style.background-color]="option.avatarColor ?? null"
+                    >
+                      {{ option.avatarText }}
+                    </span>
+                  }
+                  @if (option.status) {
+                    <span
+                      class="vz-combobox__status-dot"
+                      [class]="'vz-combobox__status-dot--' + option.status"
+                      [style.background-color]="option.statusColor ?? null"
+                    ></span>
+                  }
+                </div>
+              } @else if (option.icon) {
+                <span class="vz-combobox__option-custom-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                  </svg>
+                </span>
+              }
+
+              <!-- Cuerpo de la opción (Título y Subtítulo) -->
+              <div class="vz-combobox__option-body">
+                <span class="vz-combobox__option-title">{{ option.descripcion ?? option.label ?? option.id }}</span>
+                @if (option.subtitle) {
+                  <span class="vz-combobox__option-subtitle">{{ option.subtitle }}</span>
+                }
+              </div>
+
+              <!-- Badge opcional -->
+              @if (option.badge) {
+                <span class="vz-combobox__badge" [class]="'vz-combobox__badge--' + (option.badgeVariant ?? 'primary')">
+                  {{ option.badge }}
+                </span>
+              }
+
+              <!-- Checkmark SVG de Selección -->
+              @if (isOptionSelected(option.id)) {
+                <svg class="vz-combobox__check-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              }
+            }
+          </div>
+        }
+
+        <!-- Mensaje de Sin Resultados -->
+        @if (filteredOptions().length === 0) {
+          <div class="vz-combobox__no-results" role="status">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <line x1="8" y1="11" x2="14" y2="11" />
+            </svg>
+            <span>No se encontraron resultados</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+

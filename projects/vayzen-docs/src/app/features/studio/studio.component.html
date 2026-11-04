@@ -392,6 +392,28 @@
               />
             </div>
           }
+
+          <!-- COMBOBOX COMPONENT -->
+          @if (activeComponent() === 'combobox') {
+            <div class="combobox-render-wrapper" style="width: 100%; max-width: 440px; padding: 2rem;">
+              <vz-combobox
+                [theme]="comboboxTheme()"
+                [variant]="comboboxVariant()"
+                [size]="comboboxSize()"
+                [icon]="comboboxComplexity() === 'complete' && comboboxShowIcon() ? 'building' : ''"
+                [placeholder]="comboboxComplexity() === 'complete' ? 'Seleccionar corporativo...' : 'Seleccionar país...'"
+                [searchPlaceholder]="comboboxComplexity() === 'complete' ? 'Buscar por nombre, ID o ciudad...' : 'Buscar...'"
+                [allOptionText]="comboboxComplexity() === 'complete' ? 'Todos los corporativos' : 'Seleccionar...'"
+                [showAllOption]="comboboxShowAll()"
+                [options]="comboboxActiveOptions()"
+                [clearable]="comboboxClearable()"
+                [loading]="comboboxLoading()"
+                [disabled]="comboboxDisabled()"
+                [(ngModel)]="comboboxSelected"
+                (selectionChange)="onComboboxSelection($event)"
+              />
+            </div>
+          }
         </div>
       }
 
@@ -406,6 +428,9 @@
           @if (activeComponent() === 'table') {
             <app-code-block [code]="tableCode()" language="html" title="Plantilla HTML de Table" />
           }
+          @if (activeComponent() === 'combobox') {
+            <app-code-block [code]="comboboxCode()" language="html" title="Plantilla HTML de Combobox" />
+          }
         </div>
       }
 
@@ -416,6 +441,9 @@
           }
           @if (activeComponent() === 'table') {
             <app-code-block [code]="tableTokensCode()" language="css" title="Tokens CSS de VzTable en tiempo real" />
+          }
+          @if (activeComponent() === 'combobox') {
+            <app-code-block [code]="comboboxTokensCode()" language="css" title="Tokens CSS de VzCombobox en tiempo real" />
           }
         </div>
       }
@@ -435,6 +463,9 @@
           }
           @if (activeComponent() === 'table') {
             {{ tableLastEvent() || 'Haz clic en las filas de la tabla' }}
+          }
+          @if (activeComponent() === 'combobox') {
+            {{ comboboxLastEvent() || 'Selecciona una opción en el combobox' }}
           }
         </span>
       </div>
@@ -457,6 +488,11 @@
       }
       @if (activeComponent() === 'table') {
         <button type="button" class="reset-btn" (click)="resetTableDefaults()" title="Restablecer valores por defecto">
+          Reset
+        </button>
+      }
+      @if (activeComponent() === 'combobox') {
+        <button type="button" class="reset-btn" (click)="resetComboboxDefaults()" title="Restablecer valores por defecto">
           Reset
         </button>
       }
@@ -876,6 +912,190 @@
             </div>
             <label class="ios-switch">
               <input type="checkbox" [checked]="tableLoading()" (change)="tableLoading.set(!tableLoading())" />
+              <span class="ios-track"></span>
+            </label>
+          </div>
+        </div>
+      }
+
+      <!-- ── INSPECTOR PARA COMBOBOX ── -->
+      @if (activeComponent() === 'combobox') {
+        <!-- Sección 0: Complejidad -->
+        <div class="panel-section">
+          <div class="section-label-row">
+            <span class="panel-section-title">Plantilla &amp; Complejidad</span>
+          </div>
+
+          <div class="control-box">
+            <label class="control-caption">Tipo de Configuración</label>
+            <div class="segmented-track">
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxComplexity() === 'complete'"
+                (click)="comboboxComplexity.set('complete')"
+              >
+                Enterprise (Pro)
+              </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxComplexity() === 'basic'"
+                (click)="comboboxComplexity.set('basic')"
+              >
+                Básica (Minimal)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 1: Modo Oscuro Nativo -->
+        <div class="panel-section">
+          <div class="section-label-row">
+            <span class="panel-section-title">Modo de Color Nativo</span>
+          </div>
+
+          <div class="control-box">
+            <label class="control-caption">Tema del Componente</label>
+            <div class="segmented-track">
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxTheme() === 'light'"
+                (click)="comboboxTheme.set('light')"
+              >
+                ☀️ Claro
+              </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxTheme() === 'dark'"
+                (click)="comboboxTheme.set('dark')"
+              >
+                🌙 Oscuro
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 2: Apariencia -->
+        <div class="panel-section">
+          <div class="section-label-row">
+            <span class="panel-section-title">Apariencia</span>
+          </div>
+
+          <div class="control-box">
+            <label class="control-caption">Variante Visual</label>
+            <div class="segmented-track">
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxVariant() === 'outline'"
+                (click)="comboboxVariant.set('outline')"
+              >
+                Outline
+              </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxVariant() === 'filled'"
+                (click)="comboboxVariant.set('filled')"
+              >
+                Filled
+              </button>
+            </div>
+          </div>
+
+          <div class="control-box">
+            <label class="control-caption">Tamaño</label>
+            <div class="segmented-track">
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxSize() === 'sm'"
+                (click)="comboboxSize.set('sm')"
+              >
+                SM
+              </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxSize() === 'md'"
+                (click)="comboboxSize.set('md')"
+              >
+                MD
+              </button>
+              <button
+                type="button"
+                class="seg-btn"
+                [class.active]="comboboxSize() === 'lg'"
+                (click)="comboboxSize.set('lg')"
+              >
+                LG
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 3: Funcionalidades & Toggles -->
+        <div class="panel-section">
+          <div class="section-label-row">
+            <span class="panel-section-title">Comportamiento</span>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <span class="switch-title">Botón Limpiar (Cruz)</span>
+              <span class="switch-sub">Permite resetear la selección</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" [checked]="comboboxClearable()" (change)="comboboxClearable.set(!comboboxClearable())" />
+              <span class="ios-track"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <span class="switch-title">Opción "Todos"</span>
+              <span class="switch-sub">Opción fija en cabecera del panel</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" [checked]="comboboxShowAll()" (change)="comboboxShowAll.set(!comboboxShowAll())" />
+              <span class="ios-track"></span>
+            </label>
+          </div>
+
+          @if (comboboxComplexity() === 'complete') {
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Icono Prefijo</span>
+                <span class="switch-sub">Icono temático en trigger</span>
+              </div>
+              <label class="ios-switch">
+                <input type="checkbox" [checked]="comboboxShowIcon()" (change)="comboboxShowIcon.set(!comboboxShowIcon())" />
+                <span class="ios-track"></span>
+              </label>
+            </div>
+          }
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <span class="switch-title">Estado de Carga (Spinner)</span>
+              <span class="switch-sub">Simula llamada asíncrona</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" [checked]="comboboxLoading()" (change)="comboboxLoading.set(!comboboxLoading())" />
+              <span class="ios-track"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <span class="switch-title">Deshabilitado</span>
+              <span class="switch-sub">Bloquea interacción visual</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" [checked]="comboboxDisabled()" (change)="comboboxDisabled.set(!comboboxDisabled())" />
               <span class="ios-track"></span>
             </label>
           </div>

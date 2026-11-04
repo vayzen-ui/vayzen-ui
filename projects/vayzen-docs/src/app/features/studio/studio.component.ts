@@ -19,13 +19,17 @@ import {
   VzCardOrientation,
   VzCardVariant,
   VzColumn,
+  VzComboboxComponent,
+  VzComboboxOption,
+  VzComboboxSize,
+  VzComboboxVariant,
   VzTableComponent,
   VzTableDensity,
   VzTableVariant,
 } from 'vayzen-ui';
 import { CodeBlockComponent } from '../../shared/components/code-block/code-block.component';
 
-export type StudioComponentType = 'card' | 'button' | 'table';
+export type StudioComponentType = 'card' | 'button' | 'table' | 'combobox';
 export type StudioStageTab = 'preview' | 'code' | 'tokens';
 export type StudioCanvasBg = 'dots' | 'white' | 'slate';
 export type StudioCardComplexity = 'complete' | 'basic';
@@ -62,6 +66,7 @@ interface EmployeeItem {
     ...VZ_CARD_IMPORTS,
     VzButtonComponent,
     VzTableComponent,
+    VzComboboxComponent,
   ],
   templateUrl: './studio.component.html',
   styleUrls: ['../../shared/styles/doc-page.css', './studio.component.css'],
@@ -102,6 +107,14 @@ export class StudioComponent implements OnInit {
       badge: 'Datos',
       description: 'Tabla de datos reactiva con ordenamiento, badges y selección.',
       docLink: '/components/table',
+    },
+    {
+      id: 'combobox',
+      name: 'Combobox',
+      icon: '🔍',
+      badge: 'Formularios',
+      description: 'Selector inteligente con búsqueda en vivo, portal anti-colisión y modo oscuro.',
+      docLink: '/components/combobox',
     },
   ];
 
@@ -154,14 +167,14 @@ export class StudioComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const comp = params['component'] as StudioComponentType;
-      if (comp && ['card', 'button', 'table'].includes(comp)) {
+      if (comp && ['card', 'button', 'table', 'combobox'].includes(comp)) {
         this.activeComponent.set(comp);
       }
     });
   }
 
   selectComponent(id: string): void {
-    if (['card', 'button', 'table'].includes(id)) {
+    if (['card', 'button', 'table', 'combobox'].includes(id)) {
       this.activeComponent.set(id as StudioComponentType);
       this.closePicker();
     }
@@ -578,6 +591,160 @@ export class StudioComponent implements OnInit {
   --vz-table-accent: #2563eb;
   --vz-table-cell-padding-y: ${py};
   --vz-table-cell-padding-x: ${px};
+}`;
+  });
+
+  // ══════════════════════════════════════════
+  // COMBOBOX STUDIO STATE & COMPUTEDS
+  // ══════════════════════════════════════════
+  protected readonly comboboxComplexity = signal<'complete' | 'basic'>('complete');
+  protected readonly comboboxTheme = signal<'light' | 'dark'>('light');
+  protected readonly comboboxVariant = signal<VzComboboxVariant>('outline');
+  protected readonly comboboxSize = signal<VzComboboxSize>('md');
+  protected readonly comboboxClearable = signal(true);
+  protected readonly comboboxLoading = signal(false);
+  protected readonly comboboxDisabled = signal(false);
+  protected readonly comboboxShowIcon = signal(true);
+  protected readonly comboboxShowAll = signal(true);
+  protected readonly comboboxSelected = signal<any>(101);
+  protected readonly comboboxLastEvent = signal('');
+
+  protected readonly comboboxProOptions: VzComboboxOption<number>[] = [
+    {
+      id: 101,
+      descripcion: 'Vayzen Technologies Corp.',
+      subtitle: 'Sede Central · CDMX, México',
+      badge: 'Tier 1',
+      badgeVariant: 'primary',
+      icon: 'building',
+    },
+    {
+      id: 102,
+      descripcion: 'Global Logistics Latam',
+      subtitle: 'Bogotá, Colombia · Logística & Carga',
+      badge: 'Verificado',
+      badgeVariant: 'success',
+      icon: 'building',
+    },
+    {
+      id: 103,
+      descripcion: 'Iberia Cloud Services',
+      subtitle: 'Madrid, España · Nube & DevOps',
+      badge: 'En Revisión',
+      badgeVariant: 'warning',
+      icon: 'building',
+    },
+    {
+      id: 104,
+      descripcion: 'Austral CyberSec Group',
+      subtitle: 'Buenos Aires, Argentina · SOC 24/7',
+      badge: 'Crítico',
+      badgeVariant: 'danger',
+      icon: 'building',
+    },
+    {
+      id: 105,
+      descripcion: 'Andes FinTech SpA',
+      subtitle: 'Santiago, Chile · Inactivo',
+      badge: 'Inactivo',
+      badgeVariant: 'neutral',
+      activo: false,
+      icon: 'building',
+    },
+  ];
+
+  protected readonly comboboxBasicOptions: VzComboboxOption<string>[] = [
+    { id: 'MX', descripcion: 'México' },
+    { id: 'CO', descripcion: 'Colombia' },
+    { id: 'ES', descripcion: 'España' },
+    { id: 'AR', descripcion: 'Argentina' },
+    { id: 'CL', descripcion: 'Chile' },
+    { id: 'PE', descripcion: 'Perú' },
+  ];
+
+  protected readonly comboboxActiveOptions = computed<VzComboboxOption<any>[]>(() =>
+    this.comboboxComplexity() === 'complete' ? this.comboboxProOptions : this.comboboxBasicOptions
+  );
+
+  protected resetComboboxDefaults(): void {
+    this.comboboxComplexity.set('complete');
+    this.comboboxTheme.set('light');
+    this.comboboxVariant.set('outline');
+    this.comboboxSize.set('md');
+    this.comboboxClearable.set(true);
+    this.comboboxLoading.set(false);
+    this.comboboxDisabled.set(false);
+    this.comboboxShowIcon.set(true);
+    this.comboboxShowAll.set(true);
+    this.comboboxSelected.set(101);
+    this.comboboxLastEvent.set('Valores restablecidos');
+  }
+
+  protected onComboboxSelection(val: any): void {
+    this.comboboxLastEvent.set(`selectionChange → ${val ?? 'null (limpiado)'}`);
+  }
+
+  protected readonly comboboxCode = computed(() => {
+    const comp = this.comboboxComplexity();
+    const th = this.comboboxTheme();
+    const v = this.comboboxVariant();
+    const s = this.comboboxSize();
+    const clr = this.comboboxClearable();
+    const l = this.comboboxLoading();
+    const dis = this.comboboxDisabled();
+    const icon = this.comboboxShowIcon();
+    const showAll = this.comboboxShowAll();
+
+    const attrs = [
+      th === 'dark' ? 'theme="dark"' : '',
+      v !== 'outline' ? `variant="${v}"` : '',
+      s !== 'md' ? `size="${s}"` : '',
+      comp === 'complete' && icon ? 'icon="building"' : '',
+      comp === 'complete' ? 'placeholder="Seleccionar corporativo..."' : 'placeholder="Seleccionar país..."',
+      comp === 'complete' ? 'searchPlaceholder="Buscar por nombre, ID o ciudad..."' : '',
+      comp === 'complete' ? 'allOptionText="Todos los corporativos"' : '',
+      !showAll ? '[showAllOption]="false"' : '',
+      clr ? '[clearable]="true"' : '',
+      l ? '[loading]="true"' : '',
+      dis ? '[disabled]="true"' : '',
+      comp === 'complete' ? '[options]="empresas"' : '[options]="paises"',
+      '[(ngModel)]="selectedItem"',
+      '(selectionChange)="onSelectionChange($event)"',
+    ]
+      .filter(Boolean)
+      .join('\n  ');
+
+    return `<vz-combobox\n  ${attrs}\n/>`;
+  });
+
+  protected readonly comboboxTokensCode = computed(() => {
+    const th = this.comboboxTheme();
+    if (th === 'dark') {
+      return `/* Design Tokens en Modo Oscuro para VzCombobox */
+.mi-combobox-personalizado {
+  --vz-combobox-bg: #0f172a;
+  --vz-combobox-border: #334155;
+  --vz-combobox-color: #f8fafc;
+  --vz-combobox-placeholder-color: #94a3b8;
+  --vz-combobox-accent: #3b82f6;
+  --vz-combobox-dropdown-bg: #0f172a;
+  --vz-combobox-item-hover-bg: #1e293b;
+  --vz-combobox-item-active-bg: rgba(59, 130, 246, 0.15);
+  --vz-combobox-radius: 0.5rem;
+}`;
+    }
+
+    return `/* Sobrescribe los Design Tokens de VzCombobox */
+.mi-combobox-personalizado {
+  --vz-combobox-bg: #ffffff;
+  --vz-combobox-border: #e2e8f0;
+  --vz-combobox-color: #0f172a;
+  --vz-combobox-placeholder-color: #64748b;
+  --vz-combobox-accent: #2563eb;
+  --vz-combobox-dropdown-bg: #ffffff;
+  --vz-combobox-item-hover-bg: #f8fafc;
+  --vz-combobox-item-active-bg: rgba(37, 99, 235, 0.08);
+  --vz-combobox-radius: 0.5rem;
 }`;
   });
 }

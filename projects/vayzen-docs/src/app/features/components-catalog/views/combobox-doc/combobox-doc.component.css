@@ -1,0 +1,199 @@
+/* ── Layout Split: Previsualización y Código Lado a Lado (Optimización de Espacio) ── */
+.demo-split-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-top: 1.25rem;
+}
+
+.demo-split-grid .preview-card-container {
+  height: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  padding: 2.25rem 1.75rem;
+}
+
+.demo-split-grid app-code-block {
+  min-width: 0;
+  margin: 0;
+  display: block;
+  height: 100%;
+}
+
+/* Alternancia en Desktop: Código a la Izquierda y Demo a la Derecha */
+@media (min-width: 1025px) {
+  .demo-split-grid--reverse > .preview-card-container {
+    order: 2;
+  }
+
+  .demo-split-grid--reverse > app-code-block {
+    order: 1;
+  }
+}
+
+/* Responsividad: En tablet y móvil apilar verticalmente */
+@media (max-width: 1024px) {
+  .demo-split-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* En pantallas móviles la demo interactiva SIEMPRE va primero */
+  .demo-split-grid--reverse > .preview-card-container {
+    order: 1;
+  }
+
+  .demo-split-grid--reverse > app-code-block {
+    order: 2;
+  }
+}
+
+/* ── Previsualizador y Demos de Selectores ── */
+.preview-card-container {
+  padding: 2.25rem 2rem;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+  background-size: 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.demo-combobox-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 26rem;
+  width: 100%;
+}
+
+.demo-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.01em;
+}
+
+.demo-feedback {
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin-top: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.demo-feedback code {
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+  color: #0284c7;
+  font-size: 0.82em;
+}
+
+.demo-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.demo-action-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.85rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.demo-action-btn:hover {
+  border-color: #0284c7;
+  color: #0284c7;
+}
+
+/* Slot Personalizado */
+.custom-user-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.custom-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+.custom-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.custom-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.custom-role {
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+/* Botón de tema preview en la cabecera */
+.doc-theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  transition: all 160ms ease;
+}
+
+.doc-theme-toggle-btn:hover {
+  border-color: #0284c7;
+  color: #0284c7;
+}
+
+.doc-theme-toggle-btn.is-dark {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 4px 12px -2px rgba(2, 132, 199, 0.45);
+}
+

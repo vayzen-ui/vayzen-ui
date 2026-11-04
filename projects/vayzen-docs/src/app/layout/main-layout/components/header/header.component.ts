@@ -17,7 +17,7 @@ export interface QuickSearchItem {
   category: string;
   route: string;
   badge?: string;
-  icon: 'card' | 'button' | 'table' | 'studio' | 'home' | 'install';
+  icon: 'card' | 'button' | 'table' | 'studio' | 'home' | 'install' | 'combobox';
 }
 
 @Component({
@@ -61,6 +61,13 @@ export class HeaderComponent {
       category: 'Componentes',
       route: '/components/tables',
       icon: 'table',
+    },
+    {
+      title: 'Combobox',
+      subtitle: 'Selector inteligente con búsqueda en vivo, portal anti-colisión y modo oscuro.',
+      category: 'Componentes',
+      route: '/components/combobox',
+      icon: 'combobox',
     },
     {
       title: 'Vayzen Studio',
