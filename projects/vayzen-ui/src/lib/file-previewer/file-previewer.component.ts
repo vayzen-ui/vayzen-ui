@@ -31,6 +31,7 @@ import { VzFileTypeCategory, VzPreviewFile, VzRemoteFileOptions } from './file-p
 export class VzFilePreviewerComponent {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly elementRef = inject(ElementRef);
 
   // ── Inputs ──
   readonly files = input<(File | VzPreviewFile)[]>([]);
@@ -129,6 +130,18 @@ export class VzFilePreviewerComponent {
       }
     }
 
+    // Convertir data URLs a Blob URLs para permitir impresión nativa y evitar bloqueos del navegador
+    if (normalized.url && normalized.url.startsWith('data:')) {
+      try {
+        const blob = this.dataUriToBlob(normalized.url);
+        const blobUrl = URL.createObjectURL(blob);
+        this.createdBlobUrls.push(blobUrl);
+        normalized.url = blobUrl;
+      } catch {
+        // En caso de error de parseo, conservar URL original
+      }
+    }
+
     this.currentFile.set(normalized);
     this.zoomLevel.set(100);
     this.rotation.set(0);
@@ -212,9 +225,138 @@ export class VzFilePreviewerComponent {
     const curr = this.currentFile();
     if (!curr?.url) return;
 
-    const printWindow = window.open(curr.url, '_blank');
-    if (printWindow) {
-      printWindow.focus();
+    const category = this.getFileCategory(curr);
+    if (category === 'image') {
+      this.printImage(curr.url, curr.name);
+    } else if (category === 'pdf') {
+      this.printPdf(curr.url, curr.name);
+    } else {
+      this.printGeneric(curr.url);
+    }
+  }
+
+  private printImage(url: string, title?: string): void {
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    iframe.style.visibility = 'hidden';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) {
+      const w = window.open(url, '_blank');
+      w?.print();
+      return;
+    }
+
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${title || 'Impresion de Imagen'}</title>
+          <style>
+            @page { margin: 1cm; size: auto; }
+            body { margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #fff; }
+            img { max-width: 100%; max-height: 95vh; object-fit: contain; }
+          </style>
+        </head>
+        <body>
+          <img src="${url}" />
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    const img = doc.querySelector('img');
+    const triggerPrint = () => {
+      try {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+      } catch {
+        const w = window.open(url, '_blank');
+        w?.print();
+      } finally {
+        setTimeout(() => {
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+          }
+        }, 1500);
+      }
+    };
+
+    if (img?.complete) {
+      setTimeout(triggerPrint, 150);
+    } else if (img) {
+      img.onload = () => setTimeout(triggerPrint, 150);
+      img.onerror = () => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+        window.open(url, '_blank');
+      };
+    }
+  }
+
+  private printPdf(url: string, title?: string): void {
+    // 1. Si el modal tiene el iframe del PDF cargado en el canvas
+    const existingIframe = this.elementRef.nativeElement.querySelector('.vz-file-viewer__iframe') as HTMLIFrameElement;
+    if (existingIframe?.contentWindow) {
+      try {
+        existingIframe.contentWindow.focus();
+        existingIframe.contentWindow.print();
+        return;
+      } catch {
+        // Continuar al método de iframe dedicado
+      }
+    }
+
+    // 2. Iframe dedicado de impresión
+    const printIframe = document.createElement('iframe');
+    printIframe.style.position = 'fixed';
+    printIframe.style.right = '0';
+    printIframe.style.bottom = '0';
+    printIframe.style.width = '0';
+    printIframe.style.height = '0';
+    printIframe.style.border = '0';
+    printIframe.style.visibility = 'hidden';
+    printIframe.src = url;
+    document.body.appendChild(printIframe);
+
+    const cleanup = () => {
+      setTimeout(() => {
+        if (document.body.contains(printIframe)) {
+          document.body.removeChild(printIframe);
+        }
+      }, 2500);
+    };
+
+    printIframe.onload = () => {
+      try {
+        printIframe.contentWindow?.focus();
+        printIframe.contentWindow?.print();
+      } catch {
+        const w = window.open(url, '_blank');
+        w?.focus();
+      } finally {
+        cleanup();
+      }
+    };
+  }
+
+  private printGeneric(url: string): void {
+    const w = window.open(url, '_blank');
+    if (w) {
+      w.focus();
+      try {
+        w.print();
+      } catch {
+        // Bloqueo de popup o cross-origin
+      }
     }
   }
 
@@ -282,6 +424,18 @@ export class VzFilePreviewerComponent {
     if (['jpg', 'jpeg'].includes(ext || '')) return 'image/jpeg';
     if (ext === 'png') return 'image/png';
     return 'application/octet-stream';
+  }
+
+  private dataUriToBlob(dataUri: string): Blob {
+    const parts = dataUri.split(',');
+    const mime = parts[0].match(/:(.*?);/)?.[1] || 'application/octet-stream';
+    const bstr = atob(parts[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
   }
 
   private cleanupBlobUrls(): void {

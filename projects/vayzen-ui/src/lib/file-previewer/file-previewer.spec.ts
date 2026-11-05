@@ -127,4 +127,14 @@ describe('VzFilePreviewerComponent', () => {
     nav = fixture.nativeElement.querySelector('.vz-file-header__nav');
     expect(nav).toBeNull();
   });
+
+  it('debe ejecutar printCurrent sin lanzar excepciones al imprimir un archivo abierto', () => {
+    // Abrir primer archivo (PDF)
+    const viewBtns = fixture.nativeElement.querySelectorAll('.vz-file-item__btn--view');
+    viewBtns[0].click();
+    fixture.detectChanges();
+
+    const previewerComp = fixture.debugElement.children[0].componentInstance as VzFilePreviewerComponent;
+    expect(() => previewerComp.printCurrent()).not.toThrow();
+  });
 });
