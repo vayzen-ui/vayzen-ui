@@ -2,6 +2,8 @@
    VAYZEN DOCS - BASE STYLES & TYPOGRAPHY
 ========================================================= */
 
+@import './app/shared/styles/doc-page.css';
+
 *,
 *::before,
 *::after {
