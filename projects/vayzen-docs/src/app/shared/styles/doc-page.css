@@ -227,20 +227,29 @@
 /* ── STAGE PREVIEW CONTAINERS & SPLIT SHOWCASE ── */
 .doc-split-showcase {
   display: grid;
-  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: 1.5rem;
   align-items: stretch;
   width: 100%;
+  min-width: 0;
+}
+
+.doc-split-showcase > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .doc-split-showcase app-code-block {
   margin: 0;
   height: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1240px) {
   .doc-split-showcase {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 }
 

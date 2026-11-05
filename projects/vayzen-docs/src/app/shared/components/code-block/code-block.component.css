@@ -1,6 +1,8 @@
 :host {
   display: block;
   margin: 0.75rem 0;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .code-block-container {
@@ -12,6 +14,8 @@
   border: 1px solid #21262d;
   overflow: hidden;
   box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.55);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .code-block-header {

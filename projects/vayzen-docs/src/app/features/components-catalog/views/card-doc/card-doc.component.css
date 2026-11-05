@@ -8,17 +8,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .preview-card-container--stack {
   flex-direction: column;
   justify-content: flex-start;
   gap: 1.25rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .preview-card-container vz-card {
-  max-width: 400px;
+  max-width: 460px;
   width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .preview-card-container {
+    padding: 1rem 0.75rem;
+    border-radius: 10px;
+  }
 }
 
 /* ── Utilidades para Cards Básicas ── */
@@ -75,14 +88,14 @@
 /* ── Grids de Muestra ── */
 .metric-showcase-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1.5rem;
   margin: 1.5rem 0;
 }
 
 .accent-showcase-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.5rem;
   margin: 1.5rem 0;
 }
@@ -179,8 +192,9 @@
 }
 
 .custom-card-wrapper {
-  max-width: 500px;
+  max-width: 460px;
   width: 100%;
+  min-width: 0;
 }
 
 .card-dark-pro {
@@ -336,6 +350,16 @@
   border: 1px solid #e2e8f0;
   display: flex;
   justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .interactive-social-showcase {
+    padding: 1.25rem 0.75rem;
+    border-radius: 14px;
+  }
 }
 
 .social-feed-card {
@@ -344,12 +368,13 @@
   border-radius: 24px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
   transition: max-width 0.35s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.3s ease;
+  min-width: 0;
 }
 
 :host ::ng-deep .social-feed-card.vz-card--drawer-open {
   max-width: 1140px;
 
-  @media (min-width: 860px) {
+  @media (min-width: 1024px) {
     display: grid !important;
     grid-template-columns: 380px minmax(0, 1fr) !important;
     align-items: stretch;
@@ -368,6 +393,14 @@
   overflow: hidden;
   align-self: stretch !important;
   border-right: 1px solid #e2e8f0;
+}
+
+@media (max-width: 1023px) {
+  .feed-comments-panel {
+    width: 100% !important;
+    border-right: none !important;
+    border-top: 1px solid #e2e8f0 !important;
+  }
 }
 
 .feed-comments-header {
