@@ -5,3 +5,5 @@ export * from './card';
 export * from './combobox';
 export * from './select';
 export * from './multi-select';
+export * from './modal';
+export * from './file-previewer';

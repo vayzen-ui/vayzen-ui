@@ -4,7 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export interface SidebarNavItem {
   label: string;
   route: string;
-  icon: 'home' | 'install' | 'studio' | 'button' | 'card' | 'table' | 'combobox';
+  icon: 'home' | 'install' | 'studio' | 'button' | 'card' | 'table' | 'combobox' | 'modal';
   badge?: string;
   badgeType?: 'soft' | 'primary' | 'live';
 }
@@ -88,6 +88,13 @@ export class SidebarComponent {
           label: 'Combobox',
           route: '/components/combobox',
           icon: 'combobox',
+          badge: 'Select',
+          badgeType: 'soft',
+        },
+        {
+          label: 'Modal',
+          route: '/components/modals',
+          icon: 'modal',
           badge: 'Nuevo',
           badgeType: 'primary',
         },

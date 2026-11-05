@@ -1,0 +1,476 @@
+@if (showList()) {
+  <!-- Advertencia de Límite de Archivos Excedido -->
+  @if (isExceeded()) {
+    <div class="vz-file-alert vz-file-alert--warning" role="alert">
+      <div class="vz-file-alert__icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </div>
+      <div class="vz-file-alert__content">
+        <div class="vz-file-alert__title">Límite de documentos excedido</div>
+        <div class="vz-file-alert__text">
+          Has superado el límite de <strong>{{ maxFiles() }}</strong> archivos permitidos. Por favor retira los elementos excedentes antes de guardar.
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Lista de Archivos -->
+  <div class="vz-file-list">
+    @for (file of normalizedFiles(); track $index) {
+      <div class="vz-file-item">
+        <!-- Icono con Insignia Semántica según Tipo -->
+        <div class="vz-file-item__icon-badge" [class]="'vz-file-item__icon-badge--' + getFileCategory(file)">
+          <ng-container [ngTemplateOutlet]="categoryIconTpl" [ngTemplateOutletContext]="{ category: getFileCategory(file) }" />
+        </div>
+
+        <!-- Información del Archivo -->
+        <div class="vz-file-item__info">
+          <div class="vz-file-item__name-row">
+            <span class="vz-file-item__name" [title]="file.name">{{ file.name }}</span>
+            @if (file.badge) {
+              <span class="vz-file-item__badge">{{ file.badge }}</span>
+            }
+          </div>
+          <div class="vz-file-item__meta">
+            <span class="vz-file-item__format">{{ getFileCategory(file).toUpperCase() }}</span>
+            <span class="vz-file-item__meta-dot">·</span>
+            <span class="vz-file-item__size">{{ formatSize(file.size) }}</span>
+            <span class="vz-file-item__meta-dot">·</span>
+            <span class="vz-file-item__status">
+              <span class="vz-file-item__status-dot"></span>
+              Disponible
+            </span>
+          </div>
+        </div>
+
+        <!-- Acciones en Fila -->
+        <div class="vz-file-item__actions">
+          <button
+            type="button"
+            class="vz-file-item__btn vz-file-item__btn--view"
+            (click)="openFile(file, $index)"
+            title="Previsualizar archivo"
+            aria-label="Previsualizar archivo"
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <span class="vz-file-item__btn-text">Ver</span>
+          </button>
+
+          @if (allowDelete()) {
+            <button
+              type="button"
+              class="vz-file-item__btn vz-file-item__btn--delete"
+              (click)="deleteFile($index, $event)"
+              title="Eliminar archivo"
+              aria-label="Eliminar archivo"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </button>
+          }
+        </div>
+      </div>
+    } @empty {
+      <div class="vz-file-list__empty">
+        <div class="vz-file-list__empty-icon">
+          <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+            <line x1="12" y1="11" x2="12" y2="17" />
+            <line x1="9" y1="14" x2="15" y2="14" />
+          </svg>
+        </div>
+        <p class="vz-file-list__empty-text">{{ emptyMessage() }}</p>
+        <span class="vz-file-list__empty-sub">Carga o adjunta archivos compatibles para visualizarlos aquí</span>
+      </div>
+    }
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL DE PREVISUALIZACIÓN MULTIMEDIA FLOTANTE INSTITUCIONAL            -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<vz-modal
+  [(open)]="isModalOpen"
+  [theme]="effectiveTheme()"
+  [size]="isFullscreen() ? 'fullscreen' : 'xl'"
+  [scrollable]="false"
+  [closable]="false"
+  [flush]="true"
+  [closeOnBackdrop]="true"
+  [backdropBlur]="true"
+>
+  <!-- Cabecera Institucional Especializada -->
+  <div vzModalHeader class="vz-file-header">
+    <div class="vz-file-header__info">
+      <div class="vz-file-header__badge" [class]="'vz-file-item__icon-badge--' + currentCategory()">
+        <ng-container [ngTemplateOutlet]="categoryIconTpl" [ngTemplateOutletContext]="{ category: currentCategory() }" />
+      </div>
+
+      <div class="vz-file-header__titles">
+        <div class="vz-file-header__title-row">
+          <h3 class="vz-file-header__title" [title]="currentFile()?.name">{{ currentFile()?.name }}</h3>
+          <span class="vz-file-header__chip vz-file-header__chip--type">
+            {{ currentCategory().toUpperCase() }}
+          </span>
+          @if (currentFile()?.badge) {
+            <span class="vz-file-header__chip vz-file-header__chip--badge">
+              {{ currentFile()?.badge }}
+            </span>
+          }
+        </div>
+        <p class="vz-file-header__subtitle">
+          @switch (currentCategory()) {
+            @case ('pdf') { Documento Oficial PDF }
+            @case ('image') { Fotografía / Gráfico Digital }
+            @case ('word') { Documento Microsoft Word }
+            @case ('excel') { Hoja de Cálculo Excel }
+            @case ('code') { Código Fuente }
+            @default { Archivo Digital }
+          }
+          <span class="vz-file-header__dot">·</span>
+          {{ formatSize(currentFile()?.size) }}
+          <span class="vz-file-header__dot">·</span>
+          <span class="vz-file-header__secure-tag">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Verificado
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Pestañas de Vista Rápida (Configurable) -->
+    @if (showTechnicalInfo()) {
+      <div class="vz-file-header__nav">
+        <button
+          type="button"
+          class="vz-file-header__tab"
+          [class.vz-file-header__tab--active]="activeTab() === 'viewer'"
+          (click)="setActiveTab('viewer')"
+        >
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="18" rx="2" />
+            <line x1="2" y1="8" x2="22" y2="8" />
+          </svg>
+          Visor
+        </button>
+        <button
+          type="button"
+          class="vz-file-header__tab"
+          [class.vz-file-header__tab--active]="activeTab() === 'info'"
+          (click)="setActiveTab('info')"
+        >
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+          Ficha Técnica
+        </button>
+      </div>
+    }
+
+    <!-- Barra de Herramientas del Visor -->
+    <div class="vz-file-header__controls">
+      @if (allowFullscreen()) {
+        <button
+          type="button"
+          class="vz-file-header__btn"
+          (click)="toggleFullscreen($event)"
+          [title]="isFullscreen() ? 'Restaurar ventana' : 'Pantalla completa'"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            @if (isFullscreen()) {
+              <polyline points="4 14 10 14 10 20" />
+              <polyline points="20 10 14 10 14 4" />
+              <line x1="14" y1="10" x2="21" y2="3" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            } @else {
+              <polyline points="15 3 21 3 21 9" />
+              <polyline points="9 21 3 21 3 15" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            }
+          </svg>
+        </button>
+      }
+
+      <button
+        type="button"
+        class="vz-file-header__btn"
+        (click)="openInNewTab($event)"
+        title="Abrir en pestaña nueva"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+      </button>
+
+      @if (allowPrint()) {
+        <button
+          type="button"
+          class="vz-file-header__btn"
+          (click)="printCurrent($event)"
+          title="Imprimir archivo"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9" />
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+            <rect x="6" y="14" width="12" height="8" />
+          </svg>
+        </button>
+      }
+
+      @if (allowDownload()) {
+        <button
+          type="button"
+          class="vz-file-header__btn vz-file-header__btn--primary"
+          (click)="downloadCurrent($event)"
+          title="Descargar archivo"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span class="vz-file-header__btn-label">Descargar</span>
+        </button>
+      }
+
+      <button
+        type="button"
+        class="vz-file-header__btn vz-file-header__btn--close"
+        (click)="closeModal()"
+        title="Cerrar visor (Esc)"
+        aria-label="Cerrar visor"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor del Visor Multimedia -->
+  <div vzModalBody class="vz-file-viewer">
+    @if (activeTab() === 'viewer') {
+      <div class="vz-file-viewer__canvas">
+        <!-- Renderizado de PDF -->
+        @if (currentCategory() === 'pdf' && safePdfUrl()) {
+          <iframe
+            [src]="safePdfUrl()"
+            class="vz-file-viewer__iframe"
+            title="Vista previa del documento PDF"
+          ></iframe>
+        }
+
+        <!-- Renderizado de Imágenes -->
+        @else if (currentCategory() === 'image' && currentFile()?.url) {
+          <div class="vz-file-viewer__image-wrapper">
+            <img
+              [src]="currentFile()?.url"
+              [alt]="currentFile()?.name"
+              class="vz-file-viewer__image"
+              [style.transform]="'scale(' + (zoomLevel() / 100) + ') rotate(' + rotation() + 'deg)'"
+            />
+          </div>
+        }
+
+        <!-- Formato sin render nativo (Office, Code, etc.) -->
+        @else {
+          <div class="vz-file-viewer__unsupported">
+            <!-- Hoja de Documento Simulada de Alta Fidelidad -->
+            <div class="vz-doc-sheet">
+              <div class="vz-doc-sheet__header">
+                <div class="vz-doc-sheet__badge" [class]="'vz-file-item__icon-badge--' + currentCategory()">
+                  <ng-container [ngTemplateOutlet]="categoryIconTpl" [ngTemplateOutletContext]="{ category: currentCategory() }" />
+                </div>
+                <div class="vz-doc-sheet__titles">
+                  <div class="vz-doc-sheet__title">{{ currentFile()?.name }}</div>
+                  <div class="vz-doc-sheet__meta">Expediente Oficial Digital · {{ formatSize(currentFile()?.size) }}</div>
+                </div>
+              </div>
+
+              <div class="vz-doc-sheet__lines">
+                <div class="vz-doc-sheet__line vz-doc-sheet__line--long"></div>
+                <div class="vz-doc-sheet__line vz-doc-sheet__line--medium"></div>
+                <div class="vz-doc-sheet__line vz-doc-sheet__line--short"></div>
+                <div class="vz-doc-sheet__line vz-doc-sheet__line--long" style="margin-top: 1.5rem;"></div>
+                <div class="vz-doc-sheet__line vz-doc-sheet__line--medium"></div>
+              </div>
+
+              <div class="vz-doc-sheet__footer">
+                <div class="vz-doc-sheet__stamp">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  <span>DOCUMENTO REGISTRADO EN NUBE</span>
+                </div>
+                @if (allowDownload()) {
+                  <button
+                    type="button"
+                    class="vz-file-header__btn vz-file-header__btn--primary"
+                    (click)="downloadCurrent($event)"
+                  >
+                    Descargar Archivo Local
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Dock Flotante de Herramientas (Solo para imágenes o gráficos, nunca sobre el PDF) -->
+        @if (currentCategory() === 'image') {
+          <div class="vz-file-viewer__hud">
+          <div class="vz-file-hud">
+            <button type="button" class="vz-file-hud__btn" (click)="zoomOut()" title="Reducir zoom">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+            <span class="vz-file-hud__label">{{ zoomLevel() }}%</span>
+            <button type="button" class="vz-file-hud__btn" (click)="zoomIn()" title="Aumentar zoom">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+
+            <span class="vz-file-hud__divider"></span>
+
+            <button type="button" class="vz-file-hud__btn" (click)="resetZoom()" title="Restablecer tamaño original">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+              </svg>
+            </button>
+
+            <button type="button" class="vz-file-hud__btn" (click)="rotate()" title="Girar 90 grados">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    }
+
+    <!-- Ficha Técnica de Metadatos -->
+    @if (activeTab() === 'info') {
+      <div class="vz-file-info-panel">
+        <div class="vz-file-info-card">
+          <div class="vz-file-info-card__header">
+            <h4 class="vz-file-info-card__title">Metadatos del Documento Digital</h4>
+            <span class="vz-file-info-card__chip">Registro Certificado</span>
+          </div>
+
+          <div class="vz-file-info-grid">
+            <div class="vz-file-info-item">
+              <span class="vz-file-info-label">Nombre del Archivo</span>
+              <span class="vz-file-info-value">{{ currentFile()?.name }}</span>
+            </div>
+
+            <div class="vz-file-info-item">
+              <span class="vz-file-info-label">Categoría Semántica</span>
+              <span class="vz-file-info-value vz-file-info-value--caps">{{ currentCategory() }}</span>
+            </div>
+
+            <div class="vz-file-info-item">
+              <span class="vz-file-info-label">Tamaño en Disco</span>
+              <span class="vz-file-info-value">{{ formatSize(currentFile()?.size) }} ({{ currentFile()?.size || 0 }} bytes)</span>
+            </div>
+
+            <div class="vz-file-info-item">
+              <span class="vz-file-info-label">Tipo MIME Declarado</span>
+              <span class="vz-file-info-value font-mono">{{ currentFile()?.type || 'application/octet-stream' }}</span>
+            </div>
+
+            <div class="vz-file-info-item">
+              <span class="vz-file-info-label">Protocolo de Previsualización</span>
+              <span class="vz-file-info-value">Blob URL Seguro / Iframe Sandbox</span>
+            </div>
+
+            <div class="vz-file-info-item">
+              <span class="vz-file-info-label">Integridad de Acceso</span>
+              <span class="vz-file-info-value vz-file-info-value--success">Protegido por Sandbox</span>
+            </div>
+          </div>
+
+          <div class="vz-file-info-card__footer">
+            <button type="button" class="vz-file-header__btn" (click)="setActiveTab('viewer')">
+              ← Volver al Visor Interactivo
+            </button>
+            @if (allowDownload()) {
+              <button
+                type="button"
+                class="vz-file-header__btn vz-file-header__btn--primary"
+                (click)="downloadCurrent($event)"
+              >
+                Descargar Archivo
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</vz-modal>
+
+<!-- Template de Iconos por Categoría de Archivo -->
+<ng-template #categoryIconTpl let-category="category">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    @switch (category) {
+      @case ('pdf') {
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="9" y1="15" x2="15" y2="15" />
+      }
+      @case ('image') {
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
+      }
+      @case ('word') {
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+      }
+      @case ('excel') {
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="8" y1="13" x2="16" y2="13" />
+        <line x1="12" y1="10" x2="12" y2="16" />
+      }
+      @case ('code') {
+        <polyline points="16 18 22 12 16 6" />
+        <polyline points="8 6 2 12 8 18" />
+      }
+      @case ('archive') {
+        <polyline points="21 8 21 21 3 21 3 8" />
+        <rect x="1" y="3" width="22" height="5" />
+        <line x1="10" y1="12" x2="14" y2="12" />
+      }
+      @default {
+        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+        <polyline points="13 2 13 9 20 9" />
+      }
+    }
+  </svg>
+</ng-template>

@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   VZ_CARD_IMPORTS,
+  VZ_MODAL_IMPORTS,
   VzButtonComponent,
   VzButtonSize,
   VzButtonVariant,
@@ -23,13 +24,15 @@ import {
   VzComboboxOption,
   VzComboboxSize,
   VzComboboxVariant,
+  VzModalPosition,
+  VzModalSize,
   VzTableComponent,
   VzTableDensity,
   VzTableVariant,
 } from 'vayzen-ui';
 import { CodeBlockComponent } from '../../shared/components/code-block/code-block.component';
 
-export type StudioComponentType = 'card' | 'button' | 'table' | 'combobox';
+export type StudioComponentType = 'card' | 'button' | 'table' | 'combobox' | 'modal';
 export type StudioStageTab = 'preview' | 'code' | 'tokens';
 export type StudioCanvasBg = 'dots' | 'white' | 'slate';
 export type StudioCardComplexity = 'complete' | 'basic';
@@ -64,6 +67,7 @@ interface EmployeeItem {
     RouterLink,
     CodeBlockComponent,
     ...VZ_CARD_IMPORTS,
+    ...VZ_MODAL_IMPORTS,
     VzButtonComponent,
     VzTableComponent,
     VzComboboxComponent,
@@ -115,6 +119,14 @@ export class StudioComponent implements OnInit {
       badge: 'Formularios',
       description: 'Selector inteligente con búsqueda en vivo, portal anti-colisión y modo oscuro.',
       docLink: '/components/combobox',
+    },
+    {
+      id: 'modal',
+      name: 'Modal & Diálogos',
+      icon: '🪟',
+      badge: 'Feedback',
+      description: 'Ventanas modales, diálogos de confirmación y paneles laterales (drawers).',
+      docLink: '/components/modals',
     },
   ];
 
@@ -745,6 +757,88 @@ export class StudioComponent implements OnInit {
   --vz-combobox-item-hover-bg: #f8fafc;
   --vz-combobox-item-active-bg: rgba(37, 99, 235, 0.08);
   --vz-combobox-radius: 0.5rem;
+}`;
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // MODAL STUDIO CONTROLS & STATE
+  // ══════════════════════════════════════════════════════════════════════════
+  protected readonly modalTheme = signal<'light' | 'dark'>('light');
+  protected readonly modalSize = signal<VzModalSize>('md');
+  protected readonly modalPosition = signal<VzModalPosition>('center');
+  protected readonly modalTitle = signal<string>('Confirmar Operación');
+  protected readonly modalSubtitle = signal<string>('Esta acción actualizará los registros del sistema');
+  protected readonly modalIcon = signal<string>('alert');
+  protected readonly modalAllowOverflow = signal<boolean>(true);
+  protected readonly modalFullscreenToggle = signal<boolean>(true);
+  protected readonly modalStaticBackdrop = signal<boolean>(false);
+  protected readonly isStudioModalOpen = signal<boolean>(false);
+  protected readonly modalLastEvent = signal<string>('');
+
+  protected resetModalDefaults(): void {
+    this.modalTheme.set('light');
+    this.modalSize.set('md');
+    this.modalPosition.set('center');
+    this.modalTitle.set('Confirmar Operación');
+    this.modalSubtitle.set('Esta acción actualizará los registros del sistema');
+    this.modalIcon.set('alert');
+    this.modalAllowOverflow.set(true);
+    this.modalFullscreenToggle.set(true);
+    this.modalStaticBackdrop.set(false);
+    this.modalLastEvent.set('Valores restablecidos');
+  }
+
+  protected readonly modalCode = computed(() => {
+    const th = this.modalTheme();
+    const s = this.modalSize();
+    const pos = this.modalPosition();
+    const t = this.modalTitle();
+    const sub = this.modalSubtitle();
+    const icon = this.modalIcon();
+    const ov = this.modalAllowOverflow();
+    const fs = this.modalFullscreenToggle();
+    const sb = this.modalStaticBackdrop();
+
+    const attrs = [
+      '[(open)]="isOpen"',
+      th === 'dark' ? 'theme="dark"' : '',
+      `title="${t}"`,
+      sub ? `subtitle="${sub}"` : '',
+      icon ? `icon="${icon}"` : '',
+      s !== 'md' ? `size="${s}"` : '',
+      pos !== 'center' ? `position="${pos}"` : '',
+      ov ? '[allowDropdownOverflow]="true"' : '',
+      fs ? '[fullscreenToggle]="true"' : '',
+      sb ? '[staticBackdrop]="true"' : '',
+    ]
+      .filter(Boolean)
+      .join('\n  ');
+
+    return `<vz-modal\n  ${attrs}\n>\n  <div vzModalBody>\n    <p>Contenido del cuerpo del modal configurado en Vayzen Studio.</p>\n  </div>\n\n  <div vzModalActions>\n    <vz-button variant="outline" (clicked)="isOpen = false">Cancelar</vz-button>\n    <vz-button color="primary" (clicked)="isOpen = false">Aceptar</vz-button>\n  </div>\n</vz-modal>`;
+  });
+
+  protected readonly modalTokensCode = computed(() => {
+    const th = this.modalTheme();
+    if (th === 'dark') {
+      return `/* Design Tokens en Modo Oscuro para VzModal */
+.mi-modal-personalizado {
+  --vz-modal-bg: #0f172a;
+  --vz-modal-color: #f8fafc;
+  --vz-modal-border: #1e293b;
+  --vz-modal-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.7);
+  --vz-modal-backdrop-bg: rgba(2, 6, 23, 0.75);
+  --vz-modal-radius: 14px;
+}`;
+    }
+
+    return `/* Sobrescribe los Design Tokens de VzModal */
+.mi-modal-personalizado {
+  --vz-modal-bg: #ffffff;
+  --vz-modal-color: #0f172a;
+  --vz-modal-border: #e2e8f0;
+  --vz-modal-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.18);
+  --vz-modal-backdrop-bg: rgba(15, 23, 42, 0.6);
+  --vz-modal-radius: 14px;
 }`;
   });
 }

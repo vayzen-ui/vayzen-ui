@@ -26,5 +26,10 @@ export const COMPONENTS_CATALOG_ROUTES: Routes = [
     loadComponent: () =>
       import('./views/combobox-doc/combobox-doc.component').then((m) => m.ComboboxDocComponent),
   },
+  {
+    path: 'modals',
+    loadComponent: () =>
+      import('./views/modal-doc/modal-doc.component').then((m) => m.ModalDocComponent),
+  },
 ];
 

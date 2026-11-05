@@ -1,0 +1,503 @@
+<div class="doc-page">
+  <!-- Cabecera de la Documentación -->
+  <header class="doc-header">
+    <div class="doc-header-breadcrumbs">
+      <span class="breadcrumb-item">COMPONENTES</span>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-item">FEEDBACK Y DIÁLOGOS</span>
+      <span class="breadcrumb-badge">Signals · Standalone</span>
+      <span class="breadcrumb-badge">Dark Mode Nativo</span>
+    </div>
+
+    <h1 class="doc-title">Modal & Diálogos</h1>
+    <p class="doc-description">
+      Ventana modal y previsualizador de grado empresarial inspirados en los patrones visuales de AdminT: incluye
+      backdrop con desenfoque de cristal (glassmorphism), bloqueo de scroll con compensación de barra, 7 escalas
+      dimensionales (sm a xxl y fullscreen), 5 orientaciones espaciales, visor multimedia y Modo Oscuro nativo integrado de fábrica.
+    </p>
+
+    <!-- Metadatos y Accesos Rápidos -->
+    <div class="doc-meta-row">
+      <div class="doc-tags">
+        <span class="doc-tag">
+          <code>&lt;vz-modal&gt;</code>
+        </span>
+        <span class="doc-tag">
+          <code>&lt;vz-file-previewer&gt;</code>
+        </span>
+        <span class="doc-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M9 3v18" />
+          </svg>
+          Multi-Posición & Drawers
+        </span>
+        <span class="doc-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M2 12h20" />
+          </svg>
+          Zero Layout Shift
+        </span>
+      </div>
+
+      <!-- Interruptor de Tema de Previsualización -->
+      <button
+        type="button"
+        class="theme-toggle-btn"
+        (click)="togglePreviewTheme()"
+        [title]="previewTheme() === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'"
+      >
+        @if (previewTheme() === 'dark') {
+          <span>🌙 Viendo Modales en Modo Oscuro · Probar Modo Claro ☀️</span>
+        } @else {
+          <span>☀️ Viendo Modales en Modo Claro · Probar Modo Oscuro 🌙</span>
+        }
+      </button>
+    </div>
+  </header>
+
+  <!-- Navegación Anclada en Esta Página -->
+  <aside class="on-this-page">
+    <div class="otp-card">
+      <div class="otp-header">
+        <span class="otp-dot"></span>
+        <span class="otp-title">EN ESTA PÁGINA</span>
+      </div>
+      <nav class="otp-nav">
+        <a href="#modal-basico" class="otp-link">1. Modal Básico Minimalista</a>
+        <a href="#modal-pro" class="otp-link">2. Modal Pro Empresarial (Slots)</a>
+        <a href="#posiciones-tamanos" class="otp-link">3. Posiciones y Tallas (Drawers)</a>
+        <a href="#previsualizador-archivos" class="otp-link">4. Previsualizador de Archivos</a>
+        <a href="#modo-oscuro" class="otp-link">5. Modo Oscuro & Tokens</a>
+        <a href="#api-reference" class="otp-link">6. Referencia de API</a>
+      </nav>
+    </div>
+  </aside>
+
+  <div class="doc-content">
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 1. MODAL BÁSICO MINIMALISTA (ZERO-BOILERPLATE)                          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="modal-basico" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">1. Modal Básico (Diálogo Minimalista y Confirmación)</h2>
+        <p class="section-subtitle">
+          Configuración rápida zero-boilerplate para diálogos de alerta, eliminación o confirmación. Bloquea el scroll
+          del body compensando el ancho de la barra de desplazamiento para eliminar cualquier salto visual (layout shift).
+        </p>
+      </div>
+
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <vz-button
+            [theme]="previewTheme()"
+            color="danger"
+            icon="trash"
+            (clicked)="isBasicOpen.set(true)"
+          >
+            Abrir Diálogo de Confirmación
+          </vz-button>
+
+          <!-- Modal Básico -->
+          <vz-modal
+            [(open)]="isBasicOpen"
+            [theme]="previewTheme()"
+            title="Confirmar Eliminación"
+            subtitle="Esta acción es irreversible y retirará el elemento de la base de datos."
+            icon="alert"
+            size="sm"
+          >
+            <div vzModalBody>
+              <p style="margin: 0; color: inherit;">
+                ¿Estás seguro de que deseas eliminar permanentemente el folio <strong>#EXP-2026-994</strong>?
+              </p>
+            </div>
+
+            <div vzModalActions>
+              <vz-button [theme]="previewTheme()" variant="ghost" (clicked)="isBasicOpen.set(false)">
+                Cancelar
+              </vz-button>
+              <vz-button [theme]="previewTheme()" color="danger" (clicked)="isBasicOpen.set(false)">
+                Confirmar Eliminación
+              </vz-button>
+            </div>
+          </vz-modal>
+        </div>
+
+        <app-code-block [code]="basicSnippet" language="html" title="modal-basico.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 2. MODAL PRO EMPRESARIAL (SLOTS, COMBOBOX Y FULLSCREEN)                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="modal-pro" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">2. Modal Pro Empresarial (Formularios, Dropdowns sin Recorte y Pantalla Completa)</h2>
+        <p class="section-subtitle">
+          Ideal para flujos complejos de captura de datos: incluye <code>[allowDropdownOverflow]="true"</code> para que
+          selectores y comboboxes floten libres sin ser recortados, y <code>[fullscreenToggle]="true"</code> para permitir
+          expandir el modal a pantalla completa.
+        </p>
+      </div>
+
+      <div class="demo-split-grid demo-split-grid--reverse">
+        <div class="preview-card-container">
+          <vz-button
+            [theme]="previewTheme()"
+            color="primary"
+            icon="file"
+            (clicked)="isFormOpen.set(true)"
+          >
+            Abrir Modal Pro con Formulario
+          </vz-button>
+
+          <!-- Modal Pro -->
+          <vz-modal
+            [(open)]="isFormOpen"
+            [theme]="previewTheme()"
+            title="Editar Credenciales de Acceso"
+            subtitle="Gestión de roles empresariales con permisos de superusuario"
+            icon="file"
+            size="lg"
+            [allowDropdownOverflow]="true"
+            [fullscreenToggle]="true"
+          >
+            <div vzModalBody class="demo-form-stack">
+              <div class="demo-form-field">
+                <label class="demo-form-label">Nombre del Titular</label>
+                <input type="text" class="demo-input" value="Lic. Alejandro Morales Valdés" />
+              </div>
+
+              <div class="demo-form-field">
+                <label class="demo-form-label">Rol Organizacional Asignado</label>
+                <vz-combobox
+                  [theme]="previewTheme()"
+                  [options]="rolesDisponibles"
+                  [(ngModel)]="rolSeleccionado"
+                  placeholder="Selecciona un rol corporativo..."
+                />
+                <p class="demo-helper-text">
+                  El menú flotante no se corta gracias al atributo <code>[allowDropdownOverflow]="true"</code>.
+                </p>
+              </div>
+            </div>
+
+            <div vzModalActions>
+              <vz-button [theme]="previewTheme()" variant="outline" (clicked)="isFormOpen.set(false)">
+                Cancelar
+              </vz-button>
+              <vz-button [theme]="previewTheme()" color="primary" (clicked)="isFormOpen.set(false)">
+                Guardar Cambios
+              </vz-button>
+            </div>
+          </vz-modal>
+        </div>
+
+        <app-code-block [code]="formSlotsSnippet" language="html" title="modal-pro.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 3. POSICIONES ESPACIALES Y TALLAS (DRAWERS / LATERALES)                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="posiciones-tamanos" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">3. Orientaciones Espaciales y Escalas (Drawers y Hojas Inferiores)</h2>
+        <p class="section-subtitle">
+          El parámetro <code>position</code> transforma el modal en un panel lateral deslizante (Drawer en <code>left</code> o <code>right</code>),
+          una hoja inferior (Sheet en <code>bottom</code>) o una alerta superior (<code>top</code>), manteniendo el mismo API limpio.
+        </p>
+      </div>
+
+      <div class="demo-split-grid">
+        <div class="preview-card-container">
+          <div class="demo-modal-trigger-group">
+            <vz-button [theme]="previewTheme()" variant="outline" (clicked)="abrirPosicion('right', 'md', 'Panel Lateral Derecho (Drawer)')">
+              Drawer Derecho (Right)
+            </vz-button>
+            <vz-button [theme]="previewTheme()" variant="outline" (clicked)="abrirPosicion('left', 'md', 'Panel Lateral Izquierdo')">
+              Drawer Izquierdo (Left)
+            </vz-button>
+            <vz-button [theme]="previewTheme()" variant="outline" (clicked)="abrirPosicion('bottom', 'lg', 'Hoja Inferior (Bottom Sheet)')">
+              Bottom Sheet
+            </vz-button>
+            <vz-button [theme]="previewTheme()" variant="outline" (clicked)="abrirPosicion('top', 'md', 'Diálogo Superior (Top)')">
+              Top Dialog
+            </vz-button>
+          </div>
+
+          <!-- Modal de Posicionamiento Dinámico -->
+          <vz-modal
+            [(open)]="isCustomModalOpen"
+            [theme]="previewTheme()"
+            [title]="activeModalTitle()"
+            [position]="activeModalPosition()"
+            [size]="activeModalSize()"
+          >
+            <div vzModalBody>
+              <p>
+                Este modal está posicionado en <strong>{{ activeModalPosition() }}</strong> con escala <strong>{{ activeModalSize() }}</strong>.
+                Es perfecto para paneles de filtros avanzados, menús de navegación móvil o detalles de pedidos.
+              </p>
+            </div>
+            <div vzModalActions>
+              <vz-button [theme]="previewTheme()" color="primary" (clicked)="isCustomModalOpen.set(false)">
+                Entendido
+              </vz-button>
+            </div>
+          </vz-modal>
+        </div>
+
+        <app-code-block [code]="positionsSnippet" language="html" title="modal-posiciones.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 4. PREVISUALIZADOR MULTIMEDIA DE ARCHIVOS                               -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="previsualizador-archivos" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">4. Previsualizador Multimedia de Archivos (&lt;vz-file-previewer&gt;)</h2>
+        <p class="section-subtitle">
+          Componente especializado para gestión y vista previa de documentos PDF, imágenes y hojas de cálculo. Incluye
+          barra de controles con visor a pantalla completa, impresión nativa, descarga y apertura en pestaña nueva.
+        </p>
+      </div>
+
+      <div class="demo-split-grid demo-split-grid--reverse">
+        <div class="preview-card-container">
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+            <span style="font-size: 0.84rem; font-weight: 600; color: #475569;">
+              Ficha Técnica: <strong [style.color]="showTechInfo() ? '#10b981' : '#f59e0b'">{{ showTechInfo() ? 'Habilitada (Pestañas Visor/Ficha)' : 'Oculta (Solo Visor)' }}</strong>
+            </span>
+            <vz-button
+              size="sm"
+              variant="outline"
+              [theme]="previewTheme()"
+              (clicked)="toggleTechInfo()"
+            >
+              {{ showTechInfo() ? 'Ocultar Ficha Técnica' : 'Habilitar Ficha Técnica' }}
+            </vz-button>
+          </div>
+
+          <vz-file-previewer
+            [files]="sampleFiles"
+            [theme]="previewTheme()"
+            [showTechnicalInfo]="showTechInfo()"
+            [allowDelete]="true"
+            [allowDownload]="true"
+            [allowFullscreen]="true"
+          />
+        </div>
+
+        <app-code-block [code]="fileViewerSnippet" language="html" title="previsualizador-archivos.component.html" />
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 5. MODO OSCURO NATIVO Y TOKENS CSS                                     -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="modo-oscuro" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">5. Modo Oscuro Nativo y Tokens de Diseño</h2>
+        <p class="section-subtitle">
+          Admite <code>[theme]="'dark'"</code> directo en el componente o por contexto (<code>[data-theme='dark']</code>).
+          Expone variables CSS para modificar fondos, radios, desenfoque de cristal y sombras de elevación.
+        </p>
+      </div>
+
+      <app-code-block [code]="tokensSnippet" language="scss" title="modal-tokens.scss" />
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- 6. REFERENCIA DE API                                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="api-reference" class="doc-section">
+      <div class="section-heading">
+        <h2 class="section-title">6. Referencia de API</h2>
+      </div>
+
+      <h3 class="subsection-title">Inputs de &lt;vz-modal&gt;</h3>
+      <div class="api-table-wrapper">
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Defecto</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>open</code></td>
+              <td><code>boolean (ModelSignal)</code></td>
+              <td><code>false</code></td>
+              <td>Estado reactivo de apertura bidireccional (<code>[(open)]="miEstado"</code>).</td>
+            </tr>
+            <tr>
+              <td><code>title</code></td>
+              <td><code>string</code></td>
+              <td><code>''</code></td>
+              <td>Título principal mostrado en la cabecera automática.</td>
+            </tr>
+            <tr>
+              <td><code>subtitle</code></td>
+              <td><code>string</code></td>
+              <td><code>''</code></td>
+              <td>Subtítulo descriptivo secundario debajo del título.</td>
+            </tr>
+            <tr>
+              <td><code>size</code></td>
+              <td><code>'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'fullscreen' | 'custom'</code></td>
+              <td><code>'md'</code></td>
+              <td>Escala dimensional de anchura máxima del diálogo.</td>
+            </tr>
+            <tr>
+              <td><code>position</code></td>
+              <td><code>'center' | 'top' | 'bottom' | 'left' | 'right'</code></td>
+              <td><code>'center'</code></td>
+              <td>Orientación espacial del diálogo en el viewport (Drawers, Bottom Sheet o Centro).</td>
+            </tr>
+            <tr>
+              <td><code>allowDropdownOverflow</code></td>
+              <td><code>boolean</code></td>
+              <td><code>false</code></td>
+              <td>Permite que menús desplegables (combobox, datepicker) floten sin recorte.</td>
+            </tr>
+            <tr>
+              <td><code>fullscreenToggle</code></td>
+              <td><code>boolean</code></td>
+              <td><code>false</code></td>
+              <td>Muestra un botón en cabecera para alternar dinámicamente pantalla completa.</td>
+            </tr>
+            <tr>
+              <td><code>staticBackdrop</code></td>
+              <td><code>boolean</code></td>
+              <td><code>false</code></td>
+              <td>Si es true, no cierra al hacer clic afuera y produce una animación sutil de rebote.</td>
+            </tr>
+            <tr>
+              <td><code>theme</code></td>
+              <td><code>'light' | 'dark' | 'auto'</code></td>
+              <td><code>undefined</code></td>
+              <td>Fuerza el Modo Claro u Oscuro nativo de fábrica sobre el modal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title" style="margin-top: 2rem;">Directivas de Proyección (Nivel 2)</h3>
+      <div class="api-table-wrapper">
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Directiva</th>
+              <th>Selector</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>VzModalHeaderDirective</code></td>
+              <td><code>[vzModalHeader]</code></td>
+              <td>Reemplaza completamente la cabecera del modal por un diseño a medida.</td>
+            </tr>
+            <tr>
+              <td><code>VzModalTitleDirective</code></td>
+              <td><code>[vzModalTitle]</code></td>
+              <td>Proyecta un título HTML enriquecido en la cabecera por defecto.</td>
+            </tr>
+            <tr>
+              <td><code>VzModalBodyDirective</code></td>
+              <td><code>[vzModalBody]</code></td>
+              <td>Proyecta el contenido principal o formulario del cuerpo del modal.</td>
+            </tr>
+            <tr>
+              <td><code>VzModalActionsDirective</code></td>
+              <td><code>[vzModalActions]</code></td>
+              <td>Proyecta el grupo de botones de acción en el pie del modal.</td>
+            </tr>
+            <tr>
+              <td><code>VzModalFooterDirective</code></td>
+              <td><code>[vzModalFooter]</code></td>
+              <td>Reemplaza completamente el pie del modal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title" style="margin-top: 2.5rem;">Inputs de &lt;vz-file-previewer&gt;</h3>
+      <div class="api-table-wrapper">
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Defecto</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>files</code></td>
+              <td><code>(File | VzPreviewFile)[]</code></td>
+              <td><code>[]</code></td>
+              <td>Arreglo de archivos nativos o remotos (PDF, imágenes, Word, Excel, etc.).</td>
+            </tr>
+            <tr>
+              <td><code>showTechnicalInfo</code></td>
+              <td><code>boolean</code></td>
+              <td><code>true</code></td>
+              <td><strong>Configurable:</strong> Muestra u oculta la pestaña de Ficha Técnica con metadatos de auditoría en la cabecera.</td>
+            </tr>
+            <tr>
+              <td><code>showList</code></td>
+              <td><code>boolean</code></td>
+              <td><code>true</code></td>
+              <td>Muestra la lista de tarjetas de archivos o solo el modal de previsualización.</td>
+            </tr>
+            <tr>
+              <td><code>allowDelete</code></td>
+              <td><code>boolean</code></td>
+              <td><code>true</code></td>
+              <td>Muestra el botón de eliminar y emite <code>(fileDeleted)</code> con el índice.</td>
+            </tr>
+            <tr>
+              <td><code>allowDownload</code></td>
+              <td><code>boolean</code></td>
+              <td><code>true</code></td>
+              <td>Habilita el botón de descarga en la cabecera del visor y en los items.</td>
+            </tr>
+            <tr>
+              <td><code>allowPrint</code></td>
+              <td><code>boolean</code></td>
+              <td><code>true</code></td>
+              <td>Habilita el botón de impresión directa en el visor multimedia.</td>
+            </tr>
+            <tr>
+              <td><code>allowFullscreen</code></td>
+              <td><code>boolean</code></td>
+              <td><code>true</code></td>
+              <td>Habilita el botón de alternar pantalla completa en la cabecera del visor.</td>
+            </tr>
+            <tr>
+              <td><code>maxFiles</code></td>
+              <td><code>number | undefined</code></td>
+              <td><code>undefined</code></td>
+              <td>Límite recomendado de archivos; muestra alerta ámbar cuando se supera.</td>
+            </tr>
+            <tr>
+              <td><code>theme</code></td>
+              <td><code>'light' | 'dark' | 'auto'</code></td>
+              <td><code>undefined</code></td>
+              <td>Modo Claro u Oscuro nativo de fábrica para todo el componente y su visor.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+

@@ -88,6 +88,47 @@
               </div>
             </div>
           }
+
+          <!-- MODAL COMPONENT -->
+          @if (activeComponent() === 'modal') {
+            <div class="modal-render-wrapper" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2.5rem; text-align: center;">
+              <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
+                Haz clic para activar el modal configurado con los parámetros actuales del panel lateral.
+              </p>
+              <vz-button
+                [theme]="modalTheme()"
+                color="primary"
+                [icon]="modalIcon()"
+                (clicked)="isStudioModalOpen.set(true)"
+              >
+                Abrir Modal de Prueba ({{ modalSize() }} / {{ modalPosition() }})
+              </vz-button>
+
+              <vz-modal
+                [(open)]="isStudioModalOpen"
+                [theme]="modalTheme()"
+                [size]="modalSize()"
+                [position]="modalPosition()"
+                [title]="modalTitle()"
+                [subtitle]="modalSubtitle()"
+                [icon]="modalIcon()"
+                [allowDropdownOverflow]="modalAllowOverflow()"
+                [fullscreenToggle]="modalFullscreenToggle()"
+                [staticBackdrop]="modalStaticBackdrop()"
+              >
+                <div vzModalBody>
+                  <p style="margin: 0; line-height: 1.6;">
+                    Este modal está operando en tiempo real desde <strong>Vayzen Studio</strong> con tamaño
+                    <code>{{ modalSize() }}</code> y alineación <code>{{ modalPosition() }}</code>.
+                  </p>
+                </div>
+                <div vzModalActions>
+                  <vz-button variant="outline" (clicked)="isStudioModalOpen.set(false)">Cancelar</vz-button>
+                  <vz-button color="primary" (clicked)="isStudioModalOpen.set(false)">Confirmar</vz-button>
+                </div>
+              </vz-modal>
+            </div>
+          }
         </div>
 
         <div class="topbar-divider"></div>
@@ -414,6 +455,47 @@
               />
             </div>
           }
+
+          <!-- MODAL COMPONENT -->
+          @if (activeComponent() === 'modal') {
+            <div class="modal-render-wrapper" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2.5rem; text-align: center;">
+              <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
+                Haz clic para activar el modal configurado con los parámetros actuales del panel lateral.
+              </p>
+              <vz-button
+                [theme]="modalTheme()"
+                color="primary"
+                [icon]="modalIcon()"
+                (clicked)="isStudioModalOpen.set(true)"
+              >
+                Abrir Modal de Prueba ({{ modalSize() }} / {{ modalPosition() }})
+              </vz-button>
+
+              <vz-modal
+                [(open)]="isStudioModalOpen"
+                [theme]="modalTheme()"
+                [size]="modalSize()"
+                [position]="modalPosition()"
+                [title]="modalTitle()"
+                [subtitle]="modalSubtitle()"
+                [icon]="modalIcon()"
+                [allowDropdownOverflow]="modalAllowOverflow()"
+                [fullscreenToggle]="modalFullscreenToggle()"
+                [staticBackdrop]="modalStaticBackdrop()"
+              >
+                <div vzModalBody>
+                  <p style="margin: 0; line-height: 1.6;">
+                    Este modal está operando en tiempo real desde <strong>Vayzen Studio</strong> con tamaño
+                    <code>{{ modalSize() }}</code> y alineación <code>{{ modalPosition() }}</code>.
+                  </p>
+                </div>
+                <div vzModalActions>
+                  <vz-button variant="outline" (clicked)="isStudioModalOpen.set(false)">Cancelar</vz-button>
+                  <vz-button color="primary" (clicked)="isStudioModalOpen.set(false)">Confirmar</vz-button>
+                </div>
+              </vz-modal>
+            </div>
+          }
         </div>
       }
 
@@ -431,6 +513,9 @@
           @if (activeComponent() === 'combobox') {
             <app-code-block [code]="comboboxCode()" language="html" title="Plantilla HTML de Combobox" />
           }
+          @if (activeComponent() === 'modal') {
+            <app-code-block [code]="modalCode()" language="html" title="Plantilla HTML de Modal" />
+          }
         </div>
       }
 
@@ -444,6 +529,9 @@
           }
           @if (activeComponent() === 'combobox') {
             <app-code-block [code]="comboboxTokensCode()" language="css" title="Tokens CSS de VzCombobox en tiempo real" />
+          }
+          @if (activeComponent() === 'modal') {
+            <app-code-block [code]="modalTokensCode()" language="css" title="Tokens CSS de VzModal en tiempo real" />
           }
         </div>
       }
@@ -466,6 +554,9 @@
           }
           @if (activeComponent() === 'combobox') {
             {{ comboboxLastEvent() || 'Selecciona una opción en el combobox' }}
+          }
+          @if (activeComponent() === 'modal') {
+            {{ modalLastEvent() || 'Abre y cierra el modal para registrar eventos' }}
           }
         </span>
       </div>
@@ -493,6 +584,11 @@
       }
       @if (activeComponent() === 'combobox') {
         <button type="button" class="reset-btn" (click)="resetComboboxDefaults()" title="Restablecer valores por defecto">
+          Reset
+        </button>
+      }
+      @if (activeComponent() === 'modal') {
+        <button type="button" class="reset-btn" (click)="resetModalDefaults()" title="Restablecer valores por defecto">
           Reset
         </button>
       }
@@ -573,6 +669,47 @@
                 <button type="button" class="seg-btn" [class.active]="cardAccentPosition() === 'top'" (click)="cardAccentPosition.set('top')">Superior (Top)</button>
                 <button type="button" class="seg-btn" [class.active]="cardAccentPosition() === 'left'" (click)="cardAccentPosition.set('left')">Lateral (Left)</button>
               </div>
+            </div>
+          }
+
+          <!-- MODAL COMPONENT -->
+          @if (activeComponent() === 'modal') {
+            <div class="modal-render-wrapper" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2.5rem; text-align: center;">
+              <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
+                Haz clic para activar el modal configurado con los parámetros actuales del panel lateral.
+              </p>
+              <vz-button
+                [theme]="modalTheme()"
+                color="primary"
+                [icon]="modalIcon()"
+                (clicked)="isStudioModalOpen.set(true)"
+              >
+                Abrir Modal de Prueba ({{ modalSize() }} / {{ modalPosition() }})
+              </vz-button>
+
+              <vz-modal
+                [(open)]="isStudioModalOpen"
+                [theme]="modalTheme()"
+                [size]="modalSize()"
+                [position]="modalPosition()"
+                [title]="modalTitle()"
+                [subtitle]="modalSubtitle()"
+                [icon]="modalIcon()"
+                [allowDropdownOverflow]="modalAllowOverflow()"
+                [fullscreenToggle]="modalFullscreenToggle()"
+                [staticBackdrop]="modalStaticBackdrop()"
+              >
+                <div vzModalBody>
+                  <p style="margin: 0; line-height: 1.6;">
+                    Este modal está operando en tiempo real desde <strong>Vayzen Studio</strong> con tamaño
+                    <code>{{ modalSize() }}</code> y alineación <code>{{ modalPosition() }}</code>.
+                  </p>
+                </div>
+                <div vzModalActions>
+                  <vz-button variant="outline" (clicked)="isStudioModalOpen.set(false)">Cancelar</vz-button>
+                  <vz-button color="primary" (clicked)="isStudioModalOpen.set(false)">Confirmar</vz-button>
+                </div>
+              </vz-modal>
             </div>
           }
         </div>
@@ -1096,6 +1233,83 @@
             </div>
             <label class="ios-switch">
               <input type="checkbox" [checked]="comboboxDisabled()" (change)="comboboxDisabled.set(!comboboxDisabled())" />
+              <span class="ios-track"></span>
+            </label>
+          </div>
+        </div>
+      }
+
+      @if (activeComponent() === 'modal') {
+        <!-- Sección 1: Tema -->
+        <div class="panel-section">
+          <span class="panel-section-title">Tema Visual</span>
+          <div class="segmented-control">
+            <button type="button" class="seg-btn" [class.active]="modalTheme() === 'light'" (click)="modalTheme.set('light')">
+              ☀️ Claro
+            </button>
+            <button type="button" class="seg-btn" [class.active]="modalTheme() === 'dark'" (click)="modalTheme.set('dark')">
+              🌙 Oscuro
+            </button>
+          </div>
+        </div>
+
+        <!-- Sección 2: Tamaño -->
+        <div class="panel-section">
+          <span class="panel-section-title">Escala Dimensional (Size)</span>
+          <div class="segmented-control">
+            <button type="button" class="seg-btn" [class.active]="modalSize() === 'sm'" (click)="modalSize.set('sm')">sm</button>
+            <button type="button" class="seg-btn" [class.active]="modalSize() === 'md'" (click)="modalSize.set('md')">md</button>
+            <button type="button" class="seg-btn" [class.active]="modalSize() === 'lg'" (click)="modalSize.set('lg')">lg</button>
+            <button type="button" class="seg-btn" [class.active]="modalSize() === 'xl'" (click)="modalSize.set('xl')">xl</button>
+            <button type="button" class="seg-btn" [class.active]="modalSize() === 'fullscreen'" (click)="modalSize.set('fullscreen')">Full</button>
+          </div>
+        </div>
+
+        <!-- Sección 3: Posición -->
+        <div class="panel-section">
+          <span class="panel-section-title">Orientación (Position)</span>
+          <div class="segmented-control">
+            <button type="button" class="seg-btn" [class.active]="modalPosition() === 'center'" (click)="modalPosition.set('center')">Center</button>
+            <button type="button" class="seg-btn" [class.active]="modalPosition() === 'top'" (click)="modalPosition.set('top')">Top</button>
+            <button type="button" class="seg-btn" [class.active]="modalPosition() === 'bottom'" (click)="modalPosition.set('bottom')">Bottom</button>
+            <button type="button" class="seg-btn" [class.active]="modalPosition() === 'right'" (click)="modalPosition.set('right')">Right</button>
+            <button type="button" class="seg-btn" [class.active]="modalPosition() === 'left'" (click)="modalPosition.set('left')">Left</button>
+          </div>
+        </div>
+
+        <!-- Sección 4: Opciones y Comportamientos -->
+        <div class="panel-section">
+          <span class="panel-section-title">Comportamientos Avanzados</span>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <span class="switch-title">Permitir Overflow Dropdowns</span>
+              <span class="switch-sub">Evita recorte de selects y comboboxes</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" [checked]="modalAllowOverflow()" (change)="modalAllowOverflow.set(!modalAllowOverflow())" />
+              <span class="ios-track"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <span class="switch-title">Botón Pantalla Completa</span>
+              <span class="switch-sub">Alternador dinámico en cabecera</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" [checked]="modalFullscreenToggle()" (change)="modalFullscreenToggle.set(!modalFullscreenToggle())" />
+              <span class="ios-track"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <span class="switch-title">Fondo Estático (Static Backdrop)</span>
+              <span class="switch-sub">Efecto rebote al hacer clic afuera</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" [checked]="modalStaticBackdrop()" (change)="modalStaticBackdrop.set(!modalStaticBackdrop())" />
               <span class="ios-track"></span>
             </label>
           </div>
