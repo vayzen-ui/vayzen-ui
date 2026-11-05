@@ -12,6 +12,7 @@ export interface DocApiRow {
   selector: 'app-doc-api-table',
   standalone: true,
   imports: [CommonModule],
+  styleUrls: ['../../styles/doc-page.css'],
   encapsulation: ViewEncapsulation.None,
   host: {
     style: 'display: block; width: 100%; margin-bottom: 1.5rem;',

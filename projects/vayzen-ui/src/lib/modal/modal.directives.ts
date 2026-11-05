@@ -48,6 +48,10 @@ export class VzModalFooterDirective {}
 @Directive({
   selector: '[vzModalActions]',
   standalone: true,
+  host: {
+    class: 'vz-modal-actions',
+    style: 'display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.5rem; flex-wrap: wrap;',
+  },
 })
 export class VzModalActionsDirective {}
 

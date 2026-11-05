@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-doc-header',
   standalone: true,
   imports: [CommonModule],
+  styleUrls: ['../../styles/doc-page.css'],
   encapsulation: ViewEncapsulation.None,
   host: {
     style: 'display: block; width: 100%;',

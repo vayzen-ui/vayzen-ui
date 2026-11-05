@@ -51,7 +51,10 @@
                 "input": "projects/vayzen-docs/public"
               }
             ],
-            "styles": ["projects/vayzen-docs/src/styles.css"]
+            "styles": [
+              "projects/vayzen-docs/src/styles.css",
+              "projects/vayzen-docs/src/app/shared/styles/doc-page.css"
+            ]
           },
           "configurations": {
             "production": {
